@@ -1,0 +1,6 @@
+{
+  "globalDependencies": {
+    "express": "registry:dt/express#4.0.0+20160317120654",
+    "mongoose": "registry:dt/mongoose#3.8.5+20160629014609"
+  }
+}
