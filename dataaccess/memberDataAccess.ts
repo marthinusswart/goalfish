@@ -2,13 +2,13 @@ import mongoose = require('mongoose');
 import member = require('../models/member');
 import memberController = require('../controllers/memberController');
 
-export class WineMongoDBService {
+export class MemberDataAccess {
     connection: mongoose.Connection;
     memberController: memberController.MemberController;
 
     init() {
         let db = new mongoose.Mongoose();
-        this.connection = db.createConnection("localhost", "microdb");
+        this.connection = db.createConnection("localhost", "goalfish");
         this.connection.on("error", console.error.bind(console, "connection error:"));
         this.memberController = new memberController.MemberController();
 
@@ -18,16 +18,16 @@ export class WineMongoDBService {
         var self = this;
         this.connection.once("open", function () {
 
-            let wineSchema = self.memberController.createMemberMongooseSchema();
-            var wineModel = self.connection.model("wine", wineSchema, "wine");
-            wineModel.find({}, function (err, wines) {
+            let memberSchema = self.memberController.createMemberMongooseSchema();
+            var memberModel = self.connection.model("member", memberSchema, "member");
+            memberModel.find({}, function (err, members) {
                 if (err) {
                     self.connection.close();
                     callback(err);
                 } else {
                     self.connection.close()
-                    console.log(wines);
-                    callback(null, self.memberController.translateMongooseArrayToMemberArray(wines));
+                    console.log(members);
+                    callback(null, self.memberController.translateMongooseArrayToMemberArray(members));
                 }
             });
 
@@ -38,62 +38,62 @@ export class WineMongoDBService {
         var self = this;
         this.connection.once("open", function () {
 
-            let wineSchema = self.memberController.createMemberMongooseSchema();
-            var wineModel = self.connection.model("wine", wineSchema, "wine");
-            wineModel.findById(id, function (err, wine:mongoose.Schema) {
+            let memberSchema = self.memberController.createMemberMongooseSchema();
+            var memberModel = self.connection.model("member", memberSchema, "member");
+            memberModel.findById(id, function (err, member:mongoose.Schema) {
                 if (err) {
                     self.connection.close();
                     callback(err);
                 } else {
                     self.connection.close()
-                    console.log(wine);
-                    callback(null, self.memberController.translateMongooseToMember(wine));
+                    console.log(member);
+                    callback(null, self.memberController.translateMongooseToMember(member));
                 }
             });
 
         });
     }
     
-    save(newWine: wine.Wine, callback){
+    save(newMember: member.Member, callback){
         var self = this;
         this.connection.once("open", function () {
 
-            let wineSchema = self.wineController.createWineMongooseSchema();
-            var wineModel = self.connection.model("wine", wineSchema, "wine");            
-            var mongooseWine = new wineModel();
-            self.wineController.translateWineToMongoose(newWine, mongooseWine);   
+            let memberSchema = self.memberController.createMemberMongooseSchema();
+            var memberModel = self.connection.model("member", memberSchema, "member");            
+            var mongooseMember = new memberModel();
+            self.memberController.translateMemberToMongoose(newMember, mongooseMember);   
                      
-            mongooseWine.save(function (err, result) {
+            mongooseMember.save(function (err, result) {
                 if (err) {
                     self.connection.close();
                     callback(err);
                 } else {
                     self.connection.close()
                     console.log(result);
-                    callback(null, self.wineController.translateMongooseToWine(result));                    
+                    callback(null, self.memberController.translateMongooseToMember(result));                    
                 }
             });
 
         });
     }
     
-     update(id: string, newWine: wine.Wine, callback){
+     update(id: string, newMember: member.Member, callback){
         var self = this;
         this.connection.once("open", function () {
 
-            let wineSchema = self.wineController.createWineMongooseSchema();
-            var wineModel = self.connection.model("wine", wineSchema, "wine");            
-            var mongooseWine = new wineModel();
-            self.wineController.translateWineToMongoose(newWine, mongooseWine);   
+            let memberSchema = self.memberController.createMemberMongooseSchema();
+            var memberModel = self.connection.model("member", memberSchema, "member");            
+            var mongooseMember = new memberModel();
+            self.memberController.translateMemberToMongoose(newMember, mongooseMember);   
                                
-            wineModel.findOneAndUpdate({"_id":mongooseWine._id}, mongooseWine, {new:true}, function (err, result) {
+            memberModel.findOneAndUpdate({"_id":mongooseMember._id}, mongooseMember, {new:true}, function (err, result) {
                 if (err) {
                     self.connection.close();
                     callback(err);
                 } else {
                     self.connection.close()
                     console.log(result);
-                    callback(null, self.wineController.translateMongooseToWine(result));                    
+                    callback(null, self.memberController.translateMongooseToMember(result));                    
                 }
             });
 

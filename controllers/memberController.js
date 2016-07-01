@@ -1,9 +1,10 @@
-import mongoose = require('mongoose');
-import member = require('../models/member');
-
-export class MemberController {
-
-    createMemberMongooseSchema() {
+"use strict";
+var mongoose = require('mongoose');
+var member = require('../models/member');
+var MemberController = (function () {
+    function MemberController() {
+    }
+    MemberController.prototype.createMemberMongooseSchema = function () {
         var memberSchema = new mongoose.Schema({
             id: String,
             salutation: String,
@@ -11,26 +12,21 @@ export class MemberController {
             surname: String,
             email: String
         });
-
         return memberSchema;
-    }
-
-    translateMemberToMongoose(member: member.Member, mongooseMember: any) {
+    };
+    MemberController.prototype.translateMemberToMongoose = function (member, mongooseMember) {
         mongooseMember.id = member.id;
         mongooseMember.name = member.name;
         mongooseMember.surname = member.surname;
         mongooseMember.salutation = member.salutation;
         mongooseMember.email = member.email;
-
         if (member.externalRef !== "") {
             mongooseMember._id = member.externalRef;
         }
-
-        return 0
-    }
-
-    translateMongooseToMember(mongooseMember: any): member.Member {
-        let memberObj: member.Member;
+        return 0;
+    };
+    MemberController.prototype.translateMongooseToMember = function (mongooseMember) {
+        var memberObj;
         memberObj = new member.Member();
         memberObj.externalRef = mongooseMember._id;
         memberObj.name = mongooseMember.name;
@@ -38,17 +34,17 @@ export class MemberController {
         memberObj.salutation = mongooseMember.salutation;
         memberObj.email = mongooseMember.email;
         memberObj.id = mongooseMember.id;
-
-
         return memberObj;
-    }
-
-    translateMongooseArrayToMemberArray(memberSchemaArray) {
+    };
+    MemberController.prototype.translateMongooseArrayToMemberArray = function (memberSchemaArray) {
+        var _this = this;
         var memberArray = [];
-        memberSchemaArray.forEach((memberSchema: mongoose.Schema) => {
-            memberArray.push(this.translateMongooseToMember(memberSchema));
+        memberSchemaArray.forEach(function (memberSchema) {
+            memberArray.push(_this.translateMongooseToMember(memberSchema));
         });
         return memberArray;
-    }
-
-}
+    };
+    return MemberController;
+}());
+exports.MemberController = MemberController;
+//# sourceMappingURL=memberController.js.map
