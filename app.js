@@ -7,7 +7,9 @@ var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
-var member = require('./routes/member')
+var member = require('./routes/member/member');
+var initiative = require('./routes/initiative/initiative');
+var underlyingAccount = require('./routes/underlyingaccount/underlyingAccount');
 
 var app = express();
 
@@ -25,9 +27,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
+
 app.use('/api/v1/member', member);
 app.use('/api/v1/member/:id', member);
 app.use('/api/v1/member/ping', member);
+
+app.use('/api/v1/initiative', initiative);
+app.use('/api/v1/initiative/:id', initiative);
+app.use('/api/v1/initiative/ping', initiative);
+
+app.use('/api/v1/underlyingAccount', underlyingAccount);
+app.use('/api/v1/underlyingAccount/:id', underlyingAccount);
+app.use('/api/v1/underlyingAccount/ping', underlyingAccount);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

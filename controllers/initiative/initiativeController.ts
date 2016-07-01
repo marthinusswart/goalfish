@@ -9,7 +9,7 @@ export class InitiativeController {
             id: String,
             name: String,
             description: String,
-            targetBalance: String,
+            targetBalance: Number,
             targetDate: Date,
             balance: Number,
             underlyingAccount: String
