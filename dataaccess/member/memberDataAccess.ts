@@ -1,6 +1,6 @@
 import mongoose = require('mongoose');
-import member = require('../models/member');
-import memberController = require('../controllers/memberController');
+import member = require('../../models/member/member');
+import memberController = require('../../controllers/member/memberController');
 
 export class MemberDataAccess {
     connection: mongoose.Connection;

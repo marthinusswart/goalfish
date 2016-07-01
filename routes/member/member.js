@@ -1,6 +1,6 @@
 "use strict";
 var express = require('express');
-var memberDataAccess = require('../dataaccess/memberDataAccess');
+var memberDataAccess = require('../../dataaccess/member/memberDataAccess');
 var router = express.Router();
 var memberDataAcccessService = new memberDataAccess.MemberDataAccess();
 router

@@ -1,5 +1,5 @@
 import mongoose = require('mongoose');
-import member = require('../models/member');
+import member = require('../../models/member/member');
 
 export class MemberController {
 

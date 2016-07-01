@@ -1,6 +1,6 @@
 "use strict";
 var mongoose = require('mongoose');
-var memberController = require('../controllers/memberController');
+var memberController = require('../../controllers/member/memberController');
 var MemberDataAccess = (function () {
     function MemberDataAccess() {
     }
