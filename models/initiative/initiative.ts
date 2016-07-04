@@ -7,4 +7,6 @@ export class Initiative {
     targetDate: Date;
     balance: number;
     underlyingAccount: string;
+    instalmentAmount: number;
+    frequency: string;
 }

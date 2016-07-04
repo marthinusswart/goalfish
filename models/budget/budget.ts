@@ -5,4 +5,6 @@ export class Budget {
     description: string;    
     balance: number;
     underlyingAccount: string;
+    instalmentAmount: number;
+    frequency: string;
 }

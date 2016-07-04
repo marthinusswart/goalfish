@@ -12,7 +12,10 @@ export class InitiativeController {
             targetBalance: Number,
             targetDate: Date,
             balance: Number,
-            underlyingAccount: String
+            underlyingAccount: String,
+            instalmentAmount: Number,
+            frequency : String
+
         });
 
         return initiativeSchema;
@@ -25,6 +28,8 @@ export class InitiativeController {
         mongooseInitiative.targetBalance = initiative.targetBalance;
         mongooseInitiative.targetDate = initiative.targetDate;
         mongooseInitiative.balance = initiative.balance;
+        mongooseInitiative.instalmentAmount = initiative.instalmentAmount;
+        mongooseInitiative.frequency = initiative.frequency;
         mongooseInitiative.underlyingAccount = initiative.underlyingAccount;
 
         if (initiative.externalRef !== "") {
