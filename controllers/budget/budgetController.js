@@ -38,6 +38,8 @@ var BudgetController = (function () {
         budgetObj.description = mongooseBudget.description;
         budgetObj.id = mongooseBudget.id;
         budgetObj.balance = mongooseBudget.balance;
+        budgetObj.instalmentAmount = mongooseBudget.instalmentAmount;
+        budgetObj.frequency = mongooseBudget.frequency;
         budgetObj.underlyingAccount = mongooseBudget.underlyingAccount;
         return budgetObj;
     };

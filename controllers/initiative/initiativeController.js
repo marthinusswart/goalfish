@@ -44,6 +44,8 @@ var InitiativeController = (function () {
         initiativeObj.targetDate = mongooseInitiative.targetDate;
         initiativeObj.id = mongooseInitiative.id;
         initiativeObj.balance = mongooseInitiative.balance;
+        initiativeObj.instalmentAmount = mongooseInitiative.instalmentAmount;
+        initiativeObj.frequency = mongooseInitiative.frequency;
         initiativeObj.underlyingAccount = mongooseInitiative.underlyingAccount;
         return initiativeObj;
     };
