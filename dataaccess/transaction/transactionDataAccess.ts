@@ -2,7 +2,7 @@ import mongoose = require('mongoose');
 import transaction = require('../../models/transaction/transaction');
 import transactionController = require('../../controllers/transaction/transactionController');
 
-export class PostingDataAccess {
+export class TransactionDataAccess {
     connection: mongoose.Connection;
     transactionController: transactionController.TransactionController;
 

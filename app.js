@@ -5,11 +5,18 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+/*** template routes - may use later */
 var routes = require('./routes/index');
 var users = require('./routes/users');
+/*** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
 var member = require('./routes/member/member');
 var initiative = require('./routes/initiative/initiative');
 var underlyingAccount = require('./routes/underlyingaccount/underlyingAccount');
+var budget = require('./routes/budget/budget');
+var journal = require('./routes/journal/journal');
+var posting = require('./routes/posting/posting');
+var transaction = require('./routes/transaction/transaction');
 
 var app = express();
 
@@ -39,6 +46,22 @@ app.use('/api/v1/initiative/ping', initiative);
 app.use('/api/v1/underlyingAccount', underlyingAccount);
 app.use('/api/v1/underlyingAccount/:id', underlyingAccount);
 app.use('/api/v1/underlyingAccount/ping', underlyingAccount);
+
+app.use('/api/v1/budget', budget);
+app.use('/api/v1/budget/:id', budget);
+app.use('/api/v1/budget/ping', budget);
+
+app.use('/api/v1/journal', journal);
+app.use('/api/v1/journal/:id', journal);
+app.use('/api/v1/journal/ping', journal);
+
+app.use('/api/v1/posting', posting);
+app.use('/api/v1/posting/:id', posting);
+app.use('/api/v1/posting/ping', posting);
+
+app.use('/api/v1/transaction', transaction);
+app.use('/api/v1/transaction/:id', transaction);
+app.use('/api/v1/transaction/ping', transaction);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

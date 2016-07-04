@@ -1,16 +1,16 @@
 "use strict";
 var mongoose = require('mongoose');
 var transactionController = require('../../controllers/transaction/transactionController');
-var PostingDataAccess = (function () {
-    function PostingDataAccess() {
+var TransactionDataAccess = (function () {
+    function TransactionDataAccess() {
     }
-    PostingDataAccess.prototype.init = function () {
+    TransactionDataAccess.prototype.init = function () {
         var db = new mongoose.Mongoose();
         this.connection = db.createConnection("localhost", "goalfish");
         this.connection.on("error", console.error.bind(console, "connection error:"));
         this.transactionController = new transactionController.TransactionController();
     };
-    PostingDataAccess.prototype.find = function (callback) {
+    TransactionDataAccess.prototype.find = function (callback) {
         var self = this;
         this.connection.once("open", function () {
             var transactionSchema = self.transactionController.createTransactionMongooseSchema();
@@ -28,7 +28,7 @@ var PostingDataAccess = (function () {
             });
         });
     };
-    PostingDataAccess.prototype.findById = function (id, callback) {
+    TransactionDataAccess.prototype.findById = function (id, callback) {
         var self = this;
         this.connection.once("open", function () {
             var transactionSchema = self.transactionController.createTransactionMongooseSchema();
@@ -46,7 +46,7 @@ var PostingDataAccess = (function () {
             });
         });
     };
-    PostingDataAccess.prototype.save = function (newTransaction, callback) {
+    TransactionDataAccess.prototype.save = function (newTransaction, callback) {
         var self = this;
         this.connection.once("open", function () {
             var transactionSchema = self.transactionController.createTransactionMongooseSchema();
@@ -66,7 +66,7 @@ var PostingDataAccess = (function () {
             });
         });
     };
-    PostingDataAccess.prototype.update = function (id, newTransaction, callback) {
+    TransactionDataAccess.prototype.update = function (id, newTransaction, callback) {
         var self = this;
         this.connection.once("open", function () {
             var transactionSchema = self.transactionController.createTransactionMongooseSchema();
@@ -86,7 +86,7 @@ var PostingDataAccess = (function () {
             });
         });
     };
-    return PostingDataAccess;
+    return TransactionDataAccess;
 }());
-exports.PostingDataAccess = PostingDataAccess;
+exports.TransactionDataAccess = TransactionDataAccess;
 //# sourceMappingURL=transactionDataAccess.js.map
