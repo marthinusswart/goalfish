@@ -9,4 +9,5 @@ export class Initiative {
     underlyingAccount: string;
     instalmentAmount: number;
     frequency: string;
+    memberId: string;
 }

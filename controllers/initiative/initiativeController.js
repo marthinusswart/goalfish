@@ -15,7 +15,8 @@ var InitiativeController = (function () {
             balance: Number,
             underlyingAccount: String,
             instalmentAmount: Number,
-            frequency: String
+            frequency: String,
+            memberId: String
         });
         return initiativeSchema;
     };
@@ -29,6 +30,7 @@ var InitiativeController = (function () {
         mongooseInitiative.instalmentAmount = initiative.instalmentAmount;
         mongooseInitiative.frequency = initiative.frequency;
         mongooseInitiative.underlyingAccount = initiative.underlyingAccount;
+        mongooseInitiative.memberId = initiative.memberId;
         if (initiative.externalRef !== "") {
             mongooseInitiative._id = initiative.externalRef;
         }
@@ -47,6 +49,7 @@ var InitiativeController = (function () {
         initiativeObj.instalmentAmount = mongooseInitiative.instalmentAmount;
         initiativeObj.frequency = mongooseInitiative.frequency;
         initiativeObj.underlyingAccount = mongooseInitiative.underlyingAccount;
+        initiativeObj.memberId = mongooseInitiative.memberId;
         return initiativeObj;
     };
     InitiativeController.prototype.translateMongooseArrayToInitiativeArray = function (initiativeSchemaArray) {

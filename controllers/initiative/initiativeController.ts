@@ -14,7 +14,8 @@ export class InitiativeController {
             balance: Number,
             underlyingAccount: String,
             instalmentAmount: Number,
-            frequency : String
+            frequency : String,
+            memberId: String
 
         });
 
@@ -31,6 +32,7 @@ export class InitiativeController {
         mongooseInitiative.instalmentAmount = initiative.instalmentAmount;
         mongooseInitiative.frequency = initiative.frequency;
         mongooseInitiative.underlyingAccount = initiative.underlyingAccount;
+        mongooseInitiative.memberId = initiative.memberId;
 
         if (initiative.externalRef !== "") {
             mongooseInitiative._id = initiative.externalRef;
@@ -52,6 +54,7 @@ export class InitiativeController {
         initiativeObj.instalmentAmount = mongooseInitiative.instalmentAmount;
         initiativeObj.frequency = mongooseInitiative.frequency;
         initiativeObj.underlyingAccount = mongooseInitiative.underlyingAccount;
+        initiativeObj.memberId = mongooseInitiative.memberId;
 
 
         return initiativeObj;
