@@ -25,6 +25,7 @@ var BudgetController = (function () {
         mongooseBudget.instalmentAmount = budget.instalmentAmount;
         mongooseBudget.frequency = budget.frequency;
         mongooseBudget.underlyingAccount = budget.underlyingAccount;
+        mongooseBudget.memberId = budget.memberId;
         if (budget.externalRef !== "") {
             mongooseBudget._id = budget.externalRef;
         }
@@ -41,6 +42,7 @@ var BudgetController = (function () {
         budgetObj.instalmentAmount = mongooseBudget.instalmentAmount;
         budgetObj.frequency = mongooseBudget.frequency;
         budgetObj.underlyingAccount = mongooseBudget.underlyingAccount;
+        budgetObj.memberId = mongooseBudget.memberId;
         return budgetObj;
     };
     BudgetController.prototype.translateMongooseArrayToBudgetArray = function (budgetSchemaArray) {

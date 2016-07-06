@@ -7,4 +7,5 @@ export class Budget {
     underlyingAccount: string;
     instalmentAmount: number;
     frequency: string;
+    memberId: string;
 }
