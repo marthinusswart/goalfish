@@ -23,6 +23,7 @@ var TransactionController = (function () {
         mongooseTransaction.description = transaction.description;
         mongooseTransaction.amount = transaction.amount;
         mongooseTransaction.date = transaction.date;
+        mongooseTransaction.classification = transaction.classification;
         mongooseTransaction.underlyingAccount = transaction.underlyingAccount;
         if (transaction.externalRef !== "") {
             mongooseTransaction._id = transaction.externalRef;
@@ -38,6 +39,7 @@ var TransactionController = (function () {
         transactionObj.id = mongooseTransaction.id;
         transactionObj.amount = mongooseTransaction.amount;
         transactionObj.date = mongooseTransaction.date;
+        transactionObj.classification = mongooseTransaction.classification;
         transactionObj.underlyingAccount = mongooseTransaction.underlyingAccount;
         return transactionObj;
     };

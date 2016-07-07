@@ -25,7 +25,8 @@ export class TransactionController {
         mongooseTransaction.referenceId = transaction.referenceId;
         mongooseTransaction.description = transaction.description;        
         mongooseTransaction.amount = transaction.amount;
-        mongooseTransaction.date = transaction.date;        
+        mongooseTransaction.date = transaction.date;
+        mongooseTransaction.classification = transaction.classification;        
         mongooseTransaction.underlyingAccount = transaction.underlyingAccount;
 
         if (transaction.externalRef !== "") {
@@ -43,7 +44,8 @@ export class TransactionController {
         transactionObj.description = mongooseTransaction.description;        
         transactionObj.id = mongooseTransaction.id;
         transactionObj.amount = mongooseTransaction.amount;
-        transactionObj.date = mongooseTransaction.date;        
+        transactionObj.date = mongooseTransaction.date;
+        transactionObj.classification = mongooseTransaction.classification;        
         transactionObj.underlyingAccount = mongooseTransaction.underlyingAccount;
 
         return transactionObj;
