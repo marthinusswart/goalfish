@@ -12,7 +12,8 @@ var JournalController = (function () {
             description: String,
             date: Date,
             amount: Number,
-            accountNumber: String
+            accountNumber: String,
+            isPosted: String
         });
         return journalSchema;
     };
@@ -22,6 +23,7 @@ var JournalController = (function () {
         mongooseJournal.description = journal.description;
         mongooseJournal.amount = journal.amount;
         mongooseJournal.date = journal.date;
+        mongooseJournal.isPosted = journal.isPosted;
         mongooseJournal.accountNumber = journal.accountNumber;
         if (journal.externalRef !== "") {
             mongooseJournal._id = journal.externalRef;
@@ -37,6 +39,7 @@ var JournalController = (function () {
         journalObj.id = mongooseJournal.id;
         journalObj.amount = mongooseJournal.amount;
         journalObj.date = mongooseJournal.date;
+        journalObj.isPosted = mongooseJournal.isPosted;
         journalObj.accountNumber = mongooseJournal.accountNumber;
         return journalObj;
     };

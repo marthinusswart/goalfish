@@ -7,5 +7,6 @@ export class UnderlyingAccount {
     interestRate: number;
     accountNumber: string;
     holdingInstitution: string;
-    balance:number;
+    balance: number;
+    memberId: string;
 }

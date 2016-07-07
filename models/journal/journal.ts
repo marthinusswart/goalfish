@@ -6,4 +6,5 @@ export class Journal {
     date: Date;
     amount: number;
     accountNumber: string;
+    isPosted: string;
 }

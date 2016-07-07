@@ -14,12 +14,14 @@ var UnderlyingAccountController = (function () {
             interestRate: Number,
             accountNumber: String,
             holdingInstitution: String,
-            balance: Number
+            balance: Number,
+            memberId: String
         });
         return UnderlyingAccountSchema;
     };
     UnderlyingAccountController.prototype.translateUnderlyingAccountToMongoose = function (underlyingAccount, mongooseUnderlyingAccount) {
         mongooseUnderlyingAccount.id = underlyingAccount.id;
+        mongooseUnderlyingAccount.memberId = underlyingAccount.memberId;
         mongooseUnderlyingAccount.name = underlyingAccount.name;
         mongooseUnderlyingAccount.description = underlyingAccount.description;
         mongooseUnderlyingAccount.productName = underlyingAccount.productName;
@@ -41,6 +43,7 @@ var UnderlyingAccountController = (function () {
         underlyingAccountObj.productName = mongooseUnderlyingAccount.productName;
         underlyingAccountObj.interestRate = mongooseUnderlyingAccount.interestRate;
         underlyingAccountObj.id = mongooseUnderlyingAccount.id;
+        underlyingAccountObj.memberId = mongooseUnderlyingAccount.memberId;
         underlyingAccountObj.balance = mongooseUnderlyingAccount.balance;
         underlyingAccountObj.accountNumber = mongooseUnderlyingAccount.accountNumber;
         underlyingAccountObj.holdingInstitution = mongooseUnderlyingAccount.holdingInstitution;

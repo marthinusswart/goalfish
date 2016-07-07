@@ -7,4 +7,5 @@ export class Transaction {
     date: Date;
     amount: number;
     underlyingAccount: string;
+    isPosted: string;
 }
