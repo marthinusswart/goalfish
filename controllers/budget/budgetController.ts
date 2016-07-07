@@ -5,14 +5,15 @@ export class BudgetController {
 
     createBudgetMongooseSchema() {
         var budgetSchema = new mongoose.Schema({
-             externalRef: String,
-    id: String,
-    name: String,
-    description: String,    
-    balance: Number,
-    underlyingAccount: String,
-    instalmentAmount: Number,
-            frequency : String
+            externalRef: String,
+            id: String,
+            name: String,
+            description: String,
+            balance: Number,
+            underlyingAccount: String,
+            instalmentAmount: Number,
+            frequency: String,
+            memberId: String
         });
 
         return budgetSchema;
@@ -21,7 +22,7 @@ export class BudgetController {
     translateBudgetToMongoose(budget: budget.Budget, mongooseBudget: any) {
         mongooseBudget.id = budget.id;
         mongooseBudget.name = budget.name;
-        mongooseBudget.description = budget.description;        
+        mongooseBudget.description = budget.description;
         mongooseBudget.balance = budget.balance;
         mongooseBudget.instalmentAmount = budget.instalmentAmount;
         mongooseBudget.frequency = budget.frequency;
@@ -40,7 +41,7 @@ export class BudgetController {
         budgetObj = new budget.Budget();
         budgetObj.externalRef = mongooseBudget._id;
         budgetObj.name = mongooseBudget.name;
-        budgetObj.description = mongooseBudget.description;        
+        budgetObj.description = mongooseBudget.description;
         budgetObj.id = mongooseBudget.id;
         budgetObj.balance = mongooseBudget.balance;
         budgetObj.instalmentAmount = mongooseBudget.instalmentAmount;

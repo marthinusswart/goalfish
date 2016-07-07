@@ -7,7 +7,7 @@ let initiativeDataAcccessService = new initiativeDataAccess.InitiativeDataAccess
 
 router
     .get('/', function (req, res, next) {
-/** Not secure at all, but great for local usage only */
+        /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
@@ -18,7 +18,7 @@ router
 
     })
     .get('/:id', function (req, res, next) {
-/** Not secure at all, but great for local usage only */
+        /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
@@ -43,15 +43,25 @@ router
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
         initiativeDataAcccessService.init();
         initiativeDataAcccessService.save(req.body, function (err, initiative) {
-            if (err === null){
-            res.status(201).send(initiative);
+            if (err === null) {
+                res.status(201).send(initiative);
             }
             else {
                 res.status(500).send(err.message);
             }
         });
     })
-     .options('/', function (req, res, next) {
+    .options('/', function (req, res, next) {
+        /** Not secure at all, but great for local usage only */
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Methods", "GET, POST, PUT");
+        res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept");
+        res.header("Content-Type", "application/json");
+        /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
+        res.status(200).send("OK");
+    })
+    .options('/:id', function (req, res, next) {
         /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Methods", "GET, POST, PUT");

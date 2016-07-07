@@ -13,7 +13,8 @@ var BudgetController = (function () {
             balance: Number,
             underlyingAccount: String,
             instalmentAmount: Number,
-            frequency: String
+            frequency: String,
+            memberId: String
         });
         return budgetSchema;
     };
