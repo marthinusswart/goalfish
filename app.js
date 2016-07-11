@@ -59,6 +59,7 @@ app.use('/api/v1/journal/ping', journal);
 app.use('/api/v1/posting', posting);
 app.use('/api/v1/posting/:id', posting);
 app.use('/api/v1/posting/ping', posting);
+app.use('/api/v1/posting/process/journals', posting);
 
 app.use('/api/v1/transaction', transaction);
 app.use('/api/v1/transaction/:id', transaction);

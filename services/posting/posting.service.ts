@@ -32,13 +32,14 @@ export class PostingService {
         this.postingDataAccess.init();
 
         var self = this;
-        this.journalDataAccess.findByField("isPosted", "N", function (err, journals) {
+        let filter = { isPosted:"N" };
+        this.journalDataAccess.findByField(filter, function (err, journals) {
             let postings: postingLib.Posting[] = [];
             if (err === null) {
                 journals.forEach((journal: journalLib.Journal) => {
                     journal.isPosted = "Y";
 
-                    let posting: postingLib.Posting = this.postingController.fromJournal(journal);
+                    let posting: postingLib.Posting = self.postingController.fromJournal(journal);
                     postings.push(posting);
 
                 });
@@ -47,14 +48,16 @@ export class PostingService {
                     function (callback) {
                         self.journalDataAccess.updateAll(journals, function (err, journals) {
                             callback(err);
-                        });
+                        }, false);
                     },
                     function (callback) {
-                        self.postingDataAccess.saveAll(postings, function (err, postings) {
+                       /* self.postingDataAccess.saveAll(postings, function (err, postings) {
                             callback(err);
-                        });
+                        });*/
+                        callback(null);
                     }],
                     function(err){
+                        self.journalDataAccess.cleanUp();
                         callback(err);
                     }
                 );

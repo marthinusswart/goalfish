@@ -1,16 +1,19 @@
 import express = require('express');
 import models = require('../../models/posting/posting');
 import postingDataAccess = require('../../dataaccess/posting/postingDataAccess');
+import postingServiceLib = require('../../services/posting/posting.service');
 
 let router = express.Router();
 let postingDataAcccessService = new postingDataAccess.PostingDataAccess();
+let postingService = new postingServiceLib.PostingService();
+postingDataAcccessService.init();
 
 router
     .get('/', function (req, res, next) {
         /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-        postingDataAcccessService.init();
+        
         postingDataAcccessService.find(function (err, postings) {
             res.status(200).send(postings);
         });
@@ -20,7 +23,7 @@ router
         /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-        postingDataAcccessService.init();
+      
         postingDataAcccessService.findById(req.params.id, function (err, posting) {
             res.status(200).send(posting);
         });
@@ -30,7 +33,7 @@ router
         /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-        postingDataAcccessService.init();
+ 
         postingDataAcccessService.update(req.params.id, req.body, function (err, posting) {
             res.status(200).send(posting);
         });
@@ -39,7 +42,7 @@ router
         /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-        postingDataAcccessService.init();
+  
         postingDataAcccessService.save(req.body, function (err, posting) {
             if (err === null) {
                 res.status(201).send(posting);
@@ -50,6 +53,29 @@ router
         });
     })
     .options('/', function (req, res, next) {
+        /** Not secure at all, but great for local usage only */
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Methods", "GET, POST, PUT");
+        res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept");
+        res.header("Content-Type", "application/json");
+        /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
+        res.status(200).send("OK");
+    })
+    .post('/process/journals', function (req, res, next) {
+        /** Not secure at all, but great for local usage only */
+        res.header("Access-Control-Allow-Origin", "*");
+        /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+        postingService.processJournals(function (err, posting) {
+            if (err === null) {
+                res.status(200).send("OK");
+            }
+            else {
+                res.status(500).send(err.message);
+            }
+        });
+    })
+    .options('/process/journals', function (req, res, next) {
         /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Methods", "GET, POST, PUT");

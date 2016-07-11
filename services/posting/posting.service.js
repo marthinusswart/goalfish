@@ -20,26 +20,28 @@ var PostingService = (function () {
         this.journalDataAccess.init();
         this.postingDataAccess.init();
         var self = this;
-        this.journalDataAccess.findByField("isPosted", "N", function (err, journals) {
-            var _this = this;
+        var filter = { isPosted: "N" };
+        this.journalDataAccess.findByField(filter, function (err, journals) {
             var postings = [];
             if (err === null) {
                 journals.forEach(function (journal) {
                     journal.isPosted = "Y";
-                    var posting = _this.postingController.fromJournal(journal);
+                    var posting = self.postingController.fromJournal(journal);
                     postings.push(posting);
                 });
                 async.waterfall([
                     function (callback) {
                         self.journalDataAccess.updateAll(journals, function (err, journals) {
                             callback(err);
-                        });
+                        }, false);
                     },
                     function (callback) {
-                        self.postingDataAccess.saveAll(postings, function (err, postings) {
-                            callback(err);
-                        });
+                        /* self.postingDataAccess.saveAll(postings, function (err, postings) {
+                             callback(err);
+                         });*/
+                        callback(null);
                     }], function (err) {
+                    self.journalDataAccess.cleanUp();
                     callback(err);
                 });
             }
