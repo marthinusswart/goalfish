@@ -17,6 +17,7 @@ var budget = require('./routes/budget/budget');
 var journal = require('./routes/journal/journal');
 var posting = require('./routes/posting/posting');
 var transaction = require('./routes/transaction/transaction');
+var maintenance = require('./routes/maintenance/maintenance');
 
 var app = express();
 
@@ -62,6 +63,10 @@ app.use('/api/v1/posting/ping', posting);
 app.use('/api/v1/transaction', transaction);
 app.use('/api/v1/transaction/:id', transaction);
 app.use('/api/v1/transaction/ping', transaction);
+
+app.use('/api/v1/maintenance', maintenance);
+app.use('/api/v1/maintenance/journal/markAllAsPosted', maintenance);
+app.use('/api/v1/maintenance/ping', maintenance);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
