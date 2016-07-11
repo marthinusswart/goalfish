@@ -22,7 +22,6 @@ var MemberDataAccess = (function () {
                 }
                 else {
                     self.connection.close();
-                    console.log(members);
                     callback(null, self.memberController.translateMongooseArrayToMemberArray(members));
                 }
             });

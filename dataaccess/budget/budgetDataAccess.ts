@@ -26,7 +26,6 @@ export class BudgetDataAccess {
                     callback(err);
                 } else {
                     self.connection.close()
-                    console.log(budgets);
                     callback(null, self.budgetController.translateMongooseArrayToBudgetArray(budgets));
                 }
             });

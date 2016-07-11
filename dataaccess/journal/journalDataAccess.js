@@ -18,8 +18,11 @@ var JournalDataAccess = (function () {
             this.journalModel = this.connection.model("journal", this.journalSchema, "journal");
             this.mongooseJournal = new this.journalModel();
             this.wasInitialised = true;
-            this.connection.once("close", function () {
+            this.connection.on("close", function () {
                 self.onConnectionClose();
+            });
+            this.connection.on("open", function () {
+                self.onConnectionOpen();
             });
         }
         else {
@@ -37,8 +40,8 @@ var JournalDataAccess = (function () {
             throw new ReferenceError("Journal Data Access module was not initialised");
         }
         var self = this;
-        this.connection.once("open", function () {
-            self.onConnectionOpen();
+        var findFunc = (function () {
+            //self.onConnectionOpen();
             self.journalModel.find({}, function (err, journals) {
                 if (err) {
                     self.connection.close();
@@ -52,12 +55,19 @@ var JournalDataAccess = (function () {
                 }
             });
         });
+        if (!this.isConnectionOpen) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        }
+        else {
+            findFunc();
+        }
     };
     JournalDataAccess.prototype.findByField = function (field, value, callback) {
         var self = this;
         var filter = field + ":" + value;
-        this.connection.once("open", function () {
-            self.onConnectionOpen();
+        var findFunc = (function () {
+            //self.onConnectionOpen();
             var journalSchema = self.journalController.createJournalMongooseSchema();
             var journalModel = self.connection.model("journal", journalSchema, "journal");
             journalModel.find({ filter: filter }, function (err, journals) {
@@ -72,11 +82,18 @@ var JournalDataAccess = (function () {
                 }
             });
         });
+        if (!this.isConnectionOpen) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        }
+        else {
+            findFunc();
+        }
     };
     JournalDataAccess.prototype.findById = function (id, callback) {
         var self = this;
-        this.connection.once("open", function () {
-            self.onConnectionOpen();
+        var findFunc = (function () {
+            //self.onConnectionOpen();
             self.journalModel.findById(id, function (err, journal) {
                 if (err) {
                     self.connection.close();
@@ -89,11 +106,18 @@ var JournalDataAccess = (function () {
                 }
             });
         });
+        if (!this.isConnectionOpen) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        }
+        else {
+            findFunc();
+        }
     };
     JournalDataAccess.prototype.save = function (newJournal, callback) {
         var self = this;
-        this.connection.once("open", function () {
-            self.onConnectionOpen();
+        var saveFunc = (function () {
+            //self.onConnectionOpen();
             var journalSchema = self.journalController.createJournalMongooseSchema();
             var journalModel = self.connection.model("journal", journalSchema, "journal");
             var mongooseJournal = new journalModel();
@@ -110,12 +134,19 @@ var JournalDataAccess = (function () {
                 }
             });
         });
+        if (!this.isConnectionOpen) {
+            this.connection.once("open", saveFunc);
+            this.connection.open("localhost", "goalfish");
+        }
+        else {
+            saveFunc();
+        }
     };
     JournalDataAccess.prototype.update = function (id, journal, callback, closeConnection) {
         if (closeConnection === void 0) { closeConnection = true; }
         var self = this;
         var updateFunc = (function () {
-            self.onConnectionOpen();
+            //self.onConnectionOpen();
             self.journalController.translateJournalToMongoose(journal, self.mongooseJournal);
             self.journalModel.findByIdAndUpdate(self.mongooseJournal._id, self.mongooseJournal, { new: true }, function (err, result) {
                 if (err) {
@@ -159,9 +190,7 @@ var JournalDataAccess = (function () {
         });
     };
     JournalDataAccess.prototype.onConnectionOpen = function () {
-        if (!this.isConnectionOpen) {
-            this.isConnectionOpen = true;
-        }
+        this.isConnectionOpen = true;
     };
     JournalDataAccess.prototype.onConnectionClose = function () {
         this.isConnectionOpen = false;

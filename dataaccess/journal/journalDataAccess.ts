@@ -1,7 +1,6 @@
 import mongoose = require('mongoose');
 import journal = require('../../models/journal/journal');
 import async = require('async');
-
 import journalController = require('../../controllers/journal/journalController');
 
 export class JournalDataAccess {
@@ -26,9 +25,13 @@ export class JournalDataAccess {
             this.mongooseJournal = new this.journalModel();
 
             this.wasInitialised = true;
-            this.connection.once("close", function () {
+            this.connection.on("close", function () {
                 self.onConnectionClose();
-            })
+            });
+
+            this.connection.on("open", function () {
+                self.onConnectionOpen();
+            });
         } else {
             throw new ReferenceError("Can't initialise again");
         }
@@ -47,8 +50,9 @@ export class JournalDataAccess {
         }
 
         var self = this;
-        this.connection.once("open", function () {
-            self.onConnectionOpen();
+
+        var findFunc = (function () {
+            //self.onConnectionOpen();
             self.journalModel.find({}, function (err, journals) {
                 if (err) {
                     self.connection.close();
@@ -62,13 +66,20 @@ export class JournalDataAccess {
             });
 
         });
+
+        if (!this.isConnectionOpen) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        } else {
+            findFunc();
+        }
     }
 
     findByField(field: string, value: any, callback) {
         var self = this;
         var filter = field + ":" + value;
-        this.connection.once("open", function () {
-            self.onConnectionOpen();
+        var findFunc = (function () {
+            //self.onConnectionOpen();
             let journalSchema = self.journalController.createJournalMongooseSchema();
             var journalModel = self.connection.model("journal", journalSchema, "journal");
             journalModel.find({ filter }, function (err, journals) {
@@ -83,12 +94,20 @@ export class JournalDataAccess {
             });
 
         });
+
+        if (!this.isConnectionOpen) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        } else {
+            findFunc();
+        }
     }
 
     findById(id: string, callback) {
         var self = this;
-        this.connection.once("open", function () {
-            self.onConnectionOpen();
+
+        var findFunc = (function () {
+            //self.onConnectionOpen();
 
             self.journalModel.findById(id, function (err, journal: mongoose.Schema) {
                 if (err) {
@@ -102,12 +121,20 @@ export class JournalDataAccess {
             });
 
         });
+
+        if (!this.isConnectionOpen) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        } else {
+            findFunc();
+        }
     }
 
     save(newJournal: journal.Journal, callback) {
         var self = this;
-        this.connection.once("open", function () {
-            self.onConnectionOpen();
+
+        var saveFunc = (function () {
+            //self.onConnectionOpen();
             let journalSchema = self.journalController.createJournalMongooseSchema();
             var journalModel = self.connection.model("journal", journalSchema, "journal");
             var mongooseJournal = new journalModel();
@@ -123,15 +150,21 @@ export class JournalDataAccess {
                     callback(null, self.journalController.translateMongooseToJournal(result));
                 }
             });
-
         });
+
+        if (!this.isConnectionOpen) {
+            this.connection.once("open", saveFunc);
+            this.connection.open("localhost", "goalfish");
+        } else {
+            saveFunc();
+        }
     }
 
     update(id: string, journal: journal.Journal, callback, closeConnection: boolean = true) {
         var self = this;
 
         var updateFunc = (function () {
-            self.onConnectionOpen();
+            //self.onConnectionOpen();
 
             self.journalController.translateJournalToMongoose(journal, self.mongooseJournal);
             self.journalModel.findByIdAndUpdate(self.mongooseJournal._id, self.mongooseJournal, { new: true }, function (err, result) {
@@ -166,7 +199,7 @@ export class JournalDataAccess {
                 count++;
 
                 this.update(journalObj.externalRef, journalObj, function (err, journal) {
-                    if (err === null) {                        
+                    if (err === null) {
                     } else {
                         console.log("Failed to update " + err);
                     }
@@ -176,14 +209,12 @@ export class JournalDataAccess {
             (err) => {
                 this.cleanUp();
                 callback(err, journals);
-            });        
+            });
 
     }
 
     onConnectionOpen() {
-        if (!this.isConnectionOpen) {         
-            this.isConnectionOpen = true;
-        }
+        this.isConnectionOpen = true;
     }
 
     onConnectionClose() {

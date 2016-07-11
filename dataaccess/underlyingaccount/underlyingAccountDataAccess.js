@@ -22,7 +22,6 @@ var UnderlyingAccountDataAccess = (function () {
                 }
                 else {
                     self.connection.close();
-                    console.log(underlyingAccounts);
                     callback(null, self.underlyingAccountController.translateMongooseArrayToUnderlyingAccountArray(underlyingAccounts));
                 }
             });

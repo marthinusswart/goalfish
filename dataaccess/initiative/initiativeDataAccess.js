@@ -22,7 +22,6 @@ var InitiativeDataAccess = (function () {
                 }
                 else {
                     self.connection.close();
-                    console.log(initiatives);
                     callback(null, self.initiativeController.translateMongooseArrayToInitiativeArray(initiatives));
                 }
             });

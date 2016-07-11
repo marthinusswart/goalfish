@@ -1,46 +1,87 @@
 import mongoose = require('mongoose');
 import transaction = require('../../models/transaction/transaction');
 import transactionController = require('../../controllers/transaction/transactionController');
+import async = require('async');
 
 export class TransactionDataAccess {
     connection: mongoose.Connection;
     transactionController: transactionController.TransactionController;
+    wasInitialised: boolean = false;
+    isConnectionOpen: boolean = false;
+    transactionSchema: any;
+    transactionModel: any;
+    mongooseTransaction: any;
 
     init() {
-        let db = new mongoose.Mongoose();
-        this.connection = db.createConnection("localhost", "goalfish");
-        this.connection.on("error", console.error.bind(console, "connection error:"));
-        this.transactionController = new transactionController.TransactionController();
+        if (!this.wasInitialised) {
+            var self = this;
+            let db = new mongoose.Mongoose();
+            this.connection = db.createConnection("localhost", "goalfish");
+            this.connection.on("error", console.error.bind(console, "connection error:"));
+            this.transactionController = new transactionController.TransactionController();
 
+            this.transactionSchema = this.transactionController.createTransactionMongooseSchema();
+            this.transactionModel = this.connection.model("transaction", this.transactionSchema, "transaction");
+            this.mongooseTransaction = new this.transactionModel();
+
+            this.wasInitialised = true;
+            this.connection.on("close", function () {
+                self.onConnectionClose();
+            });
+
+            this.connection.on("open", function () {
+                self.onConnectionOpen();
+            });
+        } else {
+            throw new ReferenceError("Can't initialise again");
+        }
     }
 
-    find(callback) {
-        var self = this;
-        this.connection.once("open", function () {
+    cleanUp() {
+        if (this.wasInitialised) {
+            this.connection.close();
+        }
+    }
 
-            let transactionSchema = self.transactionController.createTransactionMongooseSchema();
-            var transactionModel = self.connection.model("transaction", transactionSchema, "transaction");
-            transactionModel.find({}, function (err, transactions) {
+    find(callback, closeConnection: boolean = true) {
+        if (!this.wasInitialised) {
+            throw new ReferenceError("Transaction Data Access module was not initialised");
+        }
+
+        var self = this;
+
+        var findFunc = (function () {
+            self.transactionModel.find({}, function (err, transactions) {
                 if (err) {
                     self.connection.close();
                     callback(err);
                 } else {
-                    self.connection.close()
-                    console.log(transactions);
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
                     callback(null, self.transactionController.translateMongooseArrayToTransactionArray(transactions));
                 }
             });
 
         });
+
+        if (!this.isConnectionOpen) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        } else {
+            findFunc();
+        }
+
     }
-    
+
     findById(id: string, callback) {
         var self = this;
-        this.connection.once("open", function () {
+
+        var findFunc = (function () {
 
             let transactionSchema = self.transactionController.createTransactionMongooseSchema();
             var transactionModel = self.connection.model("transaction", transactionSchema, "transaction");
-            transactionModel.findById(id, function (err, transaction:mongoose.Schema) {
+            transactionModel.findById(id, function (err, transaction: mongoose.Schema) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -50,19 +91,26 @@ export class TransactionDataAccess {
                     callback(null, self.transactionController.translateMongooseToTransaction(transaction));
                 }
             });
-
         });
+
+        if (!this.isConnectionOpen) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        } else {
+            findFunc();
+        }
     }
-    
-    save(newTransaction: transaction.Transaction, callback){
+
+    save(newTransaction: transaction.Transaction, callback) {
         var self = this;
-        this.connection.once("open", function () {
+
+        var saveFunc = (function () {
 
             let transactionSchema = self.transactionController.createTransactionMongooseSchema();
-            var transactionModel = self.connection.model("transaction", transactionSchema, "transaction");            
+            var transactionModel = self.connection.model("transaction", transactionSchema, "transaction");
             var mongooseTransaction = new transactionModel();
-            self.transactionController.translateTransactionToMongoose(newTransaction, mongooseTransaction);   
-                     
+            self.transactionController.translateTransactionToMongoose(newTransaction, mongooseTransaction);
+
             mongooseTransaction.save(function (err, result) {
                 if (err) {
                     self.connection.close();
@@ -70,33 +118,78 @@ export class TransactionDataAccess {
                 } else {
                     self.connection.close()
                     console.log(result);
-                    callback(null, self.transactionController.translateMongooseToTransaction(result));                    
+                    callback(null, self.transactionController.translateMongooseToTransaction(result));
                 }
             });
 
         });
-    }
-    
-     update(id: string, newTransaction: transaction.Transaction, callback){
-        var self = this;
-        this.connection.once("open", function () {
 
-            let transactionSchema = self.transactionController.createTransactionMongooseSchema();
-            var transactionModel = self.connection.model("transaction", transactionSchema, "transaction");            
-            var mongooseTransaction = new transactionModel();
-            self.transactionController.translateTransactionToMongoose(newTransaction, mongooseTransaction);   
-                               
-            transactionModel.findOneAndUpdate({"_id":mongooseTransaction._id}, mongooseTransaction, {new:true}, function (err, result) {
+        if (!this.isConnectionOpen) {
+            this.connection.once("open", saveFunc);
+            this.connection.open("localhost", "goalfish");
+        } else {
+            saveFunc();
+        }
+    }
+
+    update(id: string, newTransaction: transaction.Transaction, callback, closeConnection: boolean = true) {
+        var self = this;
+
+        var updateFunc = (function () {
+
+            self.transactionController.translateTransactionToMongoose(newTransaction, self.mongooseTransaction);
+
+            self.transactionModel.findByIdAndUpdate(self.mongooseTransaction._id, self.mongooseTransaction, { new: true }, function (err, result) {
                 if (err) {
                     self.connection.close();
                     callback(err);
                 } else {
-                    self.connection.close()
-                    console.log(result);
-                    callback(null, self.transactionController.translateMongooseToTransaction(result));                    
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
+                    callback(null, self.transactionController.translateMongooseToTransaction(result));
                 }
             });
 
         });
+
+        if (!this.isConnectionOpen) {
+            this.connection.once("open", updateFunc);
+            this.connection.open("localhost", "goalfish");
+        } else {
+            updateFunc();
+        }
+    }
+
+    updateAll(transactions: any[], callback) {
+        var self = this;
+        let count = 0;
+
+        async.whilst(() => { return count < transactions.length; },
+            (callback) => {
+                let transactionObj: transaction.Transaction = transactions[count];
+                count++;
+
+                this.update(transactionObj.externalRef, transactionObj, function (err, transaction) {
+                    if (err === null) {
+                    } else {
+                        console.log("Failed to update " + err);
+                    }
+                    callback();
+                }, false);
+            },
+            (err) => {
+                this.cleanUp();
+                callback(err, transactions);
+            });
+
+    }
+
+    onConnectionOpen() {
+        this.isConnectionOpen = true;
+    }
+
+    onConnectionClose() {
+        this.isConnectionOpen = false;
     }
 }

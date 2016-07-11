@@ -3,12 +3,12 @@ var express = require('express');
 var journalDataAccess = require('../../dataaccess/journal/journalDataAccess');
 var router = express.Router();
 var journalDataAcccessService = new journalDataAccess.JournalDataAccess();
+journalDataAcccessService.init();
 router
     .get('/', function (req, res, next) {
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    journalDataAcccessService.init();
     journalDataAcccessService.find(function (err, journals) {
         res.status(200).send(journals);
     });
@@ -17,7 +17,6 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    journalDataAcccessService.init();
     journalDataAcccessService.findById(req.params.id, function (err, journal) {
         res.status(200).send(journal);
     });
@@ -26,7 +25,6 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    journalDataAcccessService.init();
     journalDataAcccessService.update(req.params.id, req.body, function (err, journal) {
         res.status(200).send(journal);
     });
@@ -35,7 +33,6 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    journalDataAcccessService.init();
     journalDataAcccessService.save(req.body, function (err, journal) {
         if (err === null) {
             res.status(201).send(journal);

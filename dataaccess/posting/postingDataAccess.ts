@@ -26,7 +26,6 @@ export class PostingDataAccess {
                     callback(err);
                 } else {
                     self.connection.close()
-                    console.log(postings);
                     callback(null, self.postingController.translateMongooseArrayToPostingArray(postings));
                 }
             });

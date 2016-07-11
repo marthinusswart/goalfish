@@ -26,7 +26,6 @@ export class UnderlyingAccountDataAccess {
                     callback(err);
                 } else {
                     self.connection.close()
-                    console.log(underlyingAccounts);
                     callback(null, self.underlyingAccountController.translateMongooseArrayToUnderlyingAccountArray(underlyingAccounts));
                 }
             });

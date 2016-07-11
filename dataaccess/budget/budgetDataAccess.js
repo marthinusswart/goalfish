@@ -22,7 +22,6 @@ var BudgetDataAccess = (function () {
                 }
                 else {
                     self.connection.close();
-                    console.log(budgets);
                     callback(null, self.budgetController.translateMongooseArrayToBudgetArray(budgets));
                 }
             });

@@ -26,7 +26,6 @@ export class MemberDataAccess {
                     callback(err);
                 } else {
                     self.connection.close()
-                    console.log(members);
                     callback(null, self.memberController.translateMongooseArrayToMemberArray(members));
                 }
             });

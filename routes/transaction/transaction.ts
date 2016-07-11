@@ -4,13 +4,14 @@ import transactionDataAccess = require('../../dataaccess/transaction/transaction
 
 let router = express.Router();
 let transactionDataAcccessService = new transactionDataAccess.TransactionDataAccess();
+transactionDataAcccessService.init();
 
 router
     .get('/', function (req, res, next) {
         /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-        transactionDataAcccessService.init();
+    
         transactionDataAcccessService.find(function (err, transactions) {
             res.status(200).send(transactions);
         });
@@ -20,7 +21,7 @@ router
         /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-        transactionDataAcccessService.init();
+        
         transactionDataAcccessService.findById(req.params.id, function (err, transaction) {
             res.status(200).send(transaction);
         });
@@ -30,7 +31,7 @@ router
         /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-        transactionDataAcccessService.init();
+        
         transactionDataAcccessService.update(req.params.id, req.body, function (err, transaction) {
             res.status(200).send(transaction);
         });
@@ -39,7 +40,7 @@ router
         /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-        transactionDataAcccessService.init();
+        
         transactionDataAcccessService.save(req.body, function (err, transaction) {
             if (err === null) {
                 res.status(201).send(transaction);
