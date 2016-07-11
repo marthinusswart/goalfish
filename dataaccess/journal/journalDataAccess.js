@@ -63,7 +63,8 @@ var JournalDataAccess = (function () {
             findFunc();
         }
     };
-    JournalDataAccess.prototype.findByField = function (field, value, callback) {
+    JournalDataAccess.prototype.findByField = function (field, value, callback, closeConnection) {
+        if (closeConnection === void 0) { closeConnection = true; }
         var self = this;
         var filter = field + ":" + value;
         var findFunc = (function () {

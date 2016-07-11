@@ -1,6 +1,6 @@
 "use strict";
 var mongoose = require('mongoose');
-var posting = require('../../models/posting/posting');
+var postingLib = require('../../models/posting/posting');
 var PostingController = (function () {
     function PostingController() {
     }
@@ -32,7 +32,7 @@ var PostingController = (function () {
     };
     PostingController.prototype.translateMongooseToPosting = function (mongoosePosting) {
         var postingObj;
-        postingObj = new posting.Posting();
+        postingObj = new postingLib.Posting();
         postingObj.externalRef = mongoosePosting._id;
         postingObj.referenceId = mongoosePosting.referenceId;
         postingObj.description = mongoosePosting.description;
@@ -50,6 +50,17 @@ var PostingController = (function () {
             postingArray.push(_this.translateMongooseToPosting(postingSchema));
         });
         return postingArray;
+    };
+    PostingController.prototype.fromJournal = function (journal) {
+        var posting = new postingLib.Posting();
+        posting.accountNumber = journal.accountNumber;
+        posting.amount = journal.amount;
+        posting.date = new Date();
+        posting.description = journal.description;
+        posting.id = "PSTxxxx";
+        posting.referenceId = journal.id;
+        posting.type = "Journal";
+        return posting;
     };
     return PostingController;
 }());

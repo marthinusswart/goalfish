@@ -75,7 +75,7 @@ export class JournalDataAccess {
         }
     }
 
-    findByField(field: string, value: any, callback) {
+    findByField(field: string, value: any, callback, closeConnection: boolean = true) {
         var self = this;
         var filter = field + ":" + value;
         var findFunc = (function () {

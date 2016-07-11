@@ -1,5 +1,6 @@
 import mongoose = require('mongoose');
-import posting = require('../../models/posting/posting');
+import postingLib = require('../../models/posting/posting');
+import journalLib = require('../../models/journal/journal');
 
 export class PostingController {
 
@@ -20,7 +21,7 @@ export class PostingController {
         return postingSchema;
     }
 
-    translatePostingToMongoose(posting: posting.Posting, mongoosePosting: any) {
+    translatePostingToMongoose(posting: postingLib.Posting, mongoosePosting: any) {
         mongoosePosting.id = posting.id;
         mongoosePosting.referenceId = posting.referenceId;
         mongoosePosting.description = posting.description;        
@@ -36,9 +37,9 @@ export class PostingController {
         return 0
     }
 
-    translateMongooseToPosting(mongoosePosting: any): posting.Posting {
-        let postingObj: posting.Posting;
-        postingObj = new posting.Posting();
+    translateMongooseToPosting(mongoosePosting: any): postingLib.Posting {
+        let postingObj: postingLib.Posting;
+        postingObj = new postingLib.Posting();
         postingObj.externalRef = mongoosePosting._id;
         postingObj.referenceId = mongoosePosting.referenceId;
         postingObj.description = mongoosePosting.description;        
@@ -57,6 +58,20 @@ export class PostingController {
             postingArray.push(this.translateMongooseToPosting(postingSchema));
         });
         return postingArray;
+    }
+
+    fromJournal(journal: journalLib.Journal): postingLib.Posting{
+        let posting: postingLib.Posting = new postingLib.Posting();
+
+        posting.accountNumber = journal.accountNumber;
+        posting.amount = journal.amount;
+        posting.date = new Date();
+        posting.description = journal.description;
+        posting.id = "PSTxxxx";
+        posting.referenceId = journal.id;
+        posting.type = "Journal";
+
+        return posting;
     }
 
 }

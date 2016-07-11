@@ -41,7 +41,6 @@ var TransactionDataAccess = (function () {
         }
         var self = this;
         var findFunc = (function () {
-            //self.onConnectionOpen();
             self.transactionModel.find({}, function (err, transactions) {
                 if (err) {
                     self.connection.close();
