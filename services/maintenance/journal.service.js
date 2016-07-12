@@ -24,6 +24,23 @@ var JournalMaintenanceService = (function () {
             }
         }, false);
     };
+    JournalMaintenanceService.prototype.markAllAsNotPosted = function (callback) {
+        var self = this;
+        this.journalDataAccess.find(function (err, journals) {
+            if (err === null) {
+                journals.forEach(function (journal) {
+                    journal.isPosted = "N";
+                });
+                self.journalDataAccess.updateAll(journals, function (err, journals) {
+                    callback(err);
+                });
+            }
+            else {
+                console.log("Couldn't update: " + err);
+                callback(err);
+            }
+        }, false);
+    };
     return JournalMaintenanceService;
 }());
 exports.JournalMaintenanceService = JournalMaintenanceService;

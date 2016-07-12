@@ -1,17 +1,16 @@
 import mongoose = require('mongoose');
-import journal = require('../../models/journal/journal');
-import async = require('async');
-import journalController = require('../../controllers/journal/journalController');
+import keyLib = require('../../models/key/key');
+import keyControllerLib = require('../../controllers/key/keyController');
 
-export class JournalDataAccess {
+export class KeyDataAccess {
     connection: mongoose.Connection;
-    journalController: journalController.JournalController;
+    keyController: keyControllerLib.KeyController;
     wasInitialised: boolean = false;
     isConnectionOpening: boolean = false;
     isConnectionOpen: boolean = false;
-    journalSchema: any;
-    journalModel: any;
-    mongooseJournal: any;
+    keySchema: any;
+    keyModel: any;
+    mongooseKey: any;
 
     init() {
         if (!this.wasInitialised) {
@@ -19,11 +18,11 @@ export class JournalDataAccess {
             var self = this;
             this.connection = db.createConnection("localhost", "goalfish");
             this.connection.on("error", console.error.bind(console, "connection error:"));
-            this.journalController = new journalController.JournalController();
+            this.keyController = new keyControllerLib.KeyController();
 
-            this.journalSchema = this.journalController.createJournalMongooseSchema();
-            this.journalModel = this.connection.model("journal", this.journalSchema, "journal");
-            this.mongooseJournal = new this.journalModel();
+            this.keySchema = this.keyController.createKeyMongooseSchema();
+            this.keyModel = this.connection.model("key", this.keySchema, "key");
+            this.mongooseKey = new this.keyModel();
 
             this.wasInitialised = true;
             this.isConnectionOpening = true;
@@ -54,8 +53,7 @@ export class JournalDataAccess {
         var self = this;
 
         var findFunc = (function () {
-            //self.onConnectionOpen();
-            self.journalModel.find({}, function (err, journals) {
+            self.keyModel.find({}, function (err, keys) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -63,7 +61,7 @@ export class JournalDataAccess {
                     if (closeConnection) {
                         self.connection.close();
                     }
-                    callback(null, self.journalController.translateMongooseArrayToJournalArray(journals));
+                    callback(null, self.keyController.translateMongooseArrayToKeyArray(keys));
                 }
             });
 
@@ -81,9 +79,7 @@ export class JournalDataAccess {
         var self = this;
         var findFunc = (function () {
 
-            let journalSchema = self.journalController.createJournalMongooseSchema();
-            var journalModel = self.connection.model("journal", journalSchema, "journal");
-            journalModel.find(filter, function (err, journals) {
+            self.keyModel.find(filter, function (err, keys) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -91,7 +87,7 @@ export class JournalDataAccess {
                     if (closeConnection) {
                         self.connection.close();
                     }
-                    callback(null, self.journalController.translateMongooseArrayToJournalArray(journals));
+                    callback(null, self.keyController.translateMongooseArrayToKeyArray(keys));
                 }
             });
 
@@ -105,19 +101,20 @@ export class JournalDataAccess {
         }
     }
 
-    findById(id: string, callback) {
+    findById(id: string, callback, closeConnection: boolean = false) {
         var self = this;
 
         var findFunc = (function () {
-            //self.onConnectionOpen();
 
-            self.journalModel.findById(id, function (err, journal: mongoose.Schema) {
+            self.keyModel.findById(id, function (err, key: mongoose.Schema) {
                 if (err) {
                     self.connection.close();
                     callback(err);
                 } else {
-                    self.connection.close()
-                    callback(null, self.journalController.translateMongooseToJournal(journal));
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
+                    callback(null, self.keyController.translateMongooseToKey(key));
                 }
             });
 
@@ -131,24 +128,24 @@ export class JournalDataAccess {
         }
     }
 
-    save(newJournal: journal.Journal, callback) {
+    save(newKey: keyLib.Key, callback, closeConnection: boolean = false) {
         var self = this;
 
         var saveFunc = (function () {
-            //self.onConnectionOpen();
-            let journalSchema = self.journalController.createJournalMongooseSchema();
-            var journalModel = self.connection.model("journal", journalSchema, "journal");
-            var mongooseJournal = new journalModel();
-            self.journalController.translateJournalToMongoose(newJournal, mongooseJournal);
 
-            mongooseJournal.save(function (err, result) {
+            self.mongooseKey = new self.keyModel();
+            self.keyController.translateKeyToMongoose(newKey, self.mongooseKey);
+
+            self.mongooseKey.save(function (err, result) {
                 if (err) {
                     self.connection.close();
                     callback(err);
                 } else {
-                    self.connection.close()
-                    console.log(result);
-                    callback(null, self.journalController.translateMongooseToJournal(result));
+                    if (closeConnection) {
+                        self.connection.close()
+                    }
+
+                    callback(null, self.keyController.translateMongooseToKey(result));
                 }
             });
         });
@@ -161,12 +158,12 @@ export class JournalDataAccess {
         }
     }
 
-    update(id: string, journal: journal.Journal, callback, closeConnection: boolean = false) {
+    update(id: string, key: keyLib.Key, callback, closeConnection: boolean = false) {
         var self = this;
 
         var updateFunc = (function () {
-            self.journalController.translateJournalToMongoose(journal, self.mongooseJournal);
-            self.journalModel.findByIdAndUpdate(self.mongooseJournal._id, self.mongooseJournal, { new: true }, function (err, result) {
+            self.keyController.translateKeyToMongoose(key, self.mongooseKey);
+            self.keyModel.findByIdAndUpdate(self.mongooseKey._id, self.mongooseKey, { new: true }, function (err, result) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -174,7 +171,7 @@ export class JournalDataAccess {
                     if (closeConnection) {
                         self.connection.close();
                     }
-                    callback(null, self.journalController.translateMongooseToJournal(result));
+                    callback(null, self.keyController.translateMongooseToKey(result));
                 }
 
             });
@@ -186,33 +183,6 @@ export class JournalDataAccess {
         } else {
             updateFunc();
         }
-    }
-
-    updateAll(journals: any[], callback, closeConnection: boolean = false) {
-        var self = this;
-        let count = 0;
-
-        async.whilst(() => { return count < journals.length; },
-            (callback) => {
-                let journalObj: journal.Journal = journals[count];
-                count++;
-
-                this.update(journalObj.externalRef, journalObj, function (err, journal) {
-                    if (err === null) {
-                        console.log("Updated");
-                    } else {
-                        console.log("Failed to update " + err);
-                    }
-                    callback();
-                }, false);
-            },
-            (err) => {
-                if (closeConnection) {
-                    this.cleanUp();
-                }
-                callback(err, journals);
-            });
-
     }
 
     onConnectionOpen() {

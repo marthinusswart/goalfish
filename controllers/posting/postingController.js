@@ -60,6 +60,7 @@ var PostingController = (function () {
         posting.id = "PSTxxxx";
         posting.referenceId = journal.id;
         posting.type = "Journal";
+        posting.externalRef = "";
         return posting;
     };
     return PostingController;

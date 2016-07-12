@@ -25,4 +25,21 @@ export class TransactionMaintenanceService {
             }
         }, false);
     }
+
+    markAllAsNotPosted(callback) {
+        var self = this;
+        this.transactionDataAccess.find(function (err, transactions) {
+            if (err === null) {
+                transactions.forEach((transaction: trxLib.Transaction) => {
+                    transaction.isPosted = "N";
+                });
+                self.transactionDataAccess.updateAll(transactions, function (err, transactions) {
+                    callback(err);
+                })
+            } else {
+                console.log("Couldn't update: " + err)
+                callback(err);
+            }
+        }, false);
+    }
 }

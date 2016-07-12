@@ -8,6 +8,9 @@ import postingDataAccessLib = require('../../dataaccess/posting/postingDataAcces
 import postingLib = require('../../models/posting/posting');
 import postingControllerLib = require('../../controllers/posting/postingController');
 
+import keyServiceLib = require('../key/key.service');
+import keyLib = require('../../models/key/key');
+
 import async = require('async');
 
 export class PostingService {
@@ -15,6 +18,7 @@ export class PostingService {
     journalDataAccess: journalDataAccessLib.JournalDataAccess;
     postingDataAccess: postingDataAccessLib.PostingDataAccess;
     postingController: postingControllerLib.PostingController;
+    keyService: keyServiceLib.KeyService;
 
     processTransactions(callback) {
         this.transactionDataAccess = new trxDataAccessLib.TransactionDataAccess();
@@ -27,12 +31,16 @@ export class PostingService {
         this.journalDataAccess = new journalDataAccessLib.JournalDataAccess();
         this.postingDataAccess = new postingDataAccessLib.PostingDataAccess();
         this.postingController = new postingControllerLib.PostingController();
+        this.keyService = new keyServiceLib.KeyService();
 
         this.journalDataAccess.init();
         this.postingDataAccess.init();
+        this.keyService.init();
 
         var self = this;
-        let filter = { isPosted:"N" };
+        let filter = { isPosted: "N" };
+        let count = 0;
+
         this.journalDataAccess.findByField(filter, function (err, journals) {
             let postings: postingLib.Posting[] = [];
             if (err === null) {
@@ -44,23 +52,45 @@ export class PostingService {
 
                 });
 
-                async.waterfall([
-                    function (callback) {
-                        self.journalDataAccess.updateAll(journals, function (err, journals) {
-                            callback(err);
-                        }, false);
+                async.whilst(() => { return count < postings.length; },
+                    (callback) => {
+                        let postingObj: postingLib.Posting = postings[count];
+                        count++;
+
+                        self.keyService.getNextKey("posting", function (err, key: keyLib.Key) {
+                            if (err === null) {
+                                let keyStr: string = "" + key.key;
+                                if (key.key < 1000) {
+                                    keyStr = ("0000" + keyStr).slice(-4);
+                                }
+                                postingObj.id = "PST" + keyStr;
+                                console.log("loaded key " + postingObj.id);
+                            } else {
+                                console.log("Failed to load key " + err);
+                            }
+                            callback();
+                        });
                     },
-                    function (callback) {
-                       /* self.postingDataAccess.saveAll(postings, function (err, postings) {
-                            callback(err);
-                        });*/
-                        callback(null);
-                    }],
-                    function(err){
-                        self.journalDataAccess.cleanUp();
-                        callback(err);
-                    }
-                );
+                    (err) => {
+                        async.waterfall([
+                            function (callbackWf) {
+                                self.journalDataAccess.updateAll(journals, function (err, journals) {
+                                    callbackWf(err);
+                                });
+                            },
+                            function (callbackWf) {
+                                self.postingDataAccess.saveAll(postings, function (err, postings) {
+                                    callbackWf(err);
+                                });
+                            }],
+                            function (err) {
+                                callback(err, postings);
+                            }
+                        );
+                        
+                    });
+
+
             } else {
                 console.log("Couldn't update: " + err)
                 callback(err);

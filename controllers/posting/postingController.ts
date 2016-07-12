@@ -6,15 +6,15 @@ export class PostingController {
 
     createPostingMongooseSchema() {
         var postingSchema = new mongoose.Schema({
-               
-    externalRef: String,
-    id: String,
-    referenceId: String,
-    type: String,
-    description: String,
-    date: Date,
-    amount: Number,
-    accountNumber: String
+
+            externalRef: String,
+            id: String,
+            referenceId: String,
+            type: String,
+            description: String,
+            date: Date,
+            amount: Number,
+            accountNumber: String
 
         });
 
@@ -24,7 +24,7 @@ export class PostingController {
     translatePostingToMongoose(posting: postingLib.Posting, mongoosePosting: any) {
         mongoosePosting.id = posting.id;
         mongoosePosting.referenceId = posting.referenceId;
-        mongoosePosting.description = posting.description;        
+        mongoosePosting.description = posting.description;
         mongoosePosting.amount = posting.amount;
         mongoosePosting.date = posting.date;
         mongoosePosting.type = posting.type;
@@ -32,7 +32,7 @@ export class PostingController {
 
         if (posting.externalRef !== "") {
             mongoosePosting._id = posting.externalRef;
-        }
+        } 
 
         return 0
     }
@@ -42,7 +42,7 @@ export class PostingController {
         postingObj = new postingLib.Posting();
         postingObj.externalRef = mongoosePosting._id;
         postingObj.referenceId = mongoosePosting.referenceId;
-        postingObj.description = mongoosePosting.description;        
+        postingObj.description = mongoosePosting.description;
         postingObj.id = mongoosePosting.id;
         postingObj.amount = mongoosePosting.amount;
         postingObj.date = mongoosePosting.date;
@@ -60,7 +60,7 @@ export class PostingController {
         return postingArray;
     }
 
-    fromJournal(journal: journalLib.Journal): postingLib.Posting{
+    fromJournal(journal: journalLib.Journal): postingLib.Posting {
         let posting: postingLib.Posting = new postingLib.Posting();
 
         posting.accountNumber = journal.accountNumber;
@@ -70,6 +70,7 @@ export class PostingController {
         posting.id = "PSTxxxx";
         posting.referenceId = journal.id;
         posting.type = "Journal";
+        posting.externalRef = "";
 
         return posting;
     }

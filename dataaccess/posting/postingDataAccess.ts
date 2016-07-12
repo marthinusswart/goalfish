@@ -1,6 +1,7 @@
 import mongoose = require('mongoose');
 import posting = require('../../models/posting/posting');
 import postingController = require('../../controllers/posting/postingController');
+import async = require('async');
 
 export class PostingDataAccess {
     connection: mongoose.Connection;
@@ -10,7 +11,6 @@ export class PostingDataAccess {
     isConnectionOpening: boolean = false;
     postingSchema: any;
     postingModel: any;
-    mongoosePosting: any;
 
     init() {
         if (!this.wasInitialised) {
@@ -21,7 +21,6 @@ export class PostingDataAccess {
             this.postingController = new postingController.PostingController();
             this.postingSchema = this.postingController.createPostingMongooseSchema();
             this.postingModel = this.connection.model("posting", this.postingSchema, "posting");
-            this.mongoosePosting = new this.postingModel();
             this.isConnectionOpening = true;
             this.wasInitialised = true;
             this.connection.on("close", function () {
@@ -58,7 +57,7 @@ export class PostingDataAccess {
 
         });
 
-         if (!this.isConnectionOpen && !this.isConnectionOpening) {
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", findFunc);
             this.connection.open("localhost", "goalfish");
         } else {
@@ -76,7 +75,6 @@ export class PostingDataAccess {
                     callback(err);
                 } else {
                     self.connection.close()
-                    console.log(posting);
                     callback(null, self.postingController.translateMongooseToPosting(posting));
                 }
             });
@@ -84,13 +82,13 @@ export class PostingDataAccess {
         });
     }
 
-    save(newPosting: posting.Posting, callback, closeConnection: boolean = true) {
+    save(newPosting: posting.Posting, callback, closeConnection: boolean = false) {
         var self = this;
         var saveFunc = (function () {
+            let mongoosePosting =  new self.postingModel();
+            self.postingController.translatePostingToMongoose(newPosting, mongoosePosting);
 
-            self.postingController.translatePostingToMongoose(newPosting, self.mongoosePosting);
-
-            self.mongoosePosting.save(function (err, result) {
+            mongoosePosting.save(function (err, result) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -104,7 +102,7 @@ export class PostingDataAccess {
 
         });
 
-         if (!this.isConnectionOpen) {
+        if (!this.isConnectionOpen) {
             this.connection.once("open", saveFunc);
             this.connection.open("localhost", "goalfish");
         } else {
@@ -112,13 +110,13 @@ export class PostingDataAccess {
         }
     }
 
-    update(id: string, newPosting: posting.Posting, callback, closeConnection: boolean = true) {
+    update(id: string, newPosting: posting.Posting, callback, closeConnection: boolean = false) {
         var self = this;
         var updateFunc = (function () {
+            let mongoosePosting =  new self.postingModel();
+            self.postingController.translatePostingToMongoose(newPosting, mongoosePosting);
 
-            self.postingController.translatePostingToMongoose(newPosting, self.mongoosePosting);
-
-            self.postingModel.findByIdAndUpdate(self.mongoosePosting._id, self.mongoosePosting, { new: true }, function (err, result) {
+            self.postingModel.findByIdAndUpdate(mongoosePosting._id, mongoosePosting, { new: true }, function (err, result) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -140,7 +138,7 @@ export class PostingDataAccess {
         }
     }
 
-    saveAll(postings: any[], callback) {
+    saveAll(postings: any[], callback, closeConnection: boolean = false) {
         var self = this;
         let count = 0;
 
@@ -149,8 +147,9 @@ export class PostingDataAccess {
                 let postingObj: posting.Posting = postings[count];
                 count++;
 
-                this.save(postingObj, function (err, journal) {
+                this.save(postingObj, function (err, posting) {
                     if (err === null) {
+                        console.log("Saved " + posting.externalRef)
                     } else {
                         console.log("Failed to save " + err);
                     }
@@ -158,7 +157,9 @@ export class PostingDataAccess {
                 }, false);
             },
             (err) => {
-                this.cleanUp();
+                if (closeConnection) {
+                    this.cleanUp();
+                }
                 callback(err, postings);
             });
 

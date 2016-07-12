@@ -66,6 +66,7 @@ router
         /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+        
         postingService.processJournals(function (err, posting) {
             if (err === null) {
                 res.status(200).send("OK");

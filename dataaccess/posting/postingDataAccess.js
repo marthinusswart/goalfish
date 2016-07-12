@@ -1,6 +1,7 @@
 "use strict";
 var mongoose = require('mongoose');
 var postingController = require('../../controllers/posting/postingController');
+var async = require('async');
 var PostingDataAccess = (function () {
     function PostingDataAccess() {
         this.wasInitialised = false;
@@ -16,7 +17,6 @@ var PostingDataAccess = (function () {
             this.postingController = new postingController.PostingController();
             this.postingSchema = this.postingController.createPostingMongooseSchema();
             this.postingModel = this.connection.model("posting", this.postingSchema, "posting");
-            this.mongoosePosting = new this.postingModel();
             this.isConnectionOpening = true;
             this.wasInitialised = true;
             this.connection.on("close", function () {
@@ -67,18 +67,18 @@ var PostingDataAccess = (function () {
                 }
                 else {
                     self.connection.close();
-                    console.log(posting);
                     callback(null, self.postingController.translateMongooseToPosting(posting));
                 }
             });
         });
     };
     PostingDataAccess.prototype.save = function (newPosting, callback, closeConnection) {
-        if (closeConnection === void 0) { closeConnection = true; }
+        if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var saveFunc = (function () {
-            self.postingController.translatePostingToMongoose(newPosting, self.mongoosePosting);
-            self.mongoosePosting.save(function (err, result) {
+            var mongoosePosting = new self.postingModel();
+            self.postingController.translatePostingToMongoose(newPosting, mongoosePosting);
+            mongoosePosting.save(function (err, result) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -100,11 +100,12 @@ var PostingDataAccess = (function () {
         }
     };
     PostingDataAccess.prototype.update = function (id, newPosting, callback, closeConnection) {
-        if (closeConnection === void 0) { closeConnection = true; }
+        if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var updateFunc = (function () {
-            self.postingController.translatePostingToMongoose(newPosting, self.mongoosePosting);
-            self.postingModel.findByIdAndUpdate(self.mongoosePosting._id, self.mongoosePosting, { new: true }, function (err, result) {
+            var mongoosePosting = new self.postingModel();
+            self.postingController.translatePostingToMongoose(newPosting, mongoosePosting);
+            self.postingModel.findByIdAndUpdate(mongoosePosting._id, mongoosePosting, { new: true }, function (err, result) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -125,15 +126,17 @@ var PostingDataAccess = (function () {
             updateFunc();
         }
     };
-    PostingDataAccess.prototype.saveAll = function (postings, callback) {
+    PostingDataAccess.prototype.saveAll = function (postings, callback, closeConnection) {
         var _this = this;
+        if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var count = 0;
         async.whilst(function () { return count < postings.length; }, function (callback) {
             var postingObj = postings[count];
             count++;
-            _this.save(postingObj, function (err, journal) {
+            _this.save(postingObj, function (err, posting) {
                 if (err === null) {
+                    console.log("Saved " + posting.externalRef);
                 }
                 else {
                     console.log("Failed to save " + err);
@@ -141,7 +144,9 @@ var PostingDataAccess = (function () {
                 callback();
             }, false);
         }, function (err) {
-            _this.cleanUp();
+            if (closeConnection) {
+                _this.cleanUp();
+            }
             callback(err, postings);
         });
     };
