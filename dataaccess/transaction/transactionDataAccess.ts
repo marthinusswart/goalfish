@@ -8,6 +8,7 @@ export class TransactionDataAccess {
     transactionController: transactionController.TransactionController;
     wasInitialised: boolean = false;
     isConnectionOpen: boolean = false;
+    isConnectionOpening: boolean = false;
     transactionSchema: any;
     transactionModel: any;
     mongooseTransaction: any;
@@ -24,6 +25,7 @@ export class TransactionDataAccess {
             this.transactionModel = this.connection.model("transaction", this.transactionSchema, "transaction");
             this.mongooseTransaction = new this.transactionModel();
 
+            this.isConnectionOpening = true;
             this.wasInitialised = true;
             this.connection.on("close", function () {
                 self.onConnectionClose();
@@ -43,7 +45,7 @@ export class TransactionDataAccess {
         }
     }
 
-    find(callback, closeConnection: boolean = true) {
+    find(callback, closeConnection: boolean = false) {
         if (!this.wasInitialised) {
             throw new ReferenceError("Transaction Data Access module was not initialised");
         }
@@ -65,7 +67,7 @@ export class TransactionDataAccess {
 
         });
 
-        if (!this.isConnectionOpen) {
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", findFunc);
             this.connection.open("localhost", "goalfish");
         } else {
@@ -74,7 +76,33 @@ export class TransactionDataAccess {
 
     }
 
-    findById(id: string, callback) {
+    findByField(filter: any, callback, closeConnection: boolean = false) {
+        var self = this;
+        var findFunc = (function () {
+
+            self.transactionModel.find(filter, function (err, transactions) {
+                if (err) {
+                    self.connection.close();
+                    callback(err);
+                } else {
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
+                    callback(null, self.transactionController.translateMongooseArrayToTransactionArray(transactions));
+                }
+            });
+
+        });
+
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        } else {
+            findFunc();
+        }
+    }
+
+    findById(id: string, callback, closeConnection: boolean = false) {
         var self = this;
 
         var findFunc = (function () {
@@ -86,8 +114,9 @@ export class TransactionDataAccess {
                     self.connection.close();
                     callback(err);
                 } else {
-                    self.connection.close()
-                    console.log(transaction);
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
                     callback(null, self.transactionController.translateMongooseToTransaction(transaction));
                 }
             });
@@ -101,7 +130,7 @@ export class TransactionDataAccess {
         }
     }
 
-    save(newTransaction: transaction.Transaction, callback) {
+    save(newTransaction: transaction.Transaction, callback, closeConnection: boolean = false) {
         var self = this;
 
         var saveFunc = (function () {
@@ -116,8 +145,9 @@ export class TransactionDataAccess {
                     self.connection.close();
                     callback(err);
                 } else {
-                    self.connection.close()
-                    console.log(result);
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
                     callback(null, self.transactionController.translateMongooseToTransaction(result));
                 }
             });
@@ -132,7 +162,7 @@ export class TransactionDataAccess {
         }
     }
 
-    update(id: string, newTransaction: transaction.Transaction, callback, closeConnection: boolean = true) {
+    update(id: string, newTransaction: transaction.Transaction, callback, closeConnection: boolean = false) {
         var self = this;
 
         var updateFunc = (function () {
@@ -161,7 +191,7 @@ export class TransactionDataAccess {
         }
     }
 
-    updateAll(transactions: any[], callback) {
+    updateAll(transactions: any[], callback, closeConnection: boolean = false) {
         var self = this;
         let count = 0;
 
@@ -179,7 +209,9 @@ export class TransactionDataAccess {
                 }, false);
             },
             (err) => {
-                this.cleanUp();
+                if (closeConnection) {
+                    this.cleanUp();
+                }
                 callback(err, transactions);
             });
 
@@ -187,6 +219,7 @@ export class TransactionDataAccess {
 
     onConnectionOpen() {
         this.isConnectionOpen = true;
+        this.isConnectionOpening = false;
     }
 
     onConnectionClose() {

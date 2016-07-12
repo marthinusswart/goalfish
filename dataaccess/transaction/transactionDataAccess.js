@@ -6,6 +6,7 @@ var TransactionDataAccess = (function () {
     function TransactionDataAccess() {
         this.wasInitialised = false;
         this.isConnectionOpen = false;
+        this.isConnectionOpening = false;
     }
     TransactionDataAccess.prototype.init = function () {
         if (!this.wasInitialised) {
@@ -17,6 +18,7 @@ var TransactionDataAccess = (function () {
             this.transactionSchema = this.transactionController.createTransactionMongooseSchema();
             this.transactionModel = this.connection.model("transaction", this.transactionSchema, "transaction");
             this.mongooseTransaction = new this.transactionModel();
+            this.isConnectionOpening = true;
             this.wasInitialised = true;
             this.connection.on("close", function () {
                 self.onConnectionClose();
@@ -35,7 +37,7 @@ var TransactionDataAccess = (function () {
         }
     };
     TransactionDataAccess.prototype.find = function (callback, closeConnection) {
-        if (closeConnection === void 0) { closeConnection = true; }
+        if (closeConnection === void 0) { closeConnection = false; }
         if (!this.wasInitialised) {
             throw new ReferenceError("Transaction Data Access module was not initialised");
         }
@@ -54,7 +56,7 @@ var TransactionDataAccess = (function () {
                 }
             });
         });
-        if (!this.isConnectionOpen) {
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", findFunc);
             this.connection.open("localhost", "goalfish");
         }
@@ -62,7 +64,33 @@ var TransactionDataAccess = (function () {
             findFunc();
         }
     };
-    TransactionDataAccess.prototype.findById = function (id, callback) {
+    TransactionDataAccess.prototype.findByField = function (filter, callback, closeConnection) {
+        if (closeConnection === void 0) { closeConnection = false; }
+        var self = this;
+        var findFunc = (function () {
+            self.transactionModel.find(filter, function (err, transactions) {
+                if (err) {
+                    self.connection.close();
+                    callback(err);
+                }
+                else {
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
+                    callback(null, self.transactionController.translateMongooseArrayToTransactionArray(transactions));
+                }
+            });
+        });
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        }
+        else {
+            findFunc();
+        }
+    };
+    TransactionDataAccess.prototype.findById = function (id, callback, closeConnection) {
+        if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var findFunc = (function () {
             var transactionSchema = self.transactionController.createTransactionMongooseSchema();
@@ -73,8 +101,9 @@ var TransactionDataAccess = (function () {
                     callback(err);
                 }
                 else {
-                    self.connection.close();
-                    console.log(transaction);
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
                     callback(null, self.transactionController.translateMongooseToTransaction(transaction));
                 }
             });
@@ -87,7 +116,8 @@ var TransactionDataAccess = (function () {
             findFunc();
         }
     };
-    TransactionDataAccess.prototype.save = function (newTransaction, callback) {
+    TransactionDataAccess.prototype.save = function (newTransaction, callback, closeConnection) {
+        if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var saveFunc = (function () {
             var transactionSchema = self.transactionController.createTransactionMongooseSchema();
@@ -100,8 +130,9 @@ var TransactionDataAccess = (function () {
                     callback(err);
                 }
                 else {
-                    self.connection.close();
-                    console.log(result);
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
                     callback(null, self.transactionController.translateMongooseToTransaction(result));
                 }
             });
@@ -115,7 +146,7 @@ var TransactionDataAccess = (function () {
         }
     };
     TransactionDataAccess.prototype.update = function (id, newTransaction, callback, closeConnection) {
-        if (closeConnection === void 0) { closeConnection = true; }
+        if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var updateFunc = (function () {
             self.transactionController.translateTransactionToMongoose(newTransaction, self.mongooseTransaction);
@@ -140,8 +171,9 @@ var TransactionDataAccess = (function () {
             updateFunc();
         }
     };
-    TransactionDataAccess.prototype.updateAll = function (transactions, callback) {
+    TransactionDataAccess.prototype.updateAll = function (transactions, callback, closeConnection) {
         var _this = this;
+        if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var count = 0;
         async.whilst(function () { return count < transactions.length; }, function (callback) {
@@ -156,12 +188,15 @@ var TransactionDataAccess = (function () {
                 callback();
             }, false);
         }, function (err) {
-            _this.cleanUp();
+            if (closeConnection) {
+                _this.cleanUp();
+            }
             callback(err, transactions);
         });
     };
     TransactionDataAccess.prototype.onConnectionOpen = function () {
         this.isConnectionOpen = true;
+        this.isConnectionOpening = false;
     };
     TransactionDataAccess.prototype.onConnectionClose = function () {
         this.isConnectionOpen = false;

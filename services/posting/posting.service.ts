@@ -22,9 +22,73 @@ export class PostingService {
 
     processTransactions(callback) {
         this.transactionDataAccess = new trxDataAccessLib.TransactionDataAccess();
+        this.postingDataAccess = new postingDataAccessLib.PostingDataAccess();
+        this.postingController = new postingControllerLib.PostingController();
+        this.keyService = new keyServiceLib.KeyService();
+
         this.transactionDataAccess.init();
+        this.postingDataAccess.init();
+        this.keyService.init();
+
         var self = this;
-        //this.transactionDataAccess.findByField()
+        let filter = { isPosted: "N" };
+        let count = 0;
+
+        this.transactionDataAccess.findByField(filter, function (err, transactions) {
+            let postings: postingLib.Posting[] = [];
+            if (err === null) {
+                transactions.forEach((transaction: trxLib.Transaction) => {
+                    transaction.isPosted = "Y";
+
+                    let posting: postingLib.Posting = self.postingController.fromTransaction(transaction);
+                    postings.push(posting);
+
+                });
+
+                async.whilst(() => { return count < postings.length; },
+                    (callback) => {
+                        let postingObj: postingLib.Posting = postings[count];
+                        count++;
+
+                        self.keyService.getNextKey("posting", function (err, key: keyLib.Key) {
+                            if (err === null) {
+                                let keyStr: string = "" + key.key;
+                                if (key.key < 1000) {
+                                    keyStr = ("0000" + keyStr).slice(-4);
+                                }
+                                postingObj.id = "PST" + keyStr;
+                                console.log("loaded key " + postingObj.id);
+                            } else {
+                                console.log("Failed to load key " + err);
+                            }
+                            callback();
+                        });
+                    },
+                    (err) => {
+                        async.waterfall([
+                            function (callbackWf) {
+                                self.transactionDataAccess.updateAll(transactions, function (err, transactions) {
+                                    callbackWf(err);
+                                });
+                            },
+                            function (callbackWf) {
+                                self.postingDataAccess.saveAll(postings, function (err, postings) {
+                                    callbackWf(err);
+                                });
+                            }],
+                            function (err) {
+                                callback(err, postings);
+                            }
+                        );
+
+                    });
+
+
+            } else {
+                console.log("Couldn't update: " + err)
+                callback(err);
+            }
+        }, false);
     }
 
     processJournals(callback) {
@@ -87,7 +151,7 @@ export class PostingService {
                                 callback(err, postings);
                             }
                         );
-                        
+
                     });
 
 
@@ -95,6 +159,6 @@ export class PostingService {
                 console.log("Couldn't update: " + err)
                 callback(err);
             }
-        }, false)
+        }, false);
     }
 }

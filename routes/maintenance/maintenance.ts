@@ -7,7 +7,7 @@ let router = express.Router();
 let journalMaintenanceService = new journalServiceLib.JournalMaintenanceService();
 let trxMaintenanceService = new trxServiceLib.TransactionMaintenanceService();
 journalMaintenanceService.init();
-
+trxMaintenanceService.init();
 
 router
     .post('/journal/markAllAsPosted', function (req, res, next) {
@@ -66,7 +66,7 @@ router
         /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-        trxMaintenanceService.init();
+
         trxMaintenanceService.markAllAsPosted(function (err) {
 
             if (err === null) {
@@ -79,6 +79,32 @@ router
 
     })
     .options('/transaction/markAllAsPosted', function (req, res, next) {
+        /** Not secure at all, but great for local usage only */
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Methods", "GET, POST, PUT");
+        res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept");
+        res.header("Content-Type", "application/json");
+        /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
+        res.status(200).send("OK");
+    })
+    .post('/transaction/markAllAsNotPosted', function (req, res, next) {
+        /** Not secure at all, but great for local usage only */
+        res.header("Access-Control-Allow-Origin", "*");
+        /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+  
+        trxMaintenanceService.markAllAsNotPosted(function (err) {
+
+            if (err === null) {
+                res.status(200).send("OK");
+            }
+            else {
+                res.status(500).send("FAILED");
+            }
+        });
+
+    })
+    .options('/transaction/markAllAsNotPosted', function (req, res, next) {
         /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Methods", "GET, POST, PUT");

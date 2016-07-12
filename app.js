@@ -68,6 +68,7 @@ app.use('/api/v1/transaction/ping', transaction);
 app.use('/api/v1/maintenance', maintenance);
 app.use('/api/v1/maintenance/journal/markAllAsPosted', maintenance);
 app.use('/api/v1/maintenance/journal/markAllAsNotPosted', maintenance);
+app.use('/api/v1/maintenance/transaction/markAllAsNotPosted', maintenance);
 app.use('/api/v1/maintenance/ping', maintenance);
 
 // catch 404 and forward to error handler

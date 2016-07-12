@@ -81,9 +81,7 @@ export class JournalDataAccess {
         var self = this;
         var findFunc = (function () {
 
-            let journalSchema = self.journalController.createJournalMongooseSchema();
-            var journalModel = self.connection.model("journal", journalSchema, "journal");
-            journalModel.find(filter, function (err, journals) {
+            self.journalModel.find(filter, function (err, journals) {
                 if (err) {
                     self.connection.close();
                     callback(err);

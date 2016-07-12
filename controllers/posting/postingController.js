@@ -63,6 +63,18 @@ var PostingController = (function () {
         posting.externalRef = "";
         return posting;
     };
+    PostingController.prototype.fromTransaction = function (transaction) {
+        var posting = new postingLib.Posting();
+        posting.accountNumber = transaction.underlyingAccount;
+        posting.amount = transaction.amount;
+        posting.date = new Date();
+        posting.description = transaction.description;
+        posting.id = "PSTxxxx";
+        posting.referenceId = transaction.id;
+        posting.type = "Transaction";
+        posting.externalRef = "";
+        return posting;
+    };
     return PostingController;
 }());
 exports.PostingController = PostingController;

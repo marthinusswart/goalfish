@@ -1,6 +1,7 @@
 import mongoose = require('mongoose');
 import postingLib = require('../../models/posting/posting');
 import journalLib = require('../../models/journal/journal');
+import trxLib = require('../../models/transaction/transaction');
 
 export class PostingController {
 
@@ -70,6 +71,21 @@ export class PostingController {
         posting.id = "PSTxxxx";
         posting.referenceId = journal.id;
         posting.type = "Journal";
+        posting.externalRef = "";
+
+        return posting;
+    }
+
+    fromTransaction(transaction: trxLib.Transaction): postingLib.Posting {
+        let posting: postingLib.Posting = new postingLib.Posting();
+
+        posting.accountNumber = transaction.underlyingAccount;
+        posting.amount = transaction.amount;
+        posting.date = new Date();
+        posting.description = transaction.description;
+        posting.id = "PSTxxxx";
+        posting.referenceId = transaction.id;
+        posting.type = "Transaction";
         posting.externalRef = "";
 
         return posting;
