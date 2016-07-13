@@ -65,9 +65,36 @@ export class PostingDataAccess {
         }
     }
 
+    findByField(filter: any, callback, closeConnection: boolean = false) {
+        var self = this;
+        var findFunc = (function () {
+
+            self.postingModel.find(filter, function (err, postings) {
+                if (err) {
+                    self.connection.close();
+                    callback(err);
+                } else {
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
+                    callback(null, self.postingController.translateMongooseArrayToPostingArray(postings));
+                }
+            });
+
+        });
+
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        } else {
+            findFunc();
+        }
+    }
+
+
     findById(id: string, callback) {
         var self = this;
-        this.connection.once("open", function () {
+        var findFunc = (function () {
 
             self.postingModel.findById(id, function (err, posting: mongoose.Schema) {
                 if (err) {
@@ -80,12 +107,19 @@ export class PostingDataAccess {
             });
 
         });
+
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        } else {
+            findFunc();
+        }
     }
 
     save(newPosting: posting.Posting, callback, closeConnection: boolean = false) {
         var self = this;
         var saveFunc = (function () {
-            let mongoosePosting =  new self.postingModel();
+            let mongoosePosting = new self.postingModel();
             self.postingController.translatePostingToMongoose(newPosting, mongoosePosting);
 
             mongoosePosting.save(function (err, result) {
@@ -113,7 +147,7 @@ export class PostingDataAccess {
     update(id: string, newPosting: posting.Posting, callback, closeConnection: boolean = false) {
         var self = this;
         var updateFunc = (function () {
-            let mongoosePosting =  new self.postingModel();
+            let mongoosePosting = new self.postingModel();
             self.postingController.translatePostingToMongoose(newPosting, mongoosePosting);
 
             self.postingModel.findByIdAndUpdate(mongoosePosting._id, mongoosePosting, { new: true }, function (err, result) {

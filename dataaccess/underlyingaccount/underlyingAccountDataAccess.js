@@ -3,19 +3,36 @@ var mongoose = require('mongoose');
 var underlyingAccountController = require('../../controllers/underlyingaccount/underlyingAccountController');
 var UnderlyingAccountDataAccess = (function () {
     function UnderlyingAccountDataAccess() {
+        this.wasInitialised = false;
+        this.isConnectionOpen = false;
+        this.isConnectionOpening = false;
     }
     UnderlyingAccountDataAccess.prototype.init = function () {
-        var db = new mongoose.Mongoose();
-        this.connection = db.createConnection("localhost", "goalfish");
-        this.connection.on("error", console.error.bind(console, "connection error:"));
-        this.underlyingAccountController = new underlyingAccountController.UnderlyingAccountController();
+        if (!this.wasInitialised) {
+            var db = new mongoose.Mongoose();
+            var self = this;
+            this.connection = db.createConnection("localhost", "goalfish");
+            this.connection.on("error", console.error.bind(console, "connection error:"));
+            this.underlyingAccountController = new underlyingAccountController.UnderlyingAccountController();
+            this.underlyingAccountSchema = this.underlyingAccountController.createUnderlyingAccountMongooseSchema();
+            this.underlyingAccountModel = this.connection.model("underlyingaccount", this.underlyingAccountSchema, "underlyingaccount");
+            this.isConnectionOpening = true;
+            this.wasInitialised = true;
+            this.connection.on("close", function () {
+                self.onConnectionClose();
+            });
+            this.connection.on("open", function () {
+                self.onConnectionOpen();
+            });
+        }
+        else {
+            throw new ReferenceError("Can't initialise again");
+        }
     };
     UnderlyingAccountDataAccess.prototype.find = function (callback) {
         var self = this;
-        this.connection.once("open", function () {
-            var underlyingAccountSchema = self.underlyingAccountController.createUnderlyingAccountMongooseSchema();
-            var underlyingAccountModel = self.connection.model("underlyingaccount", underlyingAccountSchema, "underlyingaccount");
-            underlyingAccountModel.find({}, function (err, underlyingAccounts) {
+        var findFunc = (function () {
+            self.underlyingAccountModel.find({}, function (err, underlyingAccounts) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -26,6 +43,13 @@ var UnderlyingAccountDataAccess = (function () {
                 }
             });
         });
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        }
+        else {
+            findFunc();
+        }
     };
     UnderlyingAccountDataAccess.prototype.findById = function (id, callback) {
         var self = this;
@@ -84,6 +108,13 @@ var UnderlyingAccountDataAccess = (function () {
                 }
             });
         });
+    };
+    UnderlyingAccountDataAccess.prototype.onConnectionOpen = function () {
+        this.isConnectionOpen = true;
+        this.isConnectionOpening = false;
+    };
+    UnderlyingAccountDataAccess.prototype.onConnectionClose = function () {
+        this.isConnectionOpen = false;
     };
     return UnderlyingAccountDataAccess;
 }());

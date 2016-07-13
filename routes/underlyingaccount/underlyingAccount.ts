@@ -1,9 +1,11 @@
 import express = require('express');
 import models = require('../../models/underlyingaccount/underlyingaccount');
 import underlyingAccountDataAccess = require('../../dataaccess/underlyingaccount/underlyingAccountDataAccess');
+import underlyingAccountServiceLib = require('../../services/underlyingaccount/account.service');
 
 let router = express.Router();
 let underlyingAccountDataAcccessService = new underlyingAccountDataAccess.UnderlyingAccountDataAccess();
+let underlyingAccountService = new underlyingAccountServiceLib.UnderlyingAccountService();
 
 router
     .get('/', function (req, res, next) {
@@ -50,6 +52,28 @@ router
         });
     })
     .options('/', function (req, res, next) {
+        /** Not secure at all, but great for local usage only */
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Methods", "GET, POST, PUT");
+        res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept");
+        res.header("Content-Type", "application/json");
+        /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+        res.status(200).send("OK");
+    })
+    .post('/reconcile', function (req, res, next) {
+        /** Not secure at all, but great for local usage only */
+        res.header("Access-Control-Allow-Origin", "*");
+        /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+        underlyingAccountService.reconcileAccounts(function (err, underlyingAccounts) {
+            if (err === null) {
+                res.status(200).send(underlyingAccounts);
+            }
+            else {
+                res.status(500).send(err.message);
+            }
+        });
+    })
+    .options('/reconcile', function (req, res, next) {
         /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Methods", "GET, POST, PUT");

@@ -5,22 +5,40 @@ import underlyingAccountController = require('../../controllers/underlyingaccoun
 export class UnderlyingAccountDataAccess {
     connection: mongoose.Connection;
     underlyingAccountController: underlyingAccountController.UnderlyingAccountController;
+    underlyingAccountSchema: any;
+    underlyingAccountModel: any;
+    wasInitialised: boolean = false;
+    isConnectionOpen: boolean = false;
+    isConnectionOpening: boolean = false;
 
     init() {
-        let db = new mongoose.Mongoose();
-        this.connection = db.createConnection("localhost", "goalfish");
-        this.connection.on("error", console.error.bind(console, "connection error:"));
-        this.underlyingAccountController = new underlyingAccountController.UnderlyingAccountController();
+        if (!this.wasInitialised) {
+            let db = new mongoose.Mongoose();
+            var self = this;
+            this.connection = db.createConnection("localhost", "goalfish");
+            this.connection.on("error", console.error.bind(console, "connection error:"));
+            this.underlyingAccountController = new underlyingAccountController.UnderlyingAccountController();
+            this.underlyingAccountSchema = this.underlyingAccountController.createUnderlyingAccountMongooseSchema();
+            this.underlyingAccountModel = this.connection.model("underlyingaccount", this.underlyingAccountSchema, "underlyingaccount");
+            this.isConnectionOpening = true;
+            this.wasInitialised = true;
+            this.connection.on("close", function () {
+                self.onConnectionClose();
+            });
 
+            this.connection.on("open", function () {
+                self.onConnectionOpen();
+            });
+        } else {
+            throw new ReferenceError("Can't initialise again");
+        }
     }
 
     find(callback) {
         var self = this;
-        this.connection.once("open", function () {
+        var findFunc = (function () {
 
-            let underlyingAccountSchema = self.underlyingAccountController.createUnderlyingAccountMongooseSchema();
-            var underlyingAccountModel = self.connection.model("underlyingaccount", underlyingAccountSchema, "underlyingaccount");
-            underlyingAccountModel.find({}, function (err, underlyingAccounts) {
+            self.underlyingAccountModel.find({}, function (err, underlyingAccounts) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -31,15 +49,22 @@ export class UnderlyingAccountDataAccess {
             });
 
         });
+
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        } else {
+            findFunc();
+        }
     }
-    
+
     findById(id: string, callback) {
         var self = this;
         this.connection.once("open", function () {
 
             let underlyingAccountSchema = self.underlyingAccountController.createUnderlyingAccountMongooseSchema();
             var underlyingAccountModel = self.connection.model("underlyingaccount", underlyingAccountSchema, "underlyingaccount");
-            underlyingAccountModel.findById(id, function (err, underlyingAccount:mongoose.Schema) {
+            underlyingAccountModel.findById(id, function (err, underlyingAccount: mongoose.Schema) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -52,16 +77,16 @@ export class UnderlyingAccountDataAccess {
 
         });
     }
-    
-    save(newUnderlyingAccount: underlyingAccount.UnderlyingAccount, callback){
+
+    save(newUnderlyingAccount: underlyingAccount.UnderlyingAccount, callback) {
         var self = this;
         this.connection.once("open", function () {
 
             let underlyingAccountSchema = self.underlyingAccountController.createUnderlyingAccountMongooseSchema();
-            var underlyingAccountModel = self.connection.model("underlyingaccount", underlyingAccountSchema, "underlyingaccount");            
+            var underlyingAccountModel = self.connection.model("underlyingaccount", underlyingAccountSchema, "underlyingaccount");
             var mongooseUnderlyingAccount = new underlyingAccountModel();
-            self.underlyingAccountController.translateUnderlyingAccountToMongoose(newUnderlyingAccount, mongooseUnderlyingAccount);   
-                     
+            self.underlyingAccountController.translateUnderlyingAccountToMongoose(newUnderlyingAccount, mongooseUnderlyingAccount);
+
             mongooseUnderlyingAccount.save(function (err, result) {
                 if (err) {
                     self.connection.close();
@@ -69,33 +94,42 @@ export class UnderlyingAccountDataAccess {
                 } else {
                     self.connection.close()
                     console.log(result);
-                    callback(null, self.underlyingAccountController.translateMongooseToUnderlyingAccount(result));                    
+                    callback(null, self.underlyingAccountController.translateMongooseToUnderlyingAccount(result));
                 }
             });
 
         });
     }
-    
-     update(id: string, newUnderlyingAccount: underlyingAccount.UnderlyingAccount, callback){
+
+    update(id: string, newUnderlyingAccount: underlyingAccount.UnderlyingAccount, callback) {
         var self = this;
         this.connection.once("open", function () {
 
             let underlyingAccountSchema = self.underlyingAccountController.createUnderlyingAccountMongooseSchema();
-            var underlyingAccountModel = self.connection.model("underlyingaccount", underlyingAccountSchema, "underlyingaccount");            
+            var underlyingAccountModel = self.connection.model("underlyingaccount", underlyingAccountSchema, "underlyingaccount");
             var mongooseUnderlyingAccount = new underlyingAccountModel();
-            self.underlyingAccountController.translateUnderlyingAccountToMongoose(newUnderlyingAccount, mongooseUnderlyingAccount);   
-                               
-            underlyingAccountModel.findOneAndUpdate({"_id":mongooseUnderlyingAccount._id}, mongooseUnderlyingAccount, {new:true}, function (err, result) {
+            self.underlyingAccountController.translateUnderlyingAccountToMongoose(newUnderlyingAccount, mongooseUnderlyingAccount);
+
+            underlyingAccountModel.findOneAndUpdate({ "_id": mongooseUnderlyingAccount._id }, mongooseUnderlyingAccount, { new: true }, function (err, result) {
                 if (err) {
                     self.connection.close();
                     callback(err);
                 } else {
                     self.connection.close()
                     console.log(result);
-                    callback(null, self.underlyingAccountController.translateMongooseToUnderlyingAccount(result));                    
+                    callback(null, self.underlyingAccountController.translateMongooseToUnderlyingAccount(result));
                 }
             });
 
         });
+    }
+
+    onConnectionOpen() {
+        this.isConnectionOpen = true;
+        this.isConnectionOpening = false;
+    }
+
+    onConnectionClose() {
+        this.isConnectionOpen = false;
     }
 }

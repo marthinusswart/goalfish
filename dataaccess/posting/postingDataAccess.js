@@ -57,9 +57,34 @@ var PostingDataAccess = (function () {
             findFunc();
         }
     };
+    PostingDataAccess.prototype.findByField = function (filter, callback, closeConnection) {
+        if (closeConnection === void 0) { closeConnection = false; }
+        var self = this;
+        var findFunc = (function () {
+            self.postingModel.find(filter, function (err, postings) {
+                if (err) {
+                    self.connection.close();
+                    callback(err);
+                }
+                else {
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
+                    callback(null, self.postingController.translateMongooseArrayToPostingArray(postings));
+                }
+            });
+        });
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        }
+        else {
+            findFunc();
+        }
+    };
     PostingDataAccess.prototype.findById = function (id, callback) {
         var self = this;
-        this.connection.once("open", function () {
+        var findFunc = (function () {
             self.postingModel.findById(id, function (err, posting) {
                 if (err) {
                     self.connection.close();
@@ -71,6 +96,13 @@ var PostingDataAccess = (function () {
                 }
             });
         });
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        }
+        else {
+            findFunc();
+        }
     };
     PostingDataAccess.prototype.save = function (newPosting, callback, closeConnection) {
         if (closeConnection === void 0) { closeConnection = false; }

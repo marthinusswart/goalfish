@@ -9,4 +9,6 @@ export class UnderlyingAccount {
     holdingInstitution: string;
     balance: number;
     memberId: string;
+    isReconciled: boolean;
+    calculatedBalance: number;
 }

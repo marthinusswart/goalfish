@@ -45,6 +45,7 @@ app.use('/api/v1/initiative/:id', initiative);
 app.use('/api/v1/initiative/ping', initiative);
 
 app.use('/api/v1/underlyingAccount', underlyingAccount);
+app.use('/api/v1/underlyingAccount/reconcile', underlyingAccount);
 app.use('/api/v1/underlyingAccount/:id', underlyingAccount);
 app.use('/api/v1/underlyingAccount/ping', underlyingAccount);
 
