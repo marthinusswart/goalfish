@@ -18,6 +18,7 @@ var journal = require('./routes/journal/journal');
 var posting = require('./routes/posting/posting');
 var transaction = require('./routes/transaction/transaction');
 var maintenance = require('./routes/maintenance/maintenance');
+var key = require('./routes/key/key');
 
 var app = express();
 
@@ -73,6 +74,10 @@ app.use('/api/v1/maintenance/journal/markAllAsPosted', maintenance);
 app.use('/api/v1/maintenance/journal/markAllAsNotPosted', maintenance);
 app.use('/api/v1/maintenance/transaction/markAllAsNotPosted', maintenance);
 app.use('/api/v1/maintenance/ping', maintenance);
+
+app.use('/api/v1/key', key);
+app.use('/api/v1/key/:name', key);
+app.use('/api/v1/key/ping', key);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -1,7 +1,8 @@
 //import postingServiceLib = require('../../services/posting/posting.service');
 import transactionDataAccessLib = require('../../dataaccess/transaction/transactionDataAccess');
 import transactionLib = require('../../models/transaction/transaction');
-import budgetLib = require('../../models/budget/budget');
+//import budgetLib = require('../../models/budget/budget');
+import { Budget } from '../../models/budget/budget';
 import budgetControllerLib = require('../../controllers/budget/budgetController');
 import budgetDataAccessLib = require('../../dataaccess/budget/budgetDataAccess');
 
@@ -9,7 +10,7 @@ import async = require('async');
 
 export class BudgetService {
     //postingService: postingServiceLib.PostingService;
-    budget: budgetLib.Budget;
+    budget: Budget;
     budgetController: budgetControllerLib.BudgetController;
     budgetDataAccess: budgetDataAccessLib.BudgetDataAccess;
     transactionDataAccess: transactionDataAccessLib.TransactionDataAccess;
@@ -38,7 +39,7 @@ export class BudgetService {
 
                 async.whilst(() => { return count < budgets.length; },
                     (callbackWhilst) => {
-                        let budget: budgetLib.Budget = budgets[count];
+                        let budget: Budget = budgets[count];
                         count++;
                         budget.isReconciled = false;
                         let filter = { referenceId: budget.id };
