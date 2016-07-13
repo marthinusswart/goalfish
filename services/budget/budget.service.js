@@ -1,9 +1,6 @@
 "use strict";
-//import transactionDataAccessLib = require('../../dataaccess/transaction/transactionDataAccess');
 var transactionDataAccess_1 = require('../../dataaccess/transaction/transactionDataAccess');
-//import budgetControllerLib = require('../../controllers/budget/budgetController');
 var budgetController_1 = require('../../controllers/budget/budgetController');
-//import budgetDataAccessLib = require('../../dataaccess/budget/budgetDataAccess');
 var budgetDataAccess_1 = require('../../dataaccess/budget/budgetDataAccess');
 var async = require('async');
 var BudgetService = (function () {

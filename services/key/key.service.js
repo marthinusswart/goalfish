@@ -19,7 +19,6 @@ var KeyService = (function () {
                     key.name = name;
                     key.key = 1;
                     key.externalRef = "";
-                    console.log("Created key " + key.name + " " + key.key);
                     self.keyDataAccess.save(key, function (err, key) {
                         callback(err, key);
                     });
@@ -27,7 +26,6 @@ var KeyService = (function () {
                 else {
                     key = keys[0];
                     key.key = key.key + 1;
-                    console.log("Loaded key " + key.name + " " + key.key);
                     self.keyDataAccess.update(key.externalRef, key, function (err, key) {
                         callback(err, key);
                     });
