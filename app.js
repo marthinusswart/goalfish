@@ -41,6 +41,7 @@ app.use('/api/v1/member/:id', member);
 app.use('/api/v1/member/ping', member);
 
 app.use('/api/v1/initiative', initiative);
+app.use('/api/v1/initiative/reconcile', budget);
 app.use('/api/v1/initiative/:id', initiative);
 app.use('/api/v1/initiative/ping', initiative);
 
@@ -50,6 +51,7 @@ app.use('/api/v1/underlyingAccount/:id', underlyingAccount);
 app.use('/api/v1/underlyingAccount/ping', underlyingAccount);
 
 app.use('/api/v1/budget', budget);
+app.use('/api/v1/budget/reconcile', budget);
 app.use('/api/v1/budget/:id', budget);
 app.use('/api/v1/budget/ping', budget);
 

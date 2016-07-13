@@ -1,5 +1,5 @@
 "use strict";
-var postingServiceLib = require('../../services/posting/posting.service');
+//import postingServiceLib = require('../../services/posting/posting.service');
 var postingDataAccessLib = require('../../dataaccess/posting/postingDataAccess');
 var accountControllerLib = require('../../controllers/underlyingaccount/underlyingAccountController');
 var accountDataAccessLib = require('../../dataaccess/underlyingaccount/underlyingAccountDataAccess');
@@ -10,7 +10,7 @@ var UnderlyingAccountService = (function () {
     }
     UnderlyingAccountService.prototype.init = function () {
         if (!this.wasInitialised) {
-            this.postingService = new postingServiceLib.PostingService();
+            //this.postingService = new postingServiceLib.PostingService();
             this.underlyingAccountController = new accountControllerLib.UnderlyingAccountController();
             this.underlyingAccountDataAccess = new accountDataAccessLib.UnderlyingAccountDataAccess();
             this.postingDataAccess = new postingDataAccessLib.PostingDataAccess();
@@ -37,7 +37,7 @@ var UnderlyingAccountService = (function () {
                             postings.forEach(function (posting) {
                                 balance_1 += posting.amount;
                             });
-                            account.calculatedBalance = balance_1;
+                            account.calculatedBalance = parseFloat(balance_1.toFixed(2));
                             if (account.balance === account.calculatedBalance) {
                                 account.isReconciled = true;
                             }

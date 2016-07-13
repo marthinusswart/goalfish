@@ -1,5 +1,5 @@
 
-import postingServiceLib = require('../../services/posting/posting.service');
+//import postingServiceLib = require('../../services/posting/posting.service');
 import postingDataAccessLib = require('../../dataaccess/posting/postingDataAccess');
 import postingLib = require('../../models/posting/posting');
 import accountLib = require('../../models/underlyingaccount/underlyingaccount');
@@ -9,7 +9,7 @@ import accountDataAccessLib = require('../../dataaccess/underlyingaccount/underl
 import async = require('async');
 
 export class UnderlyingAccountService {
-    postingService: postingServiceLib.PostingService;
+    //postingService: postingServiceLib.PostingService;
     underlyingAccount: accountLib.UnderlyingAccount;
     underlyingAccountController: accountControllerLib.UnderlyingAccountController;
     underlyingAccountDataAccess: accountDataAccessLib.UnderlyingAccountDataAccess;
@@ -18,7 +18,7 @@ export class UnderlyingAccountService {
 
     init() {
         if (!this.wasInitialised) {
-            this.postingService = new postingServiceLib.PostingService();
+            //this.postingService = new postingServiceLib.PostingService();
             this.underlyingAccountController = new accountControllerLib.UnderlyingAccountController();
             this.underlyingAccountDataAccess = new accountDataAccessLib.UnderlyingAccountDataAccess();
             this.postingDataAccess = new postingDataAccessLib.PostingDataAccess();
@@ -51,7 +51,7 @@ export class UnderlyingAccountService {
                                 postings.forEach((posting: postingLib.Posting) => {
                                     balance += posting.amount;
                                 });
-                                account.calculatedBalance = balance;
+                                account.calculatedBalance = parseFloat(balance.toFixed(2));
                                 if (account.balance === account.calculatedBalance) {
                                     account.isReconciled = true;
                                 }

@@ -1,14 +1,17 @@
 "use strict";
 var express = require('express');
 var initiativeDataAccess = require('../../dataaccess/initiative/initiativeDataAccess');
+var initiativeServiceLib = require('../../services/initiative/initiative.service');
 var router = express.Router();
 var initiativeDataAcccessService = new initiativeDataAccess.InitiativeDataAccess();
+var initiativeService = new initiativeServiceLib.InitativeService();
+initiativeDataAcccessService.init();
+initiativeService.init();
 router
     .get('/', function (req, res, next) {
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    initiativeDataAcccessService.init();
     initiativeDataAcccessService.find(function (err, initiatives) {
         res.status(200).send(initiatives);
     });
@@ -17,7 +20,6 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    initiativeDataAcccessService.init();
     initiativeDataAcccessService.findById(req.params.id, function (err, initiative) {
         res.status(200).send(initiative);
     });
@@ -26,7 +28,6 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    initiativeDataAcccessService.init();
     initiativeDataAcccessService.update(req.params.id, req.body, function (err, initiative) {
         res.status(200).send(initiative);
     });
@@ -35,10 +36,22 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    initiativeDataAcccessService.init();
     initiativeDataAcccessService.save(req.body, function (err, initiative) {
         if (err === null) {
             res.status(201).send(initiative);
+        }
+        else {
+            res.status(500).send(err.message);
+        }
+    });
+})
+    .post('/reconcile', function (req, res, next) {
+    /** Not secure at all, but great for local usage only */
+    res.header("Access-Control-Allow-Origin", "*");
+    /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+    initiativeService.reconcileInitiatives(function (err, initiatives) {
+        if (err === null) {
+            res.status(200).send(initiatives);
         }
         else {
             res.status(500).send(err.message);
@@ -55,6 +68,15 @@ router
     res.status(200).send("OK");
 })
     .options('/:id', function (req, res, next) {
+    /** Not secure at all, but great for local usage only */
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT");
+    res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept");
+    res.header("Content-Type", "application/json");
+    /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+    res.status(200).send("OK");
+})
+    .options('/reconcile', function (req, res, next) {
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT");

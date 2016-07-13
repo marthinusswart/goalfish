@@ -58,9 +58,7 @@ var UnderlyingAccountDataAccess = (function () {
         if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var findFunc = (function () {
-            var underlyingAccountSchema = self.underlyingAccountController.createUnderlyingAccountMongooseSchema();
-            var underlyingAccountModel = self.connection.model("underlyingaccount", underlyingAccountSchema, "underlyingaccount");
-            underlyingAccountModel.findById(id, function (err, underlyingAccount) {
+            self.underlyingAccountModel.findById(id, function (err, underlyingAccount) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -84,10 +82,8 @@ var UnderlyingAccountDataAccess = (function () {
     UnderlyingAccountDataAccess.prototype.save = function (newUnderlyingAccount, callback, closeConnection) {
         if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
-        this.connection.once("open", function () {
-            var underlyingAccountSchema = self.underlyingAccountController.createUnderlyingAccountMongooseSchema();
-            var underlyingAccountModel = self.connection.model("underlyingaccount", underlyingAccountSchema, "underlyingaccount");
-            var mongooseUnderlyingAccount = new underlyingAccountModel();
+        var saveFunc = (function () {
+            var mongooseUnderlyingAccount = new self.underlyingAccountModel();
             self.underlyingAccountController.translateUnderlyingAccountToMongoose(newUnderlyingAccount, mongooseUnderlyingAccount);
             mongooseUnderlyingAccount.save(function (err, result) {
                 if (err) {
@@ -102,16 +98,21 @@ var UnderlyingAccountDataAccess = (function () {
                 }
             });
         });
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
+            this.connection.once("open", saveFunc);
+            this.connection.open("localhost", "goalfish");
+        }
+        else {
+            saveFunc();
+        }
     };
     UnderlyingAccountDataAccess.prototype.update = function (id, newUnderlyingAccount, callback, closeConnection) {
         if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
-        this.connection.once("open", function () {
-            var underlyingAccountSchema = self.underlyingAccountController.createUnderlyingAccountMongooseSchema();
-            var underlyingAccountModel = self.connection.model("underlyingaccount", underlyingAccountSchema, "underlyingaccount");
-            var mongooseUnderlyingAccount = new underlyingAccountModel();
+        var updateFunc = (function () {
+            var mongooseUnderlyingAccount = new self.underlyingAccountModel();
             self.underlyingAccountController.translateUnderlyingAccountToMongoose(newUnderlyingAccount, mongooseUnderlyingAccount);
-            underlyingAccountModel.findOneAndUpdate({ "_id": mongooseUnderlyingAccount._id }, mongooseUnderlyingAccount, { new: true }, function (err, result) {
+            self.underlyingAccountModel.findOneAndUpdate({ "_id": mongooseUnderlyingAccount._id }, mongooseUnderlyingAccount, { new: true }, function (err, result) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -124,6 +125,13 @@ var UnderlyingAccountDataAccess = (function () {
                 }
             });
         });
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
+            this.connection.once("open", updateFunc);
+            this.connection.open("localhost", "goalfish");
+        }
+        else {
+            updateFunc();
+        }
     };
     UnderlyingAccountDataAccess.prototype.onConnectionOpen = function () {
         this.isConnectionOpen = true;

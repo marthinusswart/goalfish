@@ -10,4 +10,6 @@ export class Initiative {
     instalmentAmount: number;
     frequency: string;
     memberId: string;
+    isReconciled: boolean;
+    calculatedBalance: number;
 }
