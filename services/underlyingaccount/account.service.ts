@@ -14,15 +14,22 @@ export class UnderlyingAccountService {
     underlyingAccountController: accountControllerLib.UnderlyingAccountController;
     underlyingAccountDataAccess: accountDataAccessLib.UnderlyingAccountDataAccess;
     postingDataAccess: postingDataAccessLib.PostingDataAccess;
+    wasInitialised: boolean = false;
+
+    init() {
+        if (!this.wasInitialised) {
+            this.postingService = new postingServiceLib.PostingService();
+            this.underlyingAccountController = new accountControllerLib.UnderlyingAccountController();
+            this.underlyingAccountDataAccess = new accountDataAccessLib.UnderlyingAccountDataAccess();
+            this.postingDataAccess = new postingDataAccessLib.PostingDataAccess();
+            this.underlyingAccountDataAccess.init();
+            this.postingDataAccess.init();
+            this.wasInitialised = true;
+        }
+    }
 
     reconcileAccounts(callback) {
         let self = this;
-        this.postingService = new postingServiceLib.PostingService();
-        this.underlyingAccountController = new accountControllerLib.UnderlyingAccountController();
-        this.underlyingAccountDataAccess = new accountDataAccessLib.UnderlyingAccountDataAccess();
-        this.postingDataAccess = new postingDataAccessLib.PostingDataAccess();
-        this.underlyingAccountDataAccess.init();
-        this.postingDataAccess.init();
 
         this.underlyingAccountDataAccess.find(findCallback);
 
@@ -41,13 +48,13 @@ export class UnderlyingAccountService {
                         function findPostingCallback(err, postings) {
                             if (err === null) {
                                 let balance: number = 0;
-                                postings.forEach((posting: postingLib.Posting) => {                                    
+                                postings.forEach((posting: postingLib.Posting) => {
                                     balance += posting.amount;
                                 });
                                 account.calculatedBalance = balance;
                                 if (account.balance === account.calculatedBalance) {
-                                    account.isReconciled = true;                                    
-                                } 
+                                    account.isReconciled = true;
+                                }
                             } else {
                                 console.log("Error in finding postings");
                             }

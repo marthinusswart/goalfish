@@ -6,15 +6,21 @@ var accountDataAccessLib = require('../../dataaccess/underlyingaccount/underlyin
 var async = require('async');
 var UnderlyingAccountService = (function () {
     function UnderlyingAccountService() {
+        this.wasInitialised = false;
     }
+    UnderlyingAccountService.prototype.init = function () {
+        if (!this.wasInitialised) {
+            this.postingService = new postingServiceLib.PostingService();
+            this.underlyingAccountController = new accountControllerLib.UnderlyingAccountController();
+            this.underlyingAccountDataAccess = new accountDataAccessLib.UnderlyingAccountDataAccess();
+            this.postingDataAccess = new postingDataAccessLib.PostingDataAccess();
+            this.underlyingAccountDataAccess.init();
+            this.postingDataAccess.init();
+            this.wasInitialised = true;
+        }
+    };
     UnderlyingAccountService.prototype.reconcileAccounts = function (callback) {
         var self = this;
-        this.postingService = new postingServiceLib.PostingService();
-        this.underlyingAccountController = new accountControllerLib.UnderlyingAccountController();
-        this.underlyingAccountDataAccess = new accountDataAccessLib.UnderlyingAccountDataAccess();
-        this.postingDataAccess = new postingDataAccessLib.PostingDataAccess();
-        this.underlyingAccountDataAccess.init();
-        this.postingDataAccess.init();
         this.underlyingAccountDataAccess.find(findCallback);
         function findCallback(err, accounts) {
             if (err === null) {

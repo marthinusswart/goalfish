@@ -6,6 +6,7 @@ var router = express.Router();
 var underlyingAccountDataAcccessService = new underlyingAccountDataAccess.UnderlyingAccountDataAccess();
 var underlyingAccountService = new underlyingAccountServiceLib.UnderlyingAccountService();
 underlyingAccountDataAcccessService.init();
+underlyingAccountService.init();
 router
     .get('/', function (req, res, next) {
     /** Not secure at all, but great for local usage only */

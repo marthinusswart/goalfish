@@ -7,6 +7,7 @@ let router = express.Router();
 let underlyingAccountDataAcccessService = new underlyingAccountDataAccess.UnderlyingAccountDataAccess();
 let underlyingAccountService = new underlyingAccountServiceLib.UnderlyingAccountService();
 underlyingAccountDataAcccessService.init();
+underlyingAccountService.init();
 
 router
     .get('/', function (req, res, next) {
