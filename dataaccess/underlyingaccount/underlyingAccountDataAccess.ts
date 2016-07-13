@@ -34,7 +34,7 @@ export class UnderlyingAccountDataAccess {
         }
     }
 
-    find(callback) {
+    find(callback, closeConnection: boolean = false) {
         var self = this;
         var findFunc = (function () {
 
@@ -43,7 +43,9 @@ export class UnderlyingAccountDataAccess {
                     self.connection.close();
                     callback(err);
                 } else {
-                    self.connection.close()
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
                     callback(null, self.underlyingAccountController.translateMongooseArrayToUnderlyingAccountArray(underlyingAccounts));
                 }
             });
@@ -58,9 +60,9 @@ export class UnderlyingAccountDataAccess {
         }
     }
 
-    findById(id: string, callback) {
+    findById(id: string, callback, closeConnection: boolean = false) {
         var self = this;
-        this.connection.once("open", function () {
+        var findFunc = (function () {
 
             let underlyingAccountSchema = self.underlyingAccountController.createUnderlyingAccountMongooseSchema();
             var underlyingAccountModel = self.connection.model("underlyingaccount", underlyingAccountSchema, "underlyingaccount");
@@ -69,16 +71,24 @@ export class UnderlyingAccountDataAccess {
                     self.connection.close();
                     callback(err);
                 } else {
-                    self.connection.close()
-                    console.log(underlyingAccount);
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
                     callback(null, self.underlyingAccountController.translateMongooseToUnderlyingAccount(underlyingAccount));
                 }
             });
 
         });
+
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        } else {
+            findFunc();
+        }
     }
 
-    save(newUnderlyingAccount: underlyingAccount.UnderlyingAccount, callback) {
+    save(newUnderlyingAccount: underlyingAccount.UnderlyingAccount, callback, closeConnection: boolean = false) {
         var self = this;
         this.connection.once("open", function () {
 
@@ -92,8 +102,9 @@ export class UnderlyingAccountDataAccess {
                     self.connection.close();
                     callback(err);
                 } else {
-                    self.connection.close()
-                    console.log(result);
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
                     callback(null, self.underlyingAccountController.translateMongooseToUnderlyingAccount(result));
                 }
             });
@@ -101,7 +112,7 @@ export class UnderlyingAccountDataAccess {
         });
     }
 
-    update(id: string, newUnderlyingAccount: underlyingAccount.UnderlyingAccount, callback) {
+    update(id: string, newUnderlyingAccount: underlyingAccount.UnderlyingAccount, callback, closeConnection: boolean = false) {
         var self = this;
         this.connection.once("open", function () {
 
@@ -115,8 +126,9 @@ export class UnderlyingAccountDataAccess {
                     self.connection.close();
                     callback(err);
                 } else {
-                    self.connection.close()
-                    console.log(result);
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
                     callback(null, self.underlyingAccountController.translateMongooseToUnderlyingAccount(result));
                 }
             });

@@ -29,7 +29,8 @@ var UnderlyingAccountDataAccess = (function () {
             throw new ReferenceError("Can't initialise again");
         }
     };
-    UnderlyingAccountDataAccess.prototype.find = function (callback) {
+    UnderlyingAccountDataAccess.prototype.find = function (callback, closeConnection) {
+        if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var findFunc = (function () {
             self.underlyingAccountModel.find({}, function (err, underlyingAccounts) {
@@ -38,7 +39,9 @@ var UnderlyingAccountDataAccess = (function () {
                     callback(err);
                 }
                 else {
-                    self.connection.close();
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
                     callback(null, self.underlyingAccountController.translateMongooseArrayToUnderlyingAccountArray(underlyingAccounts));
                 }
             });
@@ -51,9 +54,10 @@ var UnderlyingAccountDataAccess = (function () {
             findFunc();
         }
     };
-    UnderlyingAccountDataAccess.prototype.findById = function (id, callback) {
+    UnderlyingAccountDataAccess.prototype.findById = function (id, callback, closeConnection) {
+        if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
-        this.connection.once("open", function () {
+        var findFunc = (function () {
             var underlyingAccountSchema = self.underlyingAccountController.createUnderlyingAccountMongooseSchema();
             var underlyingAccountModel = self.connection.model("underlyingaccount", underlyingAccountSchema, "underlyingaccount");
             underlyingAccountModel.findById(id, function (err, underlyingAccount) {
@@ -62,14 +66,23 @@ var UnderlyingAccountDataAccess = (function () {
                     callback(err);
                 }
                 else {
-                    self.connection.close();
-                    console.log(underlyingAccount);
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
                     callback(null, self.underlyingAccountController.translateMongooseToUnderlyingAccount(underlyingAccount));
                 }
             });
         });
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        }
+        else {
+            findFunc();
+        }
     };
-    UnderlyingAccountDataAccess.prototype.save = function (newUnderlyingAccount, callback) {
+    UnderlyingAccountDataAccess.prototype.save = function (newUnderlyingAccount, callback, closeConnection) {
+        if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         this.connection.once("open", function () {
             var underlyingAccountSchema = self.underlyingAccountController.createUnderlyingAccountMongooseSchema();
@@ -82,14 +95,16 @@ var UnderlyingAccountDataAccess = (function () {
                     callback(err);
                 }
                 else {
-                    self.connection.close();
-                    console.log(result);
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
                     callback(null, self.underlyingAccountController.translateMongooseToUnderlyingAccount(result));
                 }
             });
         });
     };
-    UnderlyingAccountDataAccess.prototype.update = function (id, newUnderlyingAccount, callback) {
+    UnderlyingAccountDataAccess.prototype.update = function (id, newUnderlyingAccount, callback, closeConnection) {
+        if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         this.connection.once("open", function () {
             var underlyingAccountSchema = self.underlyingAccountController.createUnderlyingAccountMongooseSchema();
@@ -102,8 +117,9 @@ var UnderlyingAccountDataAccess = (function () {
                     callback(err);
                 }
                 else {
-                    self.connection.close();
-                    console.log(result);
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
                     callback(null, self.underlyingAccountController.translateMongooseToUnderlyingAccount(result));
                 }
             });

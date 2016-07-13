@@ -5,12 +5,12 @@ var underlyingAccountServiceLib = require('../../services/underlyingaccount/acco
 var router = express.Router();
 var underlyingAccountDataAcccessService = new underlyingAccountDataAccess.UnderlyingAccountDataAccess();
 var underlyingAccountService = new underlyingAccountServiceLib.UnderlyingAccountService();
+underlyingAccountDataAcccessService.init();
 router
     .get('/', function (req, res, next) {
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    underlyingAccountDataAcccessService.init();
     underlyingAccountDataAcccessService.find(function (err, underlyingAccounts) {
         res.status(200).send(underlyingAccounts);
     });
@@ -19,7 +19,6 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    underlyingAccountDataAcccessService.init();
     underlyingAccountDataAcccessService.findById(req.params.id, function (err, underlyingAccount) {
         res.status(200).send(underlyingAccount);
     });
@@ -28,7 +27,6 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    underlyingAccountDataAcccessService.init();
     underlyingAccountDataAcccessService.update(req.params.id, req.body, function (err, underlyingAccount) {
         res.status(200).send(underlyingAccount);
     });
@@ -37,7 +35,6 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    underlyingAccountDataAcccessService.init();
     underlyingAccountDataAcccessService.save(req.body, function (err, underlyingAccount) {
         if (err === null) {
             res.status(201).send(underlyingAccount);
