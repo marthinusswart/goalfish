@@ -1,8 +1,10 @@
 "use strict";
-//import postingServiceLib = require('../../services/posting/posting.service');
-var transactionDataAccessLib = require('../../dataaccess/transaction/transactionDataAccess');
-var budgetControllerLib = require('../../controllers/budget/budgetController');
-var budgetDataAccessLib = require('../../dataaccess/budget/budgetDataAccess');
+//import transactionDataAccessLib = require('../../dataaccess/transaction/transactionDataAccess');
+var transactionDataAccess_1 = require('../../dataaccess/transaction/transactionDataAccess');
+//import budgetControllerLib = require('../../controllers/budget/budgetController');
+var budgetController_1 = require('../../controllers/budget/budgetController');
+//import budgetDataAccessLib = require('../../dataaccess/budget/budgetDataAccess');
+var budgetDataAccess_1 = require('../../dataaccess/budget/budgetDataAccess');
 var async = require('async');
 var BudgetService = (function () {
     function BudgetService() {
@@ -11,9 +13,9 @@ var BudgetService = (function () {
     BudgetService.prototype.init = function () {
         if (!this.wasInitialised) {
             //this.postingService = new postingServiceLib.PostingService();
-            this.budgetController = new budgetControllerLib.BudgetController();
-            this.budgetDataAccess = new budgetDataAccessLib.BudgetDataAccess();
-            this.transactionDataAccess = new transactionDataAccessLib.TransactionDataAccess();
+            this.budgetController = new budgetController_1.BudgetController();
+            this.budgetDataAccess = new budgetDataAccess_1.BudgetDataAccess();
+            this.transactionDataAccess = new transactionDataAccess_1.TransactionDataAccess();
             this.budgetDataAccess.init();
             this.transactionDataAccess.init();
             this.wasInitialised = true;

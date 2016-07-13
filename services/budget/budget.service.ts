@@ -1,27 +1,24 @@
-//import postingServiceLib = require('../../services/posting/posting.service');
-import transactionDataAccessLib = require('../../dataaccess/transaction/transactionDataAccess');
-import transactionLib = require('../../models/transaction/transaction');
-//import budgetLib = require('../../models/budget/budget');
+import { TransactionDataAccess } from '../../dataaccess/transaction/transactionDataAccess';
+import { Transaction } from '../../models/transaction/transaction';
 import { Budget } from '../../models/budget/budget';
-import budgetControllerLib = require('../../controllers/budget/budgetController');
-import budgetDataAccessLib = require('../../dataaccess/budget/budgetDataAccess');
-
+import { BudgetController } from '../../controllers/budget/budgetController';
+import { BudgetDataAccess } from '../../dataaccess/budget/budgetDataAccess';
 import async = require('async');
 
 export class BudgetService {
     //postingService: postingServiceLib.PostingService;
     budget: Budget;
-    budgetController: budgetControllerLib.BudgetController;
-    budgetDataAccess: budgetDataAccessLib.BudgetDataAccess;
-    transactionDataAccess: transactionDataAccessLib.TransactionDataAccess;
+    budgetController: BudgetController;
+    budgetDataAccess: BudgetDataAccess;
+    transactionDataAccess: TransactionDataAccess;
     wasInitialised: boolean = false;
 
     init() {
         if (!this.wasInitialised) {
             //this.postingService = new postingServiceLib.PostingService();
-            this.budgetController = new budgetControllerLib.BudgetController();
-            this.budgetDataAccess = new budgetDataAccessLib.BudgetDataAccess();
-            this.transactionDataAccess = new transactionDataAccessLib.TransactionDataAccess();
+            this.budgetController = new BudgetController();
+            this.budgetDataAccess = new BudgetDataAccess();
+            this.transactionDataAccess = new TransactionDataAccess();
             this.budgetDataAccess.init();
             this.transactionDataAccess.init();
             this.wasInitialised = true;
@@ -48,7 +45,7 @@ export class BudgetService {
                         function findTransactionCallback(err, transactions) {
                             if (err === null) {
                                 let balance: number = 0;
-                                transactions.forEach((transaction: transactionLib.Transaction) => {
+                                transactions.forEach((transaction: Transaction) => {
                                     balance += transaction.amount;
                                 });
                                 budget.calculatedBalance = parseFloat(balance.toFixed(2));;
