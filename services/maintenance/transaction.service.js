@@ -9,7 +9,7 @@ var TransactionMaintenanceService = (function () {
     };
     TransactionMaintenanceService.prototype.markAllAsPosted = function (callback) {
         var self = this;
-        this.transactionDataAccess.find(function (err, transactions) {
+        this.transactionDataAccess.find([], function (err, transactions) {
             if (err === null) {
                 transactions.forEach(function (transaction) {
                     transaction.isPosted = "Y";
@@ -26,7 +26,7 @@ var TransactionMaintenanceService = (function () {
     };
     TransactionMaintenanceService.prototype.markAllAsNotPosted = function (callback) {
         var self = this;
-        this.transactionDataAccess.find(function (err, transactions) {
+        this.transactionDataAccess.find([], function (err, transactions) {
             if (err === null) {
                 transactions.forEach(function (transaction) {
                     transaction.isPosted = "N";

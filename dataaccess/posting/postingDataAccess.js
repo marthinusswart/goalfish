@@ -35,7 +35,8 @@ var PostingDataAccess = (function () {
             this.connection.close();
         }
     };
-    PostingDataAccess.prototype.find = function (callback) {
+    PostingDataAccess.prototype.find = function (accounts, callback, closeConnection) {
+        if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var findFunc = (function () {
             self.postingModel.find({}, function (err, postings) {
@@ -44,7 +45,9 @@ var PostingDataAccess = (function () {
                     callback(err);
                 }
                 else {
-                    self.connection.close();
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
                     callback(null, self.postingController.translateMongooseArrayToPostingArray(postings));
                 }
             });

@@ -15,7 +15,7 @@ router
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-let token = req.headers['x-access-token'];
+        let token = req.headers['x-access-token'];
         let memberId = token;
         underlyingAccountDataAcccessService.find(memberId, function (err, underlyingAccounts) {
             res.status(200).send(underlyingAccounts);
@@ -36,7 +36,7 @@ let token = req.headers['x-access-token'];
         /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
- 
+
         underlyingAccountDataAcccessService.update(req.params.id, req.body, function (err, underlyingAccount) {
             res.status(200).send(underlyingAccount);
         });
@@ -45,7 +45,7 @@ let token = req.headers['x-access-token'];
         /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-  
+
         underlyingAccountDataAcccessService.save(req.body, function (err, underlyingAccount) {
             if (err === null) {
                 res.status(201).send(underlyingAccount);

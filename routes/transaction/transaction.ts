@@ -1,9 +1,9 @@
 import express = require('express');
 import models = require('../../models/transaction/transaction');
-import transactionDataAccess = require('../../dataaccess/transaction/transactionDataAccess');
+import { TransactionDataAccess } from '../../dataaccess/transaction/transactionDataAccess';
 
 let router = express.Router();
-let transactionDataAcccessService = new transactionDataAccess.TransactionDataAccess();
+let transactionDataAcccessService = new TransactionDataAccess();
 transactionDataAcccessService.init();
 
 router
@@ -12,7 +12,10 @@ router
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
     
-        transactionDataAcccessService.find(function (err, transactions) {
+    let token = req.headers['x-access-token'];
+        let memberId = token;
+          let accounts:string[] = ["ACC0001","ACC0002","ACC0003","ACC0004","ACC0005"];
+        transactionDataAcccessService.find(accounts, function (err, transactions) {
             res.status(200).send(transactions);
         });
 
@@ -54,7 +57,7 @@ router
         /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Methods", "GET, POST, PUT");
-        res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept");
+        res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept,x-access-token");
         res.header("Content-Type", "application/json");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
         res.status(200).send("OK");

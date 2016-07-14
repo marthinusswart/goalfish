@@ -1,11 +1,11 @@
 "use strict";
-var keyDataAccessLib = require('../../dataaccess/key/keyDataAccess');
-var keyLib = require('../../models/key/key');
+var keyDataAccess_1 = require('../../dataaccess/key/keyDataAccess');
+var key_1 = require('../../models/key/key');
 var KeyService = (function () {
     function KeyService() {
     }
     KeyService.prototype.init = function () {
-        this.keyDataAccess = new keyDataAccessLib.KeyDataAccess();
+        this.keyDataAccess = new keyDataAccess_1.KeyDataAccess();
         this.keyDataAccess.init();
     };
     KeyService.prototype.getNextKey = function (name, callback) {
@@ -15,7 +15,7 @@ var KeyService = (function () {
             if (err === null) {
                 var key = void 0;
                 if (keys.length === 0) {
-                    key = new keyLib.Key;
+                    key = new key_1.Key;
                     key.name = name;
                     key.key = 1;
                     key.externalRef = "";

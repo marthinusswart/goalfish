@@ -41,7 +41,7 @@ export class PostingDataAccess {
         }
     }
 
-    find(callback) {
+    find(accounts: string[], callback, closeConnection: boolean = false) {
         var self = this;
         var findFunc = (function () {
 
@@ -50,7 +50,9 @@ export class PostingDataAccess {
                     self.connection.close();
                     callback(err);
                 } else {
-                    self.connection.close()
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
                     callback(null, self.postingController.translateMongooseArrayToPostingArray(postings));
                 }
             });

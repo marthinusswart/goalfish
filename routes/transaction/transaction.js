@@ -1,15 +1,18 @@
 "use strict";
 var express = require('express');
-var transactionDataAccess = require('../../dataaccess/transaction/transactionDataAccess');
+var transactionDataAccess_1 = require('../../dataaccess/transaction/transactionDataAccess');
 var router = express.Router();
-var transactionDataAcccessService = new transactionDataAccess.TransactionDataAccess();
+var transactionDataAcccessService = new transactionDataAccess_1.TransactionDataAccess();
 transactionDataAcccessService.init();
 router
     .get('/', function (req, res, next) {
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    transactionDataAcccessService.find(function (err, transactions) {
+    var token = req.headers['x-access-token'];
+    var memberId = token;
+    var accounts = ["ACC0001", "ACC0002", "ACC0003", "ACC0004", "ACC0005"];
+    transactionDataAcccessService.find(accounts, function (err, transactions) {
         res.status(200).send(transactions);
     });
 })
@@ -46,7 +49,7 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT");
-    res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept");
+    res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept,x-access-token");
     res.header("Content-Type", "application/json");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
     res.status(200).send("OK");

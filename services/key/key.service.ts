@@ -1,35 +1,35 @@
-import keyDataAccessLib = require('../../dataaccess/key/keyDataAccess');
-import keyLib = require('../../models/key/key');
+import { KeyDataAccess } from '../../dataaccess/key/keyDataAccess';
+import { Key } from '../../models/key/key';
 
 export class KeyService {
-    keyDataAccess: keyDataAccessLib.KeyDataAccess;
+    keyDataAccess: KeyDataAccess;
 
     init() {
-        this.keyDataAccess = new keyDataAccessLib.KeyDataAccess();
+        this.keyDataAccess = new KeyDataAccess();
         this.keyDataAccess.init();
     }
 
     getNextKey(name: string, callback) {
         var filter = { name: name };
         var self = this;
-        this.keyDataAccess.findByField(filter, function (err, keys: keyLib.Key[]) {
+        this.keyDataAccess.findByField(filter, function (err, keys: Key[]) {
             if (err === null) {
-                let key: keyLib.Key;
+                let key: Key;
 
                 if (keys.length === 0) {
-                    key = new keyLib.Key;
+                    key = new Key;
                     key.name = name;
                     key.key = 1;
                     key.externalRef = "";
 
-                    self.keyDataAccess.save(key, function (err, key: keyLib.Key) {
+                    self.keyDataAccess.save(key, function (err, key: Key) {
                         callback(err, key);
                     });
                 } else {
                     key = keys[0];
 
                     key.key = key.key + 1;
-                    self.keyDataAccess.update(key.externalRef, key, function (err, key: keyLib.Key) {
+                    self.keyDataAccess.update(key.externalRef, key, function (err, key: Key) {
                         callback(err, key);
                     });
                 }

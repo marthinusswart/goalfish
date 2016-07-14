@@ -36,14 +36,14 @@ var TransactionDataAccess = (function () {
             this.connection.close();
         }
     };
-    TransactionDataAccess.prototype.find = function (callback, closeConnection) {
+    TransactionDataAccess.prototype.find = function (accounts, callback, closeConnection) {
         if (closeConnection === void 0) { closeConnection = false; }
         if (!this.wasInitialised) {
             throw new ReferenceError("Transaction Data Access module was not initialised");
         }
         var self = this;
         var findFunc = (function () {
-            self.transactionModel.find({}, function (err, transactions) {
+            self.transactionModel.find({ underlyingAccount: { $in: accounts } }, function (err, transactions) {
                 if (err) {
                     self.connection.close();
                     callback(err);

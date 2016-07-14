@@ -45,7 +45,7 @@ export class TransactionDataAccess {
         }
     }
 
-    find(callback, closeConnection: boolean = false) {
+    find(accounts:string[], callback, closeConnection: boolean = false) {
         if (!this.wasInitialised) {
             throw new ReferenceError("Transaction Data Access module was not initialised");
         }
@@ -53,7 +53,7 @@ export class TransactionDataAccess {
         var self = this;
 
         var findFunc = (function () {
-            self.transactionModel.find({}, function (err, transactions) {
+            self.transactionModel.find({underlyingAccount: {$in: accounts}}, function (err, transactions) {
                 if (err) {
                     self.connection.close();
                     callback(err);

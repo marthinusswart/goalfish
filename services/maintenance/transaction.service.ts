@@ -11,7 +11,7 @@ export class TransactionMaintenanceService {
 
     markAllAsPosted(callback) {
         var self = this;
-        this.transactionDataAccess.find(function (err, transactions) {
+        this.transactionDataAccess.find([], function (err, transactions) {
             if (err === null) {
                 transactions.forEach((transaction: trxLib.Transaction) => {
                     transaction.isPosted = "Y";
@@ -28,7 +28,7 @@ export class TransactionMaintenanceService {
 
     markAllAsNotPosted(callback) {
         var self = this;
-        this.transactionDataAccess.find(function (err, transactions) {
+        this.transactionDataAccess.find([], function (err, transactions) {
             if (err === null) {
                 transactions.forEach((transaction: trxLib.Transaction) => {
                     transaction.isPosted = "N";
