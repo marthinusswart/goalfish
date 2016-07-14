@@ -1,15 +1,18 @@
 "use strict";
 var express = require('express');
-var journalDataAccess = require('../../dataaccess/journal/journalDataAccess');
+var journalDataAccess_1 = require('../../dataaccess/journal/journalDataAccess');
 var router = express.Router();
-var journalDataAcccessService = new journalDataAccess.JournalDataAccess();
+var journalDataAcccessService = new journalDataAccess_1.JournalDataAccess();
 journalDataAcccessService.init();
 router
     .get('/', function (req, res, next) {
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    journalDataAcccessService.find(function (err, journals) {
+    var token = req.headers['x-access-token'];
+    var memberId = token;
+    var accounts = ["ACC0001", "ACC0002", "ACC0003", "ACC0004", "ACC0005"];
+    journalDataAcccessService.find(accounts, function (err, journals) {
         res.status(200).send(journals);
     });
 })
@@ -46,7 +49,7 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT");
-    res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept");
+    res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept, x-access-token");
     res.header("Content-Type", "application/json");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
     res.status(200).send("OK");

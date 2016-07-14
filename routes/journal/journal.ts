@@ -1,9 +1,9 @@
 import express = require('express');
 import models = require('../../models/journal/journal');
-import journalDataAccess = require('../../dataaccess/journal/journalDataAccess');
+import { JournalDataAccess } from '../../dataaccess/journal/journalDataAccess';
 
 let router = express.Router();
-let journalDataAcccessService = new journalDataAccess.JournalDataAccess();
+let journalDataAcccessService = new JournalDataAccess();
 journalDataAcccessService.init();
 
 router
@@ -12,7 +12,10 @@ router
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
         
-        journalDataAcccessService.find(function (err, journals) {
+        let token = req.headers['x-access-token'];
+        let memberId = token;
+        let accounts:string[] = ["ACC0001","ACC0002","ACC0003","ACC0004","ACC0005"];
+        journalDataAcccessService.find(accounts, function (err, journals) {
             res.status(200).send(journals);
         });
 
@@ -54,7 +57,7 @@ router
         /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Methods", "GET, POST, PUT");
-        res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept");
+        res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept, x-access-token");
         res.header("Content-Type", "application/json");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 

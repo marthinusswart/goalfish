@@ -11,7 +11,7 @@ export class JournalMaintenanceService {
 
     markAllAsPosted(callback) {
         var self = this;
-        this.journalDataAccess.find(function (err, journals) {
+        this.journalDataAccess.find([], function (err, journals) {
             if (err === null) {
                 journals.forEach((journal: journalLib.Journal) => {
                     journal.isPosted = "Y";
@@ -28,7 +28,7 @@ export class JournalMaintenanceService {
 
     markAllAsNotPosted(callback) {
         var self = this;
-        this.journalDataAccess.find(function (err, journals) {
+        this.journalDataAccess.find([], function (err, journals) {
             if (err === null) {
                 journals.forEach((journal: journalLib.Journal) => {
                     journal.isPosted = "N";

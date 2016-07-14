@@ -36,15 +36,14 @@ var JournalDataAccess = (function () {
             this.connection.close();
         }
     };
-    JournalDataAccess.prototype.find = function (callback, closeConnection) {
+    JournalDataAccess.prototype.find = function (accounts, callback, closeConnection) {
         if (closeConnection === void 0) { closeConnection = false; }
         if (!this.wasInitialised) {
             throw new ReferenceError("Journal Data Access module was not initialised");
         }
         var self = this;
         var findFunc = (function () {
-            //self.onConnectionOpen();
-            self.journalModel.find({}, function (err, journals) {
+            self.journalModel.find({ accountNumber: { $in: accounts } }, function (err, journals) {
                 if (err) {
                     self.connection.close();
                     callback(err);

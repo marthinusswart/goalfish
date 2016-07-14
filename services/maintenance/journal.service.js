@@ -9,7 +9,7 @@ var JournalMaintenanceService = (function () {
     };
     JournalMaintenanceService.prototype.markAllAsPosted = function (callback) {
         var self = this;
-        this.journalDataAccess.find(function (err, journals) {
+        this.journalDataAccess.find([], function (err, journals) {
             if (err === null) {
                 journals.forEach(function (journal) {
                     journal.isPosted = "Y";
@@ -26,7 +26,7 @@ var JournalMaintenanceService = (function () {
     };
     JournalMaintenanceService.prototype.markAllAsNotPosted = function (callback) {
         var self = this;
-        this.journalDataAccess.find(function (err, journals) {
+        this.journalDataAccess.find([], function (err, journals) {
             if (err === null) {
                 journals.forEach(function (journal) {
                     journal.isPosted = "N";

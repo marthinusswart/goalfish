@@ -29,13 +29,11 @@ var InitiativeDataAccess = (function () {
             throw new ReferenceError("Can't initialise again");
         }
     };
-    InitiativeDataAccess.prototype.find = function (callback, closeConnection) {
+    InitiativeDataAccess.prototype.find = function (memberId, callback, closeConnection) {
         if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var findFunc = (function () {
-            //let initiativeSchema = self.initiativeController.createInitiativeMongooseSchema();
-            //var initiativeModel = self.connection.model("initiative", initiativeSchema, "initiative");
-            self.initiativeModel.find({}, function (err, initiatives) {
+            self.initiativeModel.find({ memberId: memberId }, function (err, initiatives) {
                 if (err) {
                     self.connection.close();
                     callback(err);

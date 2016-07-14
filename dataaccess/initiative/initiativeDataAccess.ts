@@ -36,13 +36,11 @@ export class InitiativeDataAccess {
 
     }
 
-    find(callback, closeConnection: boolean = false) {
+    find(memberId: string, callback, closeConnection: boolean = false) {
         var self = this;
         var findFunc = (function () {
 
-            //let initiativeSchema = self.initiativeController.createInitiativeMongooseSchema();
-            //var initiativeModel = self.connection.model("initiative", initiativeSchema, "initiative");
-            self.initiativeModel.find({}, function (err, initiatives) {
+            self.initiativeModel.find({memberId:memberId}, function (err, initiatives) {
                 if (err) {
                     self.connection.close();
                     callback(err);

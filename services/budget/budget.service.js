@@ -20,7 +20,7 @@ var BudgetService = (function () {
     };
     BudgetService.prototype.reconcileBudgets = function (callback) {
         var self = this;
-        this.budgetDataAccess.find(findCallback);
+        this.budgetDataAccess.find("MEM0001", findCallback);
         function findCallback(err, budgets) {
             if (err === null) {
                 var count_1 = 0;

@@ -1,9 +1,9 @@
 "use strict";
 var express = require('express');
-var underlyingAccountDataAccess = require('../../dataaccess/underlyingaccount/underlyingAccountDataAccess');
+var underlyingAccountDataAccess_1 = require('../../dataaccess/underlyingaccount/underlyingAccountDataAccess');
 var underlyingAccountServiceLib = require('../../services/underlyingaccount/account.service');
 var router = express.Router();
-var underlyingAccountDataAcccessService = new underlyingAccountDataAccess.UnderlyingAccountDataAccess();
+var underlyingAccountDataAcccessService = new underlyingAccountDataAccess_1.UnderlyingAccountDataAccess();
 var underlyingAccountService = new underlyingAccountServiceLib.UnderlyingAccountService();
 underlyingAccountDataAcccessService.init();
 underlyingAccountService.init();
@@ -12,7 +12,9 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    underlyingAccountDataAcccessService.find(function (err, underlyingAccounts) {
+    var token = req.headers['x-access-token'];
+    var memberId = token;
+    underlyingAccountDataAcccessService.find(memberId, function (err, underlyingAccounts) {
         res.status(200).send(underlyingAccounts);
     });
 })
@@ -49,7 +51,7 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT");
-    res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept");
+    res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept,x-access-token");
     res.header("Content-Type", "application/json");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
     res.status(200).send("OK");
@@ -71,7 +73,7 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT");
-    res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept");
+    res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept,x-access-token");
     res.header("Content-Type", "application/json");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
     res.status(200).send("OK");
@@ -80,7 +82,7 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT");
-    res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept");
+    res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept,x-access-token");
     res.header("Content-Type", "application/json");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
     res.status(200).send("OK");

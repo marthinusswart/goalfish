@@ -30,7 +30,7 @@ export class InitativeService {
     reconcileInitiatives(callback) {
         let self = this;
 
-        this.initiativeDataAccess.find(findCallback);
+        this.initiativeDataAccess.find("MEM0001", findCallback);
 
         function findCallback(err, initiatives) {
             if (err === null) {

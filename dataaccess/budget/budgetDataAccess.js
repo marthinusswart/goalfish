@@ -29,13 +29,11 @@ var BudgetDataAccess = (function () {
             throw new ReferenceError("Can't initialise again");
         }
     };
-    BudgetDataAccess.prototype.find = function (callback, closeConnection) {
+    BudgetDataAccess.prototype.find = function (memberId, callback, closeConnection) {
         if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var findFunc = (function () {
-            //let budgetSchema = self.budgetController.createBudgetMongooseSchema();
-            //var budgetModel = self.connection.model("budget", budgetSchema, "budget");
-            self.budgetModel.find({}, function (err, budgets) {
+            self.budgetModel.find({ memberId: memberId }, function (err, budgets) {
                 if (err) {
                     self.connection.close();
                     callback(err);

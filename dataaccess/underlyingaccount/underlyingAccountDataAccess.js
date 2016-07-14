@@ -29,11 +29,11 @@ var UnderlyingAccountDataAccess = (function () {
             throw new ReferenceError("Can't initialise again");
         }
     };
-    UnderlyingAccountDataAccess.prototype.find = function (callback, closeConnection) {
+    UnderlyingAccountDataAccess.prototype.find = function (memberId, callback, closeConnection) {
         if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var findFunc = (function () {
-            self.underlyingAccountModel.find({}, function (err, underlyingAccounts) {
+            self.underlyingAccountModel.find({ memberId: memberId }, function (err, underlyingAccounts) {
                 if (err) {
                     self.connection.close();
                     callback(err);

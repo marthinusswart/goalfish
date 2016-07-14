@@ -34,11 +34,11 @@ export class UnderlyingAccountDataAccess {
         }
     }
 
-    find(callback, closeConnection: boolean = false) {
+    find(memberId:string, callback, closeConnection: boolean = false) {
         var self = this;
         var findFunc = (function () {
 
-            self.underlyingAccountModel.find({}, function (err, underlyingAccounts) {
+            self.underlyingAccountModel.find({ memberId:memberId }, function (err, underlyingAccounts) {
                 if (err) {
                     self.connection.close();
                     callback(err);

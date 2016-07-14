@@ -28,7 +28,7 @@ export class BudgetService {
     reconcileBudgets(callback) {
         let self = this;
 
-        this.budgetDataAccess.find(findCallback);
+        this.budgetDataAccess.find("MEM0001", findCallback);
 
         function findCallback(err, budgets) {
             if (err === null) {

@@ -46,7 +46,7 @@ export class JournalDataAccess {
         }
     }
 
-    find(callback, closeConnection: boolean = false) {
+    find(accounts:string[], callback, closeConnection: boolean = false) {
         if (!this.wasInitialised) {
             throw new ReferenceError("Journal Data Access module was not initialised");
         }
@@ -54,8 +54,7 @@ export class JournalDataAccess {
         var self = this;
 
         var findFunc = (function () {
-            //self.onConnectionOpen();
-            self.journalModel.find({}, function (err, journals) {
+            self.journalModel.find({accountNumber: {$in: accounts}}, function (err, journals) {
                 if (err) {
                     self.connection.close();
                     callback(err);

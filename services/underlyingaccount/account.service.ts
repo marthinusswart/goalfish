@@ -31,7 +31,7 @@ export class UnderlyingAccountService {
     reconcileAccounts(callback) {
         let self = this;
 
-        this.underlyingAccountDataAccess.find(findCallback);
+        this.underlyingAccountDataAccess.find("MEM0001", findCallback);
 
         function findCallback(err, accounts) {
             if (err === null) {

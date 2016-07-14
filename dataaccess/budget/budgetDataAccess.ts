@@ -35,13 +35,11 @@ export class BudgetDataAccess {
         }
     }
 
-    find(callback, closeConnection: boolean = false) {
+    find(memberId: string, callback, closeConnection: boolean = false) {
         var self = this;
         var findFunc = (function () {
 
-            //let budgetSchema = self.budgetController.createBudgetMongooseSchema();
-            //var budgetModel = self.connection.model("budget", budgetSchema, "budget");
-            self.budgetModel.find({}, function (err, budgets) {
+            self.budgetModel.find({ memberId:memberId }, function (err, budgets) {
                 if (err) {
                     self.connection.close();
                     callback(err);

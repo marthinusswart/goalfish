@@ -21,7 +21,7 @@ var InitativeService = (function () {
     };
     InitativeService.prototype.reconcileInitiatives = function (callback) {
         var self = this;
-        this.initiativeDataAccess.find(findCallback);
+        this.initiativeDataAccess.find("MEM0001", findCallback);
         function findCallback(err, initiatives) {
             if (err === null) {
                 var count_1 = 0;
