@@ -12,6 +12,11 @@ var SecurityController = (function () {
         });
         return tokenSchema;
     };
+    SecurityController.prototype.convertTokenToMongoose = function (token, mongooseToken) {
+        mongooseToken.token = token.token;
+        mongooseToken.memberIf = token.memberId;
+        mongooseToken.accounts = token.accounts;
+    };
     return SecurityController;
 }());
 exports.SecurityController = SecurityController;

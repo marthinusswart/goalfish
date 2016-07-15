@@ -1,31 +1,83 @@
 "use strict";
 var mongoose = require('mongoose');
-var memberController = require('../../controllers/member/memberController');
+var memberController_1 = require('../../controllers/member/memberController');
 var MemberDataAccess = (function () {
     function MemberDataAccess() {
+        this.wasInitialised = false;
+        this.isConnectionOpening = false;
+        this.isConnectionOpen = false;
     }
     MemberDataAccess.prototype.init = function () {
-        var db = new mongoose.Mongoose();
-        this.connection = db.createConnection("localhost", "goalfish");
-        this.connection.on("error", console.error.bind(console, "connection error:"));
-        this.memberController = new memberController.MemberController();
+        if (!this.wasInitialised) {
+            var db = new mongoose.Mongoose();
+            var self_1 = this;
+            this.connection = db.createConnection("localhost", "goalfish");
+            this.connection.on("error", console.error.bind(console, "connection error:"));
+            this.memberController = new memberController_1.MemberController();
+            this.memberSchema = self_1.memberController.createMemberMongooseSchema();
+            this.memberModel = self_1.connection.model("member", self_1.memberSchema, "member");
+            this.wasInitialised = true;
+            this.isConnectionOpening = true;
+            this.connection.on("close", function () {
+                self_1.onConnectionClose();
+            });
+            this.connection.on("open", function () {
+                self_1.onConnectionOpen();
+            });
+        }
+        else {
+            throw new ReferenceError("Can't initialise again");
+        }
     };
-    MemberDataAccess.prototype.find = function (callback) {
+    MemberDataAccess.prototype.find = function (callback, closeConnection) {
+        if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
-        this.connection.once("open", function () {
-            var memberSchema = self.memberController.createMemberMongooseSchema();
-            var memberModel = self.connection.model("member", memberSchema, "member");
-            memberModel.find({}, function (err, members) {
+        var findFunc = (function () {
+            self.memberModel.find({}, function (err, members) {
                 if (err) {
                     self.connection.close();
                     callback(err);
                 }
                 else {
-                    self.connection.close();
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
                     callback(null, self.memberController.translateMongooseArrayToMemberArray(members));
                 }
             });
         });
+        if (!this.isConnectionOpen) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        }
+        else {
+            findFunc();
+        }
+    };
+    MemberDataAccess.prototype.findByField = function (filter, callback, closeConnection) {
+        if (closeConnection === void 0) { closeConnection = false; }
+        var self = this;
+        var findFunc = (function () {
+            self.memberModel.find(filter, function (err, members) {
+                if (err) {
+                    self.connection.close();
+                    callback(err);
+                }
+                else {
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
+                    callback(null, self.memberController.translateMongooseArrayToMemberArray(members));
+                }
+            });
+        });
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        }
+        else {
+            findFunc();
+        }
     };
     MemberDataAccess.prototype.findById = function (id, callback) {
         var self = this;
@@ -47,10 +99,10 @@ var MemberDataAccess = (function () {
     };
     MemberDataAccess.prototype.save = function (newMember, callback) {
         var self = this;
-        this.connection.once("open", function () {
-            var memberSchema = self.memberController.createMemberMongooseSchema();
-            var memberModel = self.connection.model("member", memberSchema, "member");
-            var mongooseMember = new memberModel();
+        var saveFunc = (function () {
+            //let memberSchema = self.memberController.createMemberMongooseSchema();
+            //var memberModel = self.connection.model("member", memberSchema, "member");
+            var mongooseMember = new self.memberModel();
             self.memberController.translateMemberToMongoose(newMember, mongooseMember);
             mongooseMember.save(function (err, result) {
                 if (err) {
@@ -64,6 +116,13 @@ var MemberDataAccess = (function () {
                 }
             });
         });
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
+            this.connection.once("open", saveFunc);
+            this.connection.open("localhost", "goalfish");
+        }
+        else {
+            saveFunc();
+        }
     };
     MemberDataAccess.prototype.update = function (id, newMember, callback) {
         var self = this;
@@ -84,6 +143,13 @@ var MemberDataAccess = (function () {
                 }
             });
         });
+    };
+    MemberDataAccess.prototype.onConnectionOpen = function () {
+        this.isConnectionOpen = true;
+        this.isConnectionOpening = false;
+    };
+    MemberDataAccess.prototype.onConnectionClose = function () {
+        this.isConnectionOpen = false;
     };
     return MemberDataAccess;
 }());

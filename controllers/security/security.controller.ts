@@ -2,8 +2,9 @@ import mongoose = require('mongoose');
 import { Token } from '../../models/security/token';
 
 export class SecurityController {
+
     createTokenMongooseSchema() {
-        var tokenSchema = new mongoose.Schema({
+        let tokenSchema = new mongoose.Schema({
             externalRef: String,
             token: String,
             memberId: String,
@@ -11,5 +12,11 @@ export class SecurityController {
         });
 
         return tokenSchema;
+    }
+
+    convertTokenToMongoose(token: Token, mongooseToken: any) {
+        mongooseToken.token = token.token;
+        mongooseToken.memberIf = token.memberId;
+        mongooseToken.accounts = token.accounts;
     }
 }

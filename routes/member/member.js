@@ -3,12 +3,12 @@ var express = require('express');
 var memberDataAccess = require('../../dataaccess/member/memberDataAccess');
 var router = express.Router();
 var memberDataAcccessService = new memberDataAccess.MemberDataAccess();
+memberDataAcccessService.init();
 router
     .get('/', function (req, res, next) {
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    memberDataAcccessService.init();
     memberDataAcccessService.find(function (err, members) {
         res.status(200).send(members);
     });
@@ -17,7 +17,6 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    memberDataAcccessService.init();
     memberDataAcccessService.findById(req.params.id, function (err, member) {
         res.status(200).send(member);
     });
@@ -26,7 +25,6 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    memberDataAcccessService.init();
     memberDataAcccessService.update(req.params.id, req.body, function (err, member) {
         res.status(200).send(member);
     });
@@ -35,7 +33,6 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    memberDataAcccessService.init();
     memberDataAcccessService.save(req.body, function (err, member) {
         if (err === null) {
             res.status(201).send(member);
@@ -49,7 +46,7 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT");
-    res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept");
+    res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept,x-access-token");
     res.header("Content-Type", "application/json");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
     res.status(200).send("OK");

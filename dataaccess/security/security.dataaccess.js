@@ -16,7 +16,6 @@ var SecurityDataAccess = (function () {
             this.securityController = new security_controller_1.SecurityController();
             this.tokenSchema = this.securityController.createTokenMongooseSchema();
             this.tokenModel = this.connection.model("token", this.tokenSchema, "token");
-            this.mongooseToken = new this.tokenModel();
             this.wasInitialised = true;
             this.isConnectionOpening = true;
             this.connection.on("close", function () {
@@ -28,6 +27,33 @@ var SecurityDataAccess = (function () {
         }
         else {
             throw new ReferenceError("Can't initialise again");
+        }
+    };
+    SecurityDataAccess.prototype.saveToken = function (token, callback, closeConnection) {
+        if (closeConnection === void 0) { closeConnection = false; }
+        var self = this;
+        var saveFunc = (function () {
+            var tokenMongoose = new self.tokenModel();
+            self.securityController.convertTokenToMongoose(token, tokenMongoose);
+            tokenMongoose.save(function (err, result) {
+                if (err) {
+                    self.connection.close();
+                    callback(err);
+                }
+                else {
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
+                    callback(null, token);
+                }
+            });
+        });
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
+            this.connection.once("open", saveFunc);
+            this.connection.open("localhost", "goalfish");
+        }
+        else {
+            saveFunc();
         }
     };
     SecurityDataAccess.prototype.onConnectionOpen = function () {

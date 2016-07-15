@@ -22,7 +22,6 @@ export class SecurityDataAccess {
 
             this.tokenSchema = this.securityController.createTokenMongooseSchema();
             this.tokenModel = this.connection.model("token", this.tokenSchema, "token");
-            this.mongooseToken = new this.tokenModel();
 
             this.wasInitialised = true;
             this.isConnectionOpening = true;
@@ -39,7 +38,38 @@ export class SecurityDataAccess {
 
     }
 
-     onConnectionOpen() {
+    saveToken(token: Token, callback, closeConnection: boolean = false) {
+        var self = this;
+        var saveFunc = (function () {
+
+            let tokenMongoose = new self.tokenModel()
+            self.securityController.convertTokenToMongoose(token, tokenMongoose);
+
+            tokenMongoose.save(function (err, result) {
+                if (err) {
+                    self.connection.close();
+                    callback(err);
+                } else {
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
+
+                    callback(null, token);
+                }
+            });
+
+        });
+
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
+            this.connection.once("open", saveFunc);
+            this.connection.open("localhost", "goalfish");
+        } else {
+            saveFunc();
+        }
+
+    }
+
+    onConnectionOpen() {
         this.isConnectionOpen = true;
         this.isConnectionOpening = false;
     }

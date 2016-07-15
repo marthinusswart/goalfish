@@ -4,6 +4,7 @@ import memberDataAccess = require('../../dataaccess/member/memberDataAccess');
 
 let router = express.Router();
 let memberDataAcccessService = new memberDataAccess.MemberDataAccess();
+memberDataAcccessService.init();
 
 router
     .get('/', function (req, res, next) {
@@ -11,7 +12,6 @@ router
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-        memberDataAcccessService.init();
         memberDataAcccessService.find(function (err, members) {
             res.status(200).send(members);
         });
@@ -22,7 +22,6 @@ router
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-        memberDataAcccessService.init();
         memberDataAcccessService.findById(req.params.id, function (err, member) {
             res.status(200).send(member);
         });
@@ -33,7 +32,6 @@ router
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-        memberDataAcccessService.init();
         memberDataAcccessService.update(req.params.id, req.body, function (err, member) {
             res.status(200).send(member);
         });
@@ -43,7 +41,6 @@ router
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-        memberDataAcccessService.init();
         memberDataAcccessService.save(req.body, function (err, member) {
             if (err === null) {
                 res.status(201).send(member);
@@ -57,7 +54,7 @@ router
         /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Methods", "GET, POST, PUT");
-        res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept");
+        res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept,x-access-token");
         res.header("Content-Type", "application/json");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
