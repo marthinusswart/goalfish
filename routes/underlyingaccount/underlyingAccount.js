@@ -2,20 +2,24 @@
 var express = require('express');
 var underlyingAccountDataAccess_1 = require('../../dataaccess/underlyingaccount/underlyingAccountDataAccess');
 var underlyingAccountServiceLib = require('../../services/underlyingaccount/account.service');
+var security_service_1 = require('../../services/security/security.service');
 var router = express.Router();
 var underlyingAccountDataAcccessService = new underlyingAccountDataAccess_1.UnderlyingAccountDataAccess();
 var underlyingAccountService = new underlyingAccountServiceLib.UnderlyingAccountService();
+var securityService = new security_service_1.SecurityService();
 underlyingAccountDataAcccessService.init();
 underlyingAccountService.init();
+securityService.init();
 router
     .get('/', function (req, res, next) {
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    var token = req.headers['x-access-token'];
-    var memberId = token;
-    underlyingAccountDataAcccessService.find(memberId, function (err, underlyingAccounts) {
-        res.status(200).send(underlyingAccounts);
+    var tokenString = req.headers['x-access-token'];
+    securityService.getToken(tokenString, function (err, token) {
+        underlyingAccountDataAcccessService.find(token.memberId, function (err, underlyingAccounts) {
+            res.status(200).send(underlyingAccounts);
+        });
     });
 })
     .get('/:id', function (req, res, next) {

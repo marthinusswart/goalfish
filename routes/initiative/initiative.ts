@@ -2,12 +2,16 @@ import express = require('express');
 import models = require('../../models/initiative/initiative');
 import { InitiativeDataAccess } from '../../dataaccess/initiative/initiativeDataAccess';
 import initiativeServiceLib = require('../../services/initiative/initiative.service');
+import { SecurityService } from '../../services/security/security.service';
+import { Token } from '../../models/security/token';
 
 let router = express.Router();
 let initiativeDataAcccessService = new InitiativeDataAccess();
 let initiativeService = new initiativeServiceLib.InitativeService();
+let securityService = new SecurityService();
 initiativeDataAcccessService.init();
 initiativeService.init();
+securityService.init();
 
 router
     .get('/', function (req, res, next) {
@@ -15,10 +19,12 @@ router
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-        let token = req.headers['x-access-token'];
-        let memberId = token;
-        initiativeDataAcccessService.find(memberId, function (err, initiatives) {
-            res.status(200).send(initiatives);
+        let tokenString = req.headers['x-access-token'];
+
+        securityService.getToken(tokenString, function (err, token: Token) {
+            initiativeDataAcccessService.find(token.memberId, function (err, initiatives) {
+                res.status(200).send(initiatives);
+            });
         });
 
     })

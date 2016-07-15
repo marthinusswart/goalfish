@@ -44,6 +44,7 @@ var SecurityDataAccess = (function () {
                     if (closeConnection) {
                         self.connection.close();
                     }
+                    token.token = tokenMongoose._id;
                     callback(null, token);
                 }
             });
@@ -54,6 +55,31 @@ var SecurityDataAccess = (function () {
         }
         else {
             saveFunc();
+        }
+    };
+    SecurityDataAccess.prototype.findById = function (id, callback, closeConnection) {
+        if (closeConnection === void 0) { closeConnection = false; }
+        var self = this;
+        var findFunc = (function () {
+            self.tokenModel.findById(id, function (err, token) {
+                if (err) {
+                    self.connection.close();
+                    callback(err);
+                }
+                else {
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
+                    callback(null, self.securityController.translateMongooseToToken(token));
+                }
+            });
+        });
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        }
+        else {
+            findFunc();
         }
     };
     SecurityDataAccess.prototype.onConnectionOpen = function () {

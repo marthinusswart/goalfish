@@ -2,20 +2,24 @@
 var express = require('express');
 var initiativeDataAccess_1 = require('../../dataaccess/initiative/initiativeDataAccess');
 var initiativeServiceLib = require('../../services/initiative/initiative.service');
+var security_service_1 = require('../../services/security/security.service');
 var router = express.Router();
 var initiativeDataAcccessService = new initiativeDataAccess_1.InitiativeDataAccess();
 var initiativeService = new initiativeServiceLib.InitativeService();
+var securityService = new security_service_1.SecurityService();
 initiativeDataAcccessService.init();
 initiativeService.init();
+securityService.init();
 router
     .get('/', function (req, res, next) {
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    var token = req.headers['x-access-token'];
-    var memberId = token;
-    initiativeDataAcccessService.find(memberId, function (err, initiatives) {
-        res.status(200).send(initiatives);
+    var tokenString = req.headers['x-access-token'];
+    securityService.getToken(tokenString, function (err, token) {
+        initiativeDataAcccessService.find(token.memberId, function (err, initiatives) {
+            res.status(200).send(initiatives);
+        });
     });
 })
     .get('/:id', function (req, res, next) {

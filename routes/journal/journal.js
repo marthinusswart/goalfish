@@ -1,19 +1,22 @@
 "use strict";
 var express = require('express');
 var journalDataAccess_1 = require('../../dataaccess/journal/journalDataAccess');
+var security_service_1 = require('../../services/security/security.service');
 var router = express.Router();
 var journalDataAcccessService = new journalDataAccess_1.JournalDataAccess();
+var securityService = new security_service_1.SecurityService();
 journalDataAcccessService.init();
+securityService.init();
 router
     .get('/', function (req, res, next) {
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    var token = req.headers['x-access-token'];
-    var memberId = token;
-    var accounts = ["ACC0001", "ACC0002", "ACC0003", "ACC0004", "ACC0005"];
-    journalDataAcccessService.find(accounts, function (err, journals) {
-        res.status(200).send(journals);
+    var tokenString = req.headers['x-access-token'];
+    securityService.getToken(tokenString, function (err, token) {
+        journalDataAcccessService.find(token.accounts, function (err, journals) {
+            res.status(200).send(journals);
+        });
     });
 })
     .get('/:id', function (req, res, next) {

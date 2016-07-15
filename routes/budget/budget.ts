@@ -1,13 +1,17 @@
 import express = require('express');
 import models = require('../../models/budget/budget');
 import { BudgetDataAccess } from '../../dataaccess/budget/budgetDataAccess';
-import budgetServiceLib = require('../../services/budget/budget.service');
+import { BudgetService } from '../../services/budget/budget.service';
+import { SecurityService } from '../../services/security/security.service';
+import { Token } from '../../models/security/token';
 
 let router = express.Router();
 let budgetDataAcccessService = new BudgetDataAccess();
-let budgetService = new budgetServiceLib.BudgetService();
+let budgetService = new BudgetService();
+let securityService = new SecurityService();
 budgetDataAcccessService.init();
 budgetService.init();
+securityService.init();
 
 router
     .get('/', function (req, res, next) {
@@ -15,11 +19,14 @@ router
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-        let token = req.headers['x-access-token'];
-        let memberId = token;
-        budgetDataAcccessService.find(memberId, function (err, budgets) {
-            res.status(200).send(budgets);
+        let tokenString = req.headers['x-access-token'];
+
+        securityService.getToken(tokenString, function (err, token: Token) {
+            budgetDataAcccessService.find(token.memberId, function (err, budgets) {
+                res.status(200).send(budgets);
+            });
         });
+
 
     })
     .get('/:id', function (req, res, next) {

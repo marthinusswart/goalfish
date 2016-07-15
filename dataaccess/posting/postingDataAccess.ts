@@ -45,7 +45,7 @@ export class PostingDataAccess {
         var self = this;
         var findFunc = (function () {
 
-            self.postingModel.find({}, function (err, postings) {
+            self.postingModel.find({accountNumber: {$in: accounts}}, function (err, postings) {
                 if (err) {
                     self.connection.close();
                     callback(err);

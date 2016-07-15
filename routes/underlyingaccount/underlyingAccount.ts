@@ -2,12 +2,16 @@ import express = require('express');
 import models = require('../../models/underlyingaccount/underlyingaccount');
 import { UnderlyingAccountDataAccess } from '../../dataaccess/underlyingaccount/underlyingAccountDataAccess';
 import underlyingAccountServiceLib = require('../../services/underlyingaccount/account.service');
+import { SecurityService } from '../../services/security/security.service';
+import { Token } from '../../models/security/token';
 
 let router = express.Router();
 let underlyingAccountDataAcccessService = new UnderlyingAccountDataAccess();
 let underlyingAccountService = new underlyingAccountServiceLib.UnderlyingAccountService();
+let securityService = new SecurityService();
 underlyingAccountDataAcccessService.init();
 underlyingAccountService.init();
+securityService.init();
 
 router
     .get('/', function (req, res, next) {
@@ -15,10 +19,12 @@ router
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-        let token = req.headers['x-access-token'];
-        let memberId = token;
-        underlyingAccountDataAcccessService.find(memberId, function (err, underlyingAccounts) {
-            res.status(200).send(underlyingAccounts);
+        let tokenString = req.headers['x-access-token'];
+
+        securityService.getToken(tokenString, function (err, token: Token) {
+            underlyingAccountDataAcccessService.find(token.memberId, function (err, underlyingAccounts) {
+                res.status(200).send(underlyingAccounts);
+            });
         });
 
     })

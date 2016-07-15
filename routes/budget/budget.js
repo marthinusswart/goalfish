@@ -1,21 +1,25 @@
 "use strict";
 var express = require('express');
 var budgetDataAccess_1 = require('../../dataaccess/budget/budgetDataAccess');
-var budgetServiceLib = require('../../services/budget/budget.service');
+var budget_service_1 = require('../../services/budget/budget.service');
+var security_service_1 = require('../../services/security/security.service');
 var router = express.Router();
 var budgetDataAcccessService = new budgetDataAccess_1.BudgetDataAccess();
-var budgetService = new budgetServiceLib.BudgetService();
+var budgetService = new budget_service_1.BudgetService();
+var securityService = new security_service_1.SecurityService();
 budgetDataAcccessService.init();
 budgetService.init();
+securityService.init();
 router
     .get('/', function (req, res, next) {
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    var token = req.headers['x-access-token'];
-    var memberId = token;
-    budgetDataAcccessService.find(memberId, function (err, budgets) {
-        res.status(200).send(budgets);
+    var tokenString = req.headers['x-access-token'];
+    securityService.getToken(tokenString, function (err, token) {
+        budgetDataAcccessService.find(token.memberId, function (err, budgets) {
+            res.status(200).send(budgets);
+        });
     });
 })
     .get('/:id', function (req, res, next) {

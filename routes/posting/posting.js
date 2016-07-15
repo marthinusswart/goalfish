@@ -3,20 +3,23 @@ var express = require('express');
 //import models = require('../../models/posting/posting');
 var postingDataAccess_1 = require('../../dataaccess/posting/postingDataAccess');
 var posting_service_1 = require('../../services/posting/posting.service');
+var security_service_1 = require('../../services/security/security.service');
 var router = express.Router();
 var postingDataAcccessService = new postingDataAccess_1.PostingDataAccess();
 var postingService = new posting_service_1.PostingService();
+var securityService = new security_service_1.SecurityService();
 postingDataAcccessService.init();
+securityService.init();
 router
     .get('/', function (req, res, next) {
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    var token = req.headers['x-access-token'];
-    var memberId = token;
-    var accounts = ["ACC0001", "ACC0002", "ACC0003", "ACC0004", "ACC0005"];
-    postingDataAcccessService.find(accounts, function (err, postings) {
-        res.status(200).send(postings);
+    var tokenString = req.headers['x-access-token'];
+    securityService.getToken(tokenString, function (err, token) {
+        postingDataAcccessService.find(token.accounts, function (err, postings) {
+            res.status(200).send(postings);
+        });
     });
 })
     .get('/:id', function (req, res, next) {

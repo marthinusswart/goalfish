@@ -5,7 +5,6 @@ export class SecurityController {
 
     createTokenMongooseSchema() {
         let tokenSchema = new mongoose.Schema({
-            externalRef: String,
             token: String,
             memberId: String,
             accounts: []
@@ -16,7 +15,16 @@ export class SecurityController {
 
     convertTokenToMongoose(token: Token, mongooseToken: any) {
         mongooseToken.token = token.token;
-        mongooseToken.memberIf = token.memberId;
+        mongooseToken.memberId = token.memberId;
         mongooseToken.accounts = token.accounts;
+    }
+
+    translateMongooseToToken(mongooseToken: any): Token{
+        let token = new Token();
+        token.token = mongooseToken._id;
+        token.memberId = mongooseToken.memberId;
+        token.accounts = mongooseToken.accounts;
+
+        return token;
     }
 }

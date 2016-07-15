@@ -16,15 +16,11 @@ var SecurityService = (function () {
     };
     SecurityService.prototype.login = function (credentials, callback) {
         var self = this;
-        console.log(credentials.email);
         this.memberDataAccess.findByField({ email: credentials.email }, function (err, members) {
             var member = members[0];
-            console.log(member.email);
             var token = new token_1.Token();
             token.memberId = member.id;
-            token.token = member.id;
             token.accounts = [];
-            console.log(token.memberId);
             self.underlyingAccountDataAccess.find(member.id, function (err, accounts) {
                 accounts.forEach(function (account) {
                     token.accounts.push(account.id);
@@ -33,6 +29,12 @@ var SecurityService = (function () {
                     callback(err, token);
                 });
             });
+        });
+    };
+    SecurityService.prototype.getToken = function (tokenString, callback) {
+        var self = this;
+        this.securityDataAccess.findById(tokenString, function (err, token) {
+            callback(err, token);
         });
     };
     return SecurityService;

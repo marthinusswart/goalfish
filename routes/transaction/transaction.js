@@ -1,19 +1,22 @@
 "use strict";
 var express = require('express');
 var transactionDataAccess_1 = require('../../dataaccess/transaction/transactionDataAccess');
+var security_service_1 = require('../../services/security/security.service');
 var router = express.Router();
 var transactionDataAcccessService = new transactionDataAccess_1.TransactionDataAccess();
+var securityService = new security_service_1.SecurityService();
 transactionDataAcccessService.init();
+securityService.init();
 router
     .get('/', function (req, res, next) {
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    var token = req.headers['x-access-token'];
-    var memberId = token;
-    var accounts = ["ACC0001", "ACC0002", "ACC0003", "ACC0004", "ACC0005"];
-    transactionDataAcccessService.find(accounts, function (err, transactions) {
-        res.status(200).send(transactions);
+    var tokenString = req.headers['x-access-token'];
+    securityService.getToken(tokenString, function (err, token) {
+        transactionDataAcccessService.find(token.accounts, function (err, transactions) {
+            res.status(200).send(transactions);
+        });
     });
 })
     .get('/:id', function (req, res, next) {
