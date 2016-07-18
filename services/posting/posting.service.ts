@@ -77,7 +77,7 @@ export class PostingService {
                                 });
                             }],
                             function (err) {
-                                callback(err, postings);
+                                callback(err, {result:"OK"});
                             }
                         );
 
@@ -148,7 +148,7 @@ export class PostingService {
                                 });
                             }],
                             function (err) {
-                                callback(err, postings);
+                                callback(err, {result:"OK"});
                             }
                         );
 

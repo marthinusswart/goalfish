@@ -56,7 +56,7 @@ var PostingService = (function () {
                                 callbackWf(err);
                             });
                         }], function (err) {
-                        callback(err, postings);
+                        callback(err, { result: "OK" });
                     });
                 });
             }
@@ -114,7 +114,7 @@ var PostingService = (function () {
                                 callbackWf(err);
                             });
                         }], function (err) {
-                        callback(err, postings);
+                        callback(err, { result: "OK" });
                     });
                 });
             }

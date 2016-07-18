@@ -74,9 +74,9 @@ router
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-        postingService.processJournals(function (err, posting) {
+        postingService.processJournals(function (err, result) {
             if (err === null) {
-                res.status(200).send("OK");
+                res.status(200).send(result);
             }
             else {
                 res.status(500).send(err.message);
@@ -98,9 +98,9 @@ router
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-        postingService.processTransactions(function (err, posting) {
+        postingService.processTransactions(function (err, result) {
             if (err === null) {
-                res.status(200).send("OK");
+                res.status(200).send(result);
             }
             else {
                 res.status(500).send(err.message);
