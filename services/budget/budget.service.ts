@@ -15,7 +15,6 @@ export class BudgetService {
 
     init() {
         if (!this.wasInitialised) {
-            //this.postingService = new postingServiceLib.PostingService();
             this.budgetController = new BudgetController();
             this.budgetDataAccess = new BudgetDataAccess();
             this.transactionDataAccess = new TransactionDataAccess();
@@ -25,10 +24,10 @@ export class BudgetService {
         }
     }
 
-    reconcileBudgets(callback) {
+    reconcileBudgets(memberId: string, callback) {
         let self = this;
 
-        this.budgetDataAccess.find("MEM0001", findCallback);
+        this.budgetDataAccess.find(memberId, findCallback);
 
         function findCallback(err, budgets) {
             if (err === null) {

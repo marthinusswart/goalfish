@@ -67,13 +67,17 @@ router
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-        budgetService.reconcileBudgets(function (err, budgets) {
-            if (err === null) {
-                res.status(200).send(budgets);
-            }
-            else {
-                res.status(500).send(err.message);
-            }
+        let tokenString = req.headers['x-access-token'];
+
+        securityService.getToken(tokenString, function (err, token: Token) {
+            budgetService.reconcileBudgets(token.memberId, function (err, budgets) {
+                if (err === null) {
+                    res.status(200).send(budgets);
+                }
+                else {
+                    res.status(500).send(err.message);
+                }
+            });
         });
     })
     .post('/ping', function (req, res, next) {
