@@ -1,8 +1,7 @@
 "use strict";
-//import postingServiceLib = require('../../services/posting/posting.service');
-var postingDataAccessLib = require('../../dataaccess/posting/postingDataAccess');
-var accountControllerLib = require('../../controllers/underlyingaccount/underlyingAccountController');
-var accountDataAccessLib = require('../../dataaccess/underlyingaccount/underlyingAccountDataAccess');
+var postingDataAccess_1 = require('../../dataaccess/posting/postingDataAccess');
+var underlyingAccountController_1 = require('../../controllers/underlyingaccount/underlyingAccountController');
+var underlyingAccountDataAccess_1 = require('../../dataaccess/underlyingaccount/underlyingAccountDataAccess');
 var async = require('async');
 var UnderlyingAccountService = (function () {
     function UnderlyingAccountService() {
@@ -10,18 +9,17 @@ var UnderlyingAccountService = (function () {
     }
     UnderlyingAccountService.prototype.init = function () {
         if (!this.wasInitialised) {
-            //this.postingService = new postingServiceLib.PostingService();
-            this.underlyingAccountController = new accountControllerLib.UnderlyingAccountController();
-            this.underlyingAccountDataAccess = new accountDataAccessLib.UnderlyingAccountDataAccess();
-            this.postingDataAccess = new postingDataAccessLib.PostingDataAccess();
+            this.underlyingAccountController = new underlyingAccountController_1.UnderlyingAccountController();
+            this.underlyingAccountDataAccess = new underlyingAccountDataAccess_1.UnderlyingAccountDataAccess();
+            this.postingDataAccess = new postingDataAccess_1.PostingDataAccess();
             this.underlyingAccountDataAccess.init();
             this.postingDataAccess.init();
             this.wasInitialised = true;
         }
     };
-    UnderlyingAccountService.prototype.reconcileAccounts = function (callback) {
+    UnderlyingAccountService.prototype.reconcileAccounts = function (memberId, callback) {
         var self = this;
-        this.underlyingAccountDataAccess.find("MEM0001", findCallback);
+        this.underlyingAccountDataAccess.find(memberId, findCallback);
         function findCallback(err, accounts) {
             if (err === null) {
                 var count_1 = 0;

@@ -74,13 +74,18 @@ router
         /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-        underlyingAccountService.reconcileAccounts(function (err, underlyingAccounts) {
-            if (err === null) {
-                res.status(200).send(underlyingAccounts);
-            }
-            else {
-                res.status(500).send(err.message);
-            }
+
+        let tokenString = req.headers['x-access-token'];
+
+        securityService.getToken(tokenString, function (err, token: Token) {
+            underlyingAccountService.reconcileAccounts(token.memberId, function (err, underlyingAccounts) {
+                if (err === null) {
+                    res.status(200).send(underlyingAccounts);
+                }
+                else {
+                    res.status(500).send(err.message);
+                }
+            });
         });
     })
     .options('/reconcile', function (req, res, next) {

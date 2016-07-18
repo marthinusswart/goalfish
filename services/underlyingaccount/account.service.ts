@@ -1,37 +1,34 @@
 
-//import postingServiceLib = require('../../services/posting/posting.service');
-import postingDataAccessLib = require('../../dataaccess/posting/postingDataAccess');
-import postingLib = require('../../models/posting/posting');
-import accountLib = require('../../models/underlyingaccount/underlyingaccount');
-import accountControllerLib = require('../../controllers/underlyingaccount/underlyingAccountController');
-import accountDataAccessLib = require('../../dataaccess/underlyingaccount/underlyingAccountDataAccess');
+import { PostingDataAccess } from '../../dataaccess/posting/postingDataAccess';
+import {Posting} from '../../models/posting/posting';
+import {UnderlyingAccount} from '../../models/underlyingaccount/underlyingaccount';
+import {UnderlyingAccountController} from '../../controllers/underlyingaccount/underlyingAccountController';
+import {UnderlyingAccountDataAccess} from '../../dataaccess/underlyingaccount/underlyingAccountDataAccess';
 
 import async = require('async');
 
 export class UnderlyingAccountService {
-    //postingService: postingServiceLib.PostingService;
-    underlyingAccount: accountLib.UnderlyingAccount;
-    underlyingAccountController: accountControllerLib.UnderlyingAccountController;
-    underlyingAccountDataAccess: accountDataAccessLib.UnderlyingAccountDataAccess;
-    postingDataAccess: postingDataAccessLib.PostingDataAccess;
+    underlyingAccount: UnderlyingAccount;
+    underlyingAccountController: UnderlyingAccountController;
+    underlyingAccountDataAccess: UnderlyingAccountDataAccess;
+    postingDataAccess: PostingDataAccess;
     wasInitialised: boolean = false;
 
     init() {
         if (!this.wasInitialised) {
-            //this.postingService = new postingServiceLib.PostingService();
-            this.underlyingAccountController = new accountControllerLib.UnderlyingAccountController();
-            this.underlyingAccountDataAccess = new accountDataAccessLib.UnderlyingAccountDataAccess();
-            this.postingDataAccess = new postingDataAccessLib.PostingDataAccess();
+            this.underlyingAccountController = new UnderlyingAccountController();
+            this.underlyingAccountDataAccess = new UnderlyingAccountDataAccess();
+            this.postingDataAccess = new PostingDataAccess();
             this.underlyingAccountDataAccess.init();
             this.postingDataAccess.init();
             this.wasInitialised = true;
         }
     }
 
-    reconcileAccounts(callback) {
+    reconcileAccounts(memberId: string, callback) {
         let self = this;
 
-        this.underlyingAccountDataAccess.find("MEM0001", findCallback);
+        this.underlyingAccountDataAccess.find(memberId, findCallback);
 
         function findCallback(err, accounts) {
             if (err === null) {
@@ -39,7 +36,7 @@ export class UnderlyingAccountService {
 
                 async.whilst(() => { return count < accounts.length; },
                     (callbackWhilst) => {
-                        let account: accountLib.UnderlyingAccount = accounts[count];
+                        let account: UnderlyingAccount = accounts[count];
                         count++;
                         account.isReconciled = false;
                         let filter = { accountNumber: account.id };
@@ -48,7 +45,7 @@ export class UnderlyingAccountService {
                         function findPostingCallback(err, postings) {
                             if (err === null) {
                                 let balance: number = 0;
-                                postings.forEach((posting: postingLib.Posting) => {
+                                postings.forEach((posting: Posting) => {
                                     balance += posting.amount;
                                 });
                                 account.calculatedBalance = parseFloat(balance.toFixed(2));
