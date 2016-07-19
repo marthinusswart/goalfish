@@ -112,7 +112,8 @@ var JournalDataAccess = (function () {
             findFunc();
         }
     };
-    JournalDataAccess.prototype.save = function (newJournal, callback) {
+    JournalDataAccess.prototype.save = function (newJournal, callback, closeConnection) {
+        if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var saveFunc = (function () {
             //self.onConnectionOpen();
@@ -126,8 +127,9 @@ var JournalDataAccess = (function () {
                     callback(err);
                 }
                 else {
-                    self.connection.close();
-                    console.log(result);
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
                     callback(null, self.journalController.translateMongooseToJournal(result));
                 }
             });

@@ -55,13 +55,33 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    budgetService.reconcileBudgets(function (err, budgets) {
-        if (err === null) {
-            res.status(200).send(budgets);
-        }
-        else {
-            res.status(500).send(err.message);
-        }
+    var tokenString = req.headers['x-access-token'];
+    securityService.getToken(tokenString, function (err, token) {
+        budgetService.reconcileBudgets(token.memberId, function (err, budgets) {
+            if (err === null) {
+                res.status(200).send(budgets);
+            }
+            else {
+                res.status(500).send(err.message);
+            }
+        });
+    });
+})
+    .post('/deposit', function (req, res, next) {
+    /** Not secure at all, but great for local usage only */
+    res.header("Access-Control-Allow-Origin", "*");
+    /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+    var tokenString = req.headers['x-access-token'];
+    var budgetDeposit = req.body;
+    securityService.getToken(tokenString, function (err, token) {
+        budgetService.deposit(token.memberId, budgetDeposit, function (err, budgets) {
+            if (err === null) {
+                res.status(200).send(budgets);
+            }
+            else {
+                res.status(500).send(err.message);
+            }
+        });
     });
 })
     .post('/ping', function (req, res, next) {
@@ -89,6 +109,15 @@ router
     res.status(200).send("OK");
 })
     .options('/reconcile', function (req, res, next) {
+    /** Not secure at all, but great for local usage only */
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT");
+    res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept,x-access-token");
+    res.header("Content-Type", "application/json");
+    /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+    res.status(200).send("OK");
+})
+    .options('/deposit', function (req, res, next) {
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT");

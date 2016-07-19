@@ -1,5 +1,5 @@
 import mongoose = require('mongoose');
-import budget = require('../../models/budget/budget');
+import { Budget } from '../../models/budget/budget';
 
 export class BudgetController {
 
@@ -19,7 +19,7 @@ export class BudgetController {
         return budgetSchema;
     }
 
-    translateBudgetToMongoose(budget: budget.Budget, mongooseBudget: any) {
+    translateBudgetToMongoose(budget: Budget, mongooseBudget: any) {
         mongooseBudget.id = budget.id;
         mongooseBudget.name = budget.name;
         mongooseBudget.description = budget.description;
@@ -36,9 +36,9 @@ export class BudgetController {
         return 0
     }
 
-    translateMongooseToBudget(mongooseBudget: any): budget.Budget {
-        let budgetObj: budget.Budget;
-        budgetObj = new budget.Budget();
+    translateMongooseToBudget(mongooseBudget: any): Budget {
+        let budgetObj: Budget;
+        budgetObj = new Budget();
         budgetObj.externalRef = mongooseBudget._id;
         budgetObj.name = mongooseBudget.name;
         budgetObj.description = mongooseBudget.description;

@@ -1,7 +1,11 @@
 "use strict";
 var transactionDataAccess_1 = require('../../dataaccess/transaction/transactionDataAccess');
-var budgetController_1 = require('../../controllers/budget/budgetController');
+var transaction_1 = require('../../models/transaction/transaction');
+//import { BudgetController } from '../../controllers/budget/budgetController';
 var budgetDataAccess_1 = require('../../dataaccess/budget/budgetDataAccess');
+var journal_1 = require('../../models/journal/journal');
+var journalDataAccess_1 = require('../../dataaccess/journal/journalDataAccess');
+var key_service_1 = require('../key/key.service');
 var async = require('async');
 var BudgetService = (function () {
     function BudgetService() {
@@ -9,18 +13,21 @@ var BudgetService = (function () {
     }
     BudgetService.prototype.init = function () {
         if (!this.wasInitialised) {
-            //this.postingService = new postingServiceLib.PostingService();
-            this.budgetController = new budgetController_1.BudgetController();
+            //this.budgetController = new BudgetController();
             this.budgetDataAccess = new budgetDataAccess_1.BudgetDataAccess();
             this.transactionDataAccess = new transactionDataAccess_1.TransactionDataAccess();
+            this.journalDataAccess = new journalDataAccess_1.JournalDataAccess();
+            this.keyService = new key_service_1.KeyService();
             this.budgetDataAccess.init();
             this.transactionDataAccess.init();
+            this.journalDataAccess.init();
+            this.keyService.init();
             this.wasInitialised = true;
         }
     };
-    BudgetService.prototype.reconcileBudgets = function (callback) {
+    BudgetService.prototype.reconcileBudgets = function (memberId, callback) {
         var self = this;
-        this.budgetDataAccess.find("MEM0001", findCallback);
+        this.budgetDataAccess.find(memberId, findCallback);
         function findCallback(err, budgets) {
             if (err === null) {
                 var count_1 = 0;
@@ -56,6 +63,38 @@ var BudgetService = (function () {
                 callback(err, []);
             }
         }
+    };
+    BudgetService.prototype.deposit = function (memberId, budgetDeposit, callback) {
+        var self = this;
+        var transaction = new transaction_1.Transaction();
+        var journal = new journal_1.Journal();
+        var key;
+        var jrnlSaveFunc = function (err, journal) {
+            callback(err, { result: "OK" });
+        };
+        var trxSaveFunc = function (err, transaction) {
+            self.journalDataAccess.save(journal, jrnlSaveFunc);
+        };
+        var journalKeyFunc = function (err, jnlKey) {
+            journal.amount = budgetDeposit.amount * -1;
+            journal.accountNumber = budgetDeposit.fromAccountId;
+            journal.date = budgetDeposit.depositDate;
+            journal.description = budgetDeposit.description;
+            journal.name = "Contra on transaction";
+            journal.id = journal.createIdFromKey(jnlKey.key);
+            self.transactionDataAccess.save(transaction, trxSaveFunc);
+        };
+        var trxKeyFunc = function (err, trxKey) {
+            transaction.amount = budgetDeposit.amount;
+            transaction.classification = "Budget";
+            transaction.date = budgetDeposit.depositDate;
+            transaction.description = budgetDeposit.description;
+            transaction.referenceId = budgetDeposit.budgetId;
+            transaction.underlyingAccount = budgetDeposit.toAccountId;
+            transaction.id = transaction.createIdFromKey(trxKey.key);
+            self.keyService.getNextKey("journal", journalKeyFunc);
+        };
+        this.keyService.getNextKey("transaction", trxKeyFunc);
     };
     return BudgetService;
 }());

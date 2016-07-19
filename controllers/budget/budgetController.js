@@ -1,6 +1,6 @@
 "use strict";
 var mongoose = require('mongoose');
-var budget = require('../../models/budget/budget');
+var budget_1 = require('../../models/budget/budget');
 var BudgetController = (function () {
     function BudgetController() {
     }
@@ -34,7 +34,7 @@ var BudgetController = (function () {
     };
     BudgetController.prototype.translateMongooseToBudget = function (mongooseBudget) {
         var budgetObj;
-        budgetObj = new budget.Budget();
+        budgetObj = new budget_1.Budget();
         budgetObj.externalRef = mongooseBudget._id;
         budgetObj.name = mongooseBudget.name;
         budgetObj.description = mongooseBudget.description;

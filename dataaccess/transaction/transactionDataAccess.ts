@@ -1,5 +1,5 @@
 import mongoose = require('mongoose');
-import transaction = require('../../models/transaction/transaction');
+import { Transaction } from '../../models/transaction/transaction';
 import transactionController = require('../../controllers/transaction/transactionController');
 import async = require('async');
 
@@ -130,7 +130,7 @@ export class TransactionDataAccess {
         }
     }
 
-    save(newTransaction: transaction.Transaction, callback, closeConnection: boolean = false) {
+    save(newTransaction: Transaction, callback, closeConnection: boolean = false) {
         var self = this;
 
         var saveFunc = (function () {
@@ -162,7 +162,7 @@ export class TransactionDataAccess {
         }
     }
 
-    update(id: string, newTransaction: transaction.Transaction, callback, closeConnection: boolean = false) {
+    update(id: string, newTransaction: Transaction, callback, closeConnection: boolean = false) {
         var self = this;
 
         var updateFunc = (function () {
@@ -197,7 +197,7 @@ export class TransactionDataAccess {
 
         async.whilst(() => { return count < transactions.length; },
             (callback) => {
-                let transactionObj: transaction.Transaction = transactions[count];
+                let transactionObj: Transaction = transactions[count];
                 count++;
 
                 this.update(transactionObj.externalRef, transactionObj, function (err, transaction) {

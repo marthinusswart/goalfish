@@ -1,25 +1,37 @@
 import { TransactionDataAccess } from '../../dataaccess/transaction/transactionDataAccess';
 import { Transaction } from '../../models/transaction/transaction';
 import { Budget } from '../../models/budget/budget';
-import { BudgetController } from '../../controllers/budget/budgetController';
+import { BudgetDeposit } from '../../models/budget/budget.deposit';
+//import { BudgetController } from '../../controllers/budget/budgetController';
 import { BudgetDataAccess } from '../../dataaccess/budget/budgetDataAccess';
+import { Journal } from '../../models/journal/journal';
+import { JournalDataAccess } from '../../dataaccess/journal/journalDataAccess';
+import { KeyService } from '../key/key.service';
+import { Key } from '../../models/key/key';
 import async = require('async');
 
 export class BudgetService {
     //postingService: postingServiceLib.PostingService;
     budget: Budget;
-    budgetController: BudgetController;
+    //budgetController: BudgetController;
     budgetDataAccess: BudgetDataAccess;
     transactionDataAccess: TransactionDataAccess;
+    journalDataAccess: JournalDataAccess;
+    keyService: KeyService;
+
     wasInitialised: boolean = false;
 
     init() {
         if (!this.wasInitialised) {
-            this.budgetController = new BudgetController();
+            //this.budgetController = new BudgetController();
             this.budgetDataAccess = new BudgetDataAccess();
             this.transactionDataAccess = new TransactionDataAccess();
+            this.journalDataAccess = new JournalDataAccess();
+            this.keyService = new KeyService();
             this.budgetDataAccess.init();
             this.transactionDataAccess.init();
+            this.journalDataAccess.init();
+            this.keyService.init();
             this.wasInitialised = true;
         }
     }
@@ -69,6 +81,48 @@ export class BudgetService {
 
 
         }
+
+    }
+
+    deposit(memberId: string, budgetDeposit: BudgetDeposit, callback) {
+        let self = this;
+        let transaction = new Transaction();
+        let journal = new Journal();
+        let key: number;
+
+        var jrnlSaveFunc = function (err, journal) {
+            callback(err, { result: "OK" })
+        };
+
+        var trxSaveFunc = function (err, transaction) {
+            self.journalDataAccess.save(journal, jrnlSaveFunc);
+        };
+
+        var journalKeyFunc = function (err, jnlKey: Key) {
+            journal.amount = budgetDeposit.amount * -1;
+            journal.accountNumber = budgetDeposit.fromAccountId;
+            journal.date = budgetDeposit.depositDate;
+            journal.description = budgetDeposit.description;
+            journal.name = "Contra on transaction";
+            journal.id = journal.createIdFromKey(jnlKey.key);
+
+            self.transactionDataAccess.save(transaction, trxSaveFunc);
+        };
+
+        var trxKeyFunc = function (err, trxKey: Key) {
+
+            transaction.amount = budgetDeposit.amount;
+            transaction.classification = "Budget";
+            transaction.date = budgetDeposit.depositDate;
+            transaction.description = budgetDeposit.description;
+            transaction.referenceId = budgetDeposit.budgetId;
+            transaction.underlyingAccount = budgetDeposit.toAccountId;
+            transaction.id = transaction.createIdFromKey(trxKey.key);
+
+            self.keyService.getNextKey("journal", journalKeyFunc);
+        };
+
+        this.keyService.getNextKey("transaction", trxKeyFunc);
 
     }
 }

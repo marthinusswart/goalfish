@@ -46,7 +46,7 @@ export class JournalDataAccess {
         }
     }
 
-    find(accounts:string[], callback, closeConnection: boolean = false) {
+    find(accounts: string[], callback, closeConnection: boolean = false) {
         if (!this.wasInitialised) {
             throw new ReferenceError("Journal Data Access module was not initialised");
         }
@@ -54,7 +54,7 @@ export class JournalDataAccess {
         var self = this;
 
         var findFunc = (function () {
-            self.journalModel.find({accountNumber: {$in: accounts}}, function (err, journals) {
+            self.journalModel.find({ accountNumber: { $in: accounts } }, function (err, journals) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -128,7 +128,7 @@ export class JournalDataAccess {
         }
     }
 
-    save(newJournal: journal.Journal, callback) {
+    save(newJournal: journal.Journal, callback, closeConnection: boolean = false) {
         var self = this;
 
         var saveFunc = (function () {
@@ -143,8 +143,10 @@ export class JournalDataAccess {
                     self.connection.close();
                     callback(err);
                 } else {
-                    self.connection.close()
-                    console.log(result);
+                    if (closeConnection) {
+                        self.connection.close()
+                    }
+
                     callback(null, self.journalController.translateMongooseToJournal(result));
                 }
             });
