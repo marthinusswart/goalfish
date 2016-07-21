@@ -44,6 +44,7 @@ app.use('/api/v1/member/ping', member);
 
 app.use('/api/v1/initiative', initiative);
 app.use('/api/v1/initiative/reconcile', budget);
+app.use('/api/v1/initiative/deposit', budget);
 app.use('/api/v1/initiative/:id', initiative);
 app.use('/api/v1/initiative/ping', initiative);
 

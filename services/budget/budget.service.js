@@ -1,7 +1,6 @@
 "use strict";
 var transactionDataAccess_1 = require('../../dataaccess/transaction/transactionDataAccess');
 var transaction_1 = require('../../models/transaction/transaction');
-//import { BudgetController } from '../../controllers/budget/budgetController';
 var budgetDataAccess_1 = require('../../dataaccess/budget/budgetDataAccess');
 var journal_1 = require('../../models/journal/journal');
 var journalDataAccess_1 = require('../../dataaccess/journal/journalDataAccess');
