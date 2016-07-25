@@ -1,6 +1,6 @@
 "use strict";
 var mongoose = require('mongoose');
-var budgetController = require('../../controllers/budget/budgetController');
+var budget_controller_1 = require('../../controllers/budget/budget.controller');
 var BudgetDataAccess = (function () {
     function BudgetDataAccess() {
         this.wasInitialised = false;
@@ -13,7 +13,7 @@ var BudgetDataAccess = (function () {
             var self = this;
             this.connection = db.createConnection("localhost", "goalfish");
             this.connection.on("error", console.error.bind(console, "connection error:"));
-            this.budgetController = new budgetController.BudgetController();
+            this.budgetController = new budget_controller_1.BudgetController();
             this.budgetSchema = this.budgetController.createBudgetMongooseSchema();
             this.budgetModel = this.connection.model("budget", this.budgetSchema, "budget");
             this.isConnectionOpening = true;
@@ -58,8 +58,6 @@ var BudgetDataAccess = (function () {
         if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var findFunc = (function () {
-            //let budgetSchema = self.budgetController.createBudgetMongooseSchema();
-            //var budgetModel = self.connection.model("budget", budgetSchema, "budget");
             self.budgetModel.findById(id, function (err, budget) {
                 if (err) {
                     self.connection.close();
@@ -84,8 +82,6 @@ var BudgetDataAccess = (function () {
         if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var saveFunc = (function () {
-            //let budgetSchema = self.budgetController.createBudgetMongooseSchema();
-            //var budgetModel = self.connection.model("budget", budgetSchema, "budget");
             var mongooseBudget = new self.budgetModel();
             self.budgetController.translateBudgetToMongoose(newBudget, mongooseBudget);
             mongooseBudget.save(function (err, result) {
@@ -113,8 +109,6 @@ var BudgetDataAccess = (function () {
         if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var updateFunc = (function () {
-            //let budgetSchema = self.budgetController.createBudgetMongooseSchema();
-            //var budgetModel = self.connection.model("budget", budgetSchema, "budget");
             var mongooseBudget = new self.budgetModel();
             self.budgetController.translateBudgetToMongoose(newBudget, mongooseBudget);
             self.budgetModel.findOneAndUpdate({ "_id": mongooseBudget._id }, mongooseBudget, { new: true }, function (err, result) {

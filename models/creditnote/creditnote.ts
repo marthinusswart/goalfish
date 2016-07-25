@@ -6,4 +6,5 @@ export class CreditNote {
     balance: number;
     underlyingAccount: string;
     memberId: string;
+    date: Date;
 }
