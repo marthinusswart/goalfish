@@ -1,6 +1,6 @@
 "use strict";
 var mongoose = require('mongoose');
-var budget_controller_1 = require('../../controllers/budget/budget.controller');
+var creditnote_controller_1 = require('../../controllers/creditnote/creditnote.controller');
 var BudgetDataAccess = (function () {
     function BudgetDataAccess() {
         this.wasInitialised = false;
@@ -13,9 +13,9 @@ var BudgetDataAccess = (function () {
             var self = this;
             this.connection = db.createConnection("localhost", "goalfish");
             this.connection.on("error", console.error.bind(console, "connection error:"));
-            this.budgetController = new budget_controller_1.BudgetController();
-            this.budgetSchema = this.budgetController.createBudgetMongooseSchema();
-            this.budgetModel = this.connection.model("budget", this.budgetSchema, "budget");
+            this.crNoteController = new creditnote_controller_1.CreditNoteController();
+            this.crNoteSchema = this.crNoteController.createCreditNoteMongooseSchema();
+            this.crNoteModel = this.connection.model("creditnote", this.crNoteSchema, "creditnote");
             this.isConnectionOpening = true;
             this.wasInitialised = true;
             this.connection.on("close", function () {
@@ -33,7 +33,7 @@ var BudgetDataAccess = (function () {
         if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var findFunc = (function () {
-            self.budgetModel.find({ memberId: memberId }, function (err, budgets) {
+            self.crNoteModel.find({ memberId: memberId }, function (err, budgets) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -42,7 +42,7 @@ var BudgetDataAccess = (function () {
                     if (closeConnection) {
                         self.connection.close();
                     }
-                    callback(null, self.budgetController.translateMongooseArrayToBudgetArray(budgets));
+                    callback(null, self.crNoteController.translateMongooseArrayToCreditNoteArray(budgets));
                 }
             });
         });
@@ -58,7 +58,7 @@ var BudgetDataAccess = (function () {
         if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var findFunc = (function () {
-            self.budgetModel.findById(id, function (err, budget) {
+            self.crNoteModel.findById(id, function (err, budget) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -66,7 +66,7 @@ var BudgetDataAccess = (function () {
                 else {
                     self.connection.close();
                     console.log(budget);
-                    callback(null, self.budgetController.translateMongooseToBudget(budget));
+                    callback(null, self.crNoteController.translateMongooseToCreditNote(budget));
                 }
             });
         });
@@ -78,13 +78,13 @@ var BudgetDataAccess = (function () {
             findFunc();
         }
     };
-    BudgetDataAccess.prototype.save = function (newBudget, callback, closeConnection) {
+    BudgetDataAccess.prototype.save = function (newCreditNote, callback, closeConnection) {
         if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var saveFunc = (function () {
-            var mongooseBudget = new self.budgetModel();
-            self.budgetController.translateBudgetToMongoose(newBudget, mongooseBudget);
-            mongooseBudget.save(function (err, result) {
+            var mongooseCrNote = new self.crNoteModel();
+            self.crNoteController.translateCreditNoteToMongoose(newCreditNote, mongooseCrNote);
+            mongooseCrNote.save(function (err, result) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -93,7 +93,7 @@ var BudgetDataAccess = (function () {
                     if (closeConnection) {
                         self.connection.close();
                     }
-                    callback(null, self.budgetController.translateMongooseToBudget(result));
+                    callback(null, self.crNoteController.translateMongooseToCreditNote(result));
                 }
             });
         });
@@ -105,13 +105,13 @@ var BudgetDataAccess = (function () {
             saveFunc();
         }
     };
-    BudgetDataAccess.prototype.update = function (id, newBudget, callback, closeConnection) {
+    BudgetDataAccess.prototype.update = function (id, newCreditNote, callback, closeConnection) {
         if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var updateFunc = (function () {
-            var mongooseBudget = new self.budgetModel();
-            self.budgetController.translateBudgetToMongoose(newBudget, mongooseBudget);
-            self.budgetModel.findOneAndUpdate({ "_id": mongooseBudget._id }, mongooseBudget, { new: true }, function (err, result) {
+            var mongooseCrNote = new self.crNoteModel();
+            self.crNoteController.translateCreditNoteToMongoose(newCreditNote, mongooseCrNote);
+            self.crNoteModel.findOneAndUpdate({ "_id": mongooseCrNote._id }, mongooseCrNote, { new: true }, function (err, result) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -120,7 +120,7 @@ var BudgetDataAccess = (function () {
                     if (closeConnection) {
                         self.connection.close();
                     }
-                    callback(null, self.budgetController.translateMongooseToBudget(result));
+                    callback(null, self.crNoteController.translateMongooseToCreditNote(result));
                 }
             });
         });
@@ -142,4 +142,4 @@ var BudgetDataAccess = (function () {
     return BudgetDataAccess;
 }());
 exports.BudgetDataAccess = BudgetDataAccess;
-//# sourceMappingURL=budgetDataAccess.js.map
+//# sourceMappingURL=creditnote.dataaccess.js.map
