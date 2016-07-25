@@ -3,7 +3,7 @@ import { Transaction } from '../../models/transaction/transaction';
 import { Budget } from '../../models/budget/budget';
 import { BudgetDeposit } from '../../models/budget/budget.deposit';
 import { BudgetWithdrawal } from '../../models/budget/budget.withdrawal';
-import { BudgetDataAccess } from '../../dataaccess/budget/budgetDataAccess';
+import { BudgetDataAccess } from '../../dataaccess/budget/budget.dataaccess';
 import { Journal } from '../../models/journal/journal';
 import { JournalDataAccess } from '../../dataaccess/journal/journalDataAccess';
 import { KeyService } from '../key/key.service';

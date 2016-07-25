@@ -1,10 +1,10 @@
 "use strict";
 var express = require('express');
-var budgetDataAccess_1 = require('../../dataaccess/budget/budgetDataAccess');
+var budget_dataaccess_1 = require('../../dataaccess/budget/budget.dataaccess');
 var budget_service_1 = require('../../services/budget/budget.service');
 var security_service_1 = require('../../services/security/security.service');
 var router = express.Router();
-var budgetDataAcccessService = new budgetDataAccess_1.BudgetDataAccess();
+var budgetDataAcccessService = new budget_dataaccess_1.BudgetDataAccess();
 var budgetService = new budget_service_1.BudgetService();
 var securityService = new security_service_1.SecurityService();
 budgetDataAcccessService.init();

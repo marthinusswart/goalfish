@@ -1,6 +1,6 @@
 import express = require('express');
 import models = require('../../models/budget/budget');
-import { BudgetDataAccess } from '../../dataaccess/budget/budgetDataAccess';
+import { BudgetDataAccess } from '../../dataaccess/budget/budget.dataaccess';
 import { BudgetService } from '../../services/budget/budget.service';
 import { SecurityService } from '../../services/security/security.service';
 import { Token } from '../../models/security/token';

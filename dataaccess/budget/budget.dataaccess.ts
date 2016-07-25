@@ -1,5 +1,5 @@
 import mongoose = require('mongoose');
-import budget = require('../../models/budget/budget');
+import { Budget } from '../../models/budget/budget';
 import { BudgetController } from '../../controllers/budget/budget.controller';
 
 export class BudgetDataAccess {
@@ -86,7 +86,7 @@ export class BudgetDataAccess {
         }
     }
 
-    save(newBudget: budget.Budget, callback, closeConnection: boolean = false) {
+    save(newBudget: Budget, callback, closeConnection: boolean = false) {
         var self = this;
         var saveFunc = (function () {
 
@@ -115,7 +115,7 @@ export class BudgetDataAccess {
         }
     }
 
-    update(id: string, newBudget: budget.Budget, callback, closeConnection: boolean = false) {
+    update(id: string, newBudget: Budget, callback, closeConnection: boolean = false) {
         var self = this;
         var updateFunc = (function () {
 

@@ -1,7 +1,7 @@
 "use strict";
 var transactionDataAccess_1 = require('../../dataaccess/transaction/transactionDataAccess');
 var transaction_1 = require('../../models/transaction/transaction');
-var budgetDataAccess_1 = require('../../dataaccess/budget/budgetDataAccess');
+var budget_dataaccess_1 = require('../../dataaccess/budget/budget.dataaccess');
 var journal_1 = require('../../models/journal/journal');
 var journalDataAccess_1 = require('../../dataaccess/journal/journalDataAccess');
 var key_service_1 = require('../key/key.service');
@@ -13,7 +13,7 @@ var BudgetService = (function () {
     BudgetService.prototype.init = function () {
         if (!this.wasInitialised) {
             //this.budgetController = new BudgetController();
-            this.budgetDataAccess = new budgetDataAccess_1.BudgetDataAccess();
+            this.budgetDataAccess = new budget_dataaccess_1.BudgetDataAccess();
             this.transactionDataAccess = new transactionDataAccess_1.TransactionDataAccess();
             this.journalDataAccess = new journalDataAccess_1.JournalDataAccess();
             this.keyService = new key_service_1.KeyService();
