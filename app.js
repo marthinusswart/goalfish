@@ -56,6 +56,7 @@ app.use('/api/v1/underlyingAccount/ping', underlyingAccount);
 app.use('/api/v1/budget', budget);
 app.use('/api/v1/budget/reconcile', budget);
 app.use('/api/v1/budget/deposit', budget);
+app.use('/api/v1/budget/withdraw', budget);
 app.use('/api/v1/budget/:id', budget);
 app.use('/api/v1/budget/ping', budget);
 

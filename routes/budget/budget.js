@@ -84,6 +84,23 @@ router
         });
     });
 })
+    .post('/withdraw', function (req, res, next) {
+    /** Not secure at all, but great for local usage only */
+    res.header("Access-Control-Allow-Origin", "*");
+    /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+    var tokenString = req.headers['x-access-token'];
+    var budgetWithdrawal = req.body;
+    securityService.getToken(tokenString, function (err, token) {
+        budgetService.withdraw(token.memberId, budgetWithdrawal, function (err, budgets) {
+            if (err === null) {
+                res.status(200).send(budgets);
+            }
+            else {
+                res.status(500).send(err.message);
+            }
+        });
+    });
+})
     .post('/ping', function (req, res, next) {
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
@@ -118,6 +135,15 @@ router
     res.status(200).send("OK");
 })
     .options('/deposit', function (req, res, next) {
+    /** Not secure at all, but great for local usage only */
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT");
+    res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept,x-access-token");
+    res.header("Content-Type", "application/json");
+    /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+    res.status(200).send("OK");
+})
+    .options('/withdraw', function (req, res, next) {
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT");

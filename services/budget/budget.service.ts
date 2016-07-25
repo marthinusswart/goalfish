@@ -2,6 +2,7 @@ import { TransactionDataAccess } from '../../dataaccess/transaction/transactionD
 import { Transaction } from '../../models/transaction/transaction';
 import { Budget } from '../../models/budget/budget';
 import { BudgetDeposit } from '../../models/budget/budget.deposit';
+import { BudgetWithdrawal } from '../../models/budget/budget.withdrawal';
 import { BudgetDataAccess } from '../../dataaccess/budget/budgetDataAccess';
 import { Journal } from '../../models/journal/journal';
 import { JournalDataAccess } from '../../dataaccess/journal/journalDataAccess';
@@ -119,6 +120,32 @@ export class BudgetService {
             transaction.id = transaction.createIdFromKey(trxKey.key);
 
             self.keyService.getNextKey("journal", journalKeyFunc);
+        };
+
+        this.keyService.getNextKey("transaction", trxKeyFunc);
+
+    }
+
+     withdraw(memberId: string, budgetWithdrawal: BudgetWithdrawal, callback) {
+        let self = this;
+        let transaction = new Transaction();
+        let key: number;
+
+        var trxSaveFunc = function (err, transaction) {
+           callback(err, { result: "OK" });
+        };
+
+        var trxKeyFunc = function (err, trxKey: Key) {
+
+            transaction.amount = budgetWithdrawal.amount*-1;
+            transaction.classification = "Budget";
+            transaction.date = budgetWithdrawal.withdrawalDate;
+            transaction.description = budgetWithdrawal.description;
+            transaction.referenceId = budgetWithdrawal.budgetId;
+            transaction.underlyingAccount = budgetWithdrawal.fromAccountId;
+            transaction.id = transaction.createIdFromKey(trxKey.key);
+
+            self.transactionDataAccess.save(transaction, trxSaveFunc);
         };
 
         this.keyService.getNextKey("transaction", trxKeyFunc);

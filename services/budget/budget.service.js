@@ -95,6 +95,25 @@ var BudgetService = (function () {
         };
         this.keyService.getNextKey("transaction", trxKeyFunc);
     };
+    BudgetService.prototype.withdraw = function (memberId, budgetWithdrawal, callback) {
+        var self = this;
+        var transaction = new transaction_1.Transaction();
+        var key;
+        var trxSaveFunc = function (err, transaction) {
+            callback(err, { result: "OK" });
+        };
+        var trxKeyFunc = function (err, trxKey) {
+            transaction.amount = budgetWithdrawal.amount * -1;
+            transaction.classification = "Budget";
+            transaction.date = budgetWithdrawal.withdrawalDate;
+            transaction.description = budgetWithdrawal.description;
+            transaction.referenceId = budgetWithdrawal.budgetId;
+            transaction.underlyingAccount = budgetWithdrawal.fromAccountId;
+            transaction.id = transaction.createIdFromKey(trxKey.key);
+            self.transactionDataAccess.save(transaction, trxSaveFunc);
+        };
+        this.keyService.getNextKey("transaction", trxKeyFunc);
+    };
     return BudgetService;
 }());
 exports.BudgetService = BudgetService;
