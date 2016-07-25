@@ -57,4 +57,4 @@ var BudgetController = (function () {
     return BudgetController;
 }());
 exports.BudgetController = BudgetController;
-//# sourceMappingURL=budgetController.js.map
+//# sourceMappingURL=budget.controller.js.map
