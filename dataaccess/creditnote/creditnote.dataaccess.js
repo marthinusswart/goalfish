@@ -1,13 +1,13 @@
 "use strict";
 var mongoose = require('mongoose');
 var creditnote_controller_1 = require('../../controllers/creditnote/creditnote.controller');
-var BudgetDataAccess = (function () {
-    function BudgetDataAccess() {
+var CreditNoteDataAccess = (function () {
+    function CreditNoteDataAccess() {
         this.wasInitialised = false;
         this.isConnectionOpen = false;
         this.isConnectionOpening = false;
     }
-    BudgetDataAccess.prototype.init = function () {
+    CreditNoteDataAccess.prototype.init = function () {
         if (!this.wasInitialised) {
             var db = new mongoose.Mongoose();
             var self = this;
@@ -29,7 +29,7 @@ var BudgetDataAccess = (function () {
             throw new ReferenceError("Can't initialise again");
         }
     };
-    BudgetDataAccess.prototype.find = function (memberId, callback, closeConnection) {
+    CreditNoteDataAccess.prototype.find = function (memberId, callback, closeConnection) {
         if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var findFunc = (function () {
@@ -54,7 +54,7 @@ var BudgetDataAccess = (function () {
             findFunc();
         }
     };
-    BudgetDataAccess.prototype.findById = function (id, callback, closeConnection) {
+    CreditNoteDataAccess.prototype.findById = function (id, callback, closeConnection) {
         if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var findFunc = (function () {
@@ -78,7 +78,7 @@ var BudgetDataAccess = (function () {
             findFunc();
         }
     };
-    BudgetDataAccess.prototype.save = function (newCreditNote, callback, closeConnection) {
+    CreditNoteDataAccess.prototype.save = function (newCreditNote, callback, closeConnection) {
         if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var saveFunc = (function () {
@@ -105,7 +105,7 @@ var BudgetDataAccess = (function () {
             saveFunc();
         }
     };
-    BudgetDataAccess.prototype.update = function (id, newCreditNote, callback, closeConnection) {
+    CreditNoteDataAccess.prototype.update = function (id, newCreditNote, callback, closeConnection) {
         if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var updateFunc = (function () {
@@ -132,14 +132,14 @@ var BudgetDataAccess = (function () {
             updateFunc();
         }
     };
-    BudgetDataAccess.prototype.onConnectionOpen = function () {
+    CreditNoteDataAccess.prototype.onConnectionOpen = function () {
         this.isConnectionOpen = true;
         this.isConnectionOpening = false;
     };
-    BudgetDataAccess.prototype.onConnectionClose = function () {
+    CreditNoteDataAccess.prototype.onConnectionClose = function () {
         this.isConnectionOpen = false;
     };
-    return BudgetDataAccess;
+    return CreditNoteDataAccess;
 }());
-exports.BudgetDataAccess = BudgetDataAccess;
+exports.CreditNoteDataAccess = CreditNoteDataAccess;
 //# sourceMappingURL=creditnote.dataaccess.js.map

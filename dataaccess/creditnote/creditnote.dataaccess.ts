@@ -2,7 +2,7 @@ import mongoose = require('mongoose');
 import { CreditNote } from '../../models/creditnote/creditnote';
 import { CreditNoteController } from '../../controllers/creditnote/creditnote.controller';
 
-export class BudgetDataAccess {
+export class CreditNoteDataAccess {
     connection: mongoose.Connection;
     crNoteController: CreditNoteController;
     wasInitialised: boolean = false;

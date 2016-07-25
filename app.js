@@ -20,6 +20,7 @@ var transaction = require('./routes/transaction/transaction');
 var maintenance = require('./routes/maintenance/maintenance');
 var key = require('./routes/key/key');
 var security = require('./routes/security/security');
+var creditNote = require('./routes/creditnote/creditnote');
 
 var app = express();
 
@@ -59,6 +60,10 @@ app.use('/api/v1/budget/deposit', budget);
 app.use('/api/v1/budget/withdraw', budget);
 app.use('/api/v1/budget/:id', budget);
 app.use('/api/v1/budget/ping', budget);
+
+app.use('/api/v1/creditnote', creditNote);
+app.use('/api/v1/creditnote/:id', creditNote);
+app.use('/api/v1/creditnote/ping', creditNote);
 
 app.use('/api/v1/journal', journal);
 app.use('/api/v1/journal/:id', journal);
