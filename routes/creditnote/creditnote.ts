@@ -22,8 +22,8 @@ router
         let tokenString = req.headers['x-access-token'];
 
         securityService.getToken(tokenString, function (err, token: Token) {
-            crNoteDataAcccessService.find(token.memberId, function (err, budgets) {
-                res.status(200).send(budgets);
+            crNoteDataAcccessService.find(token.memberId, function (err, creditNotes) {
+                res.status(200).send(creditNotes);
             });
         });
 
@@ -34,8 +34,8 @@ router
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-        crNoteDataAcccessService.findById(req.params.id, function (err, budget) {
-            res.status(200).send(budget);
+        crNoteDataAcccessService.findById(req.params.id, function (err, creditNote) {
+            res.status(200).send(creditNote);
         });
 
     })
@@ -44,8 +44,8 @@ router
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-        crNoteDataAcccessService.update(req.params.id, req.body, function (err, budget) {
-            res.status(200).send(budget);
+        crNoteDataAcccessService.update(req.params.id, req.body, function (err, creditNote) {
+            res.status(200).send(creditNote);
         });
     })
     .post('/', function (req, res, next) {
@@ -53,9 +53,9 @@ router
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-        crNoteDataAcccessService.save(req.body, function (err, budget) {
+        crNoteDataAcccessService.save(req.body, function (err, creditNote) {
             if (err === null) {
-                res.status(201).send(budget);
+                res.status(201).send(creditNote);
             }
             else {
                 res.status(500).send(err.message);

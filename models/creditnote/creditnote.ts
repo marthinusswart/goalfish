@@ -3,8 +3,10 @@ export class CreditNote {
     id: string;
     name: string;
     description: string;
-    balance: number;
-    underlyingAccount: string;
+    amount: number;
+    fromAccount: string;
+    toAccount: string;
     memberId: string;
     date: Date;
+    state: string;
 }

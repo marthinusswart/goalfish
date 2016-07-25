@@ -9,10 +9,12 @@ export class CreditNoteController {
             id: String,
             name: String,
             description: String,
-            balance: Number,
-            underlyingAccount: String,
+            amount: Number,
+            fromAccount: String,
+            toAccount: String,
             memberId: String,
-            date: Date
+            date: Date,
+            state: String
         });
 
         return crNoteSchema;
@@ -22,10 +24,12 @@ export class CreditNoteController {
         mongooseCrNote.id = crNote.id;
         mongooseCrNote.name = crNote.name;
         mongooseCrNote.description = crNote.description;
-        mongooseCrNote.balance = crNote.balance;
+        mongooseCrNote.amount = crNote.amount;
         mongooseCrNote.date = crNote.date;
-        mongooseCrNote.underlyingAccount = crNote.underlyingAccount;
+        mongooseCrNote.fromAccount = crNote.fromAccount;
+        mongooseCrNote.toAccount = crNote.toAccount;
         mongooseCrNote.memberId = crNote.memberId;
+        mongooseCrNote.state = crNote.state;
 
         if (crNote.externalRef !== "") {
             mongooseCrNote._id = crNote.externalRef;
@@ -41,10 +45,12 @@ export class CreditNoteController {
         crNoteObj.name = mongooseCrNote.name;
         crNoteObj.description = mongooseCrNote.description;
         crNoteObj.id = mongooseCrNote.id;
-        crNoteObj.balance = mongooseCrNote.balance;
+        crNoteObj.amount = mongooseCrNote.amount;
         crNoteObj.date = mongooseCrNote.date;
-        crNoteObj.underlyingAccount = mongooseCrNote.underlyingAccount;
+        crNoteObj.fromAccount = mongooseCrNote.fromAccount;
+        crNoteObj.toAccount = mongooseCrNote.toAccount;
         crNoteObj.memberId = mongooseCrNote.memberId;
+        crNoteObj.state = mongooseCrNote.state;
 
         return crNoteObj;
     }
