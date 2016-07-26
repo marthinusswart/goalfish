@@ -5,7 +5,7 @@ var transaction_1 = require('../../models/transaction/transaction');
 //import initiativeControllerLib = require('../../controllers/initiative/initiativeController');
 var initiativeDataAccess_1 = require('../../dataaccess/initiative/initiativeDataAccess');
 var journal_1 = require('../../models/journal/journal');
-var journalDataAccess_1 = require('../../dataaccess/journal/journalDataAccess');
+var journal_dataAccess_1 = require('../../dataaccess/journal/journal.dataAccess');
 var key_service_1 = require('../key/key.service');
 var async = require('async');
 var InitativeService = (function () {
@@ -18,7 +18,7 @@ var InitativeService = (function () {
             //this.initiativeController = new initiativeControllerLib.InitiativeController();
             this.initiativeDataAccess = new initiativeDataAccess_1.InitiativeDataAccess();
             this.transactionDataAccess = new transactionDataAccess_1.TransactionDataAccess();
-            this.journalDataAccess = new journalDataAccess_1.JournalDataAccess();
+            this.journalDataAccess = new journal_dataAccess_1.JournalDataAccess();
             this.keyService = new key_service_1.KeyService();
             this.initiativeDataAccess.init();
             this.transactionDataAccess.init();

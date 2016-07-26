@@ -1,5 +1,5 @@
 "use strict";
-var journalDataAccessLib = require('../../dataaccess/journal/journalDataAccess');
+var journalDataAccessLib = require('../../dataaccess/journal/journal.dataAccess');
 var JournalMaintenanceService = (function () {
     function JournalMaintenanceService() {
     }

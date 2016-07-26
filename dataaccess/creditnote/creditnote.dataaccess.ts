@@ -39,7 +39,7 @@ export class CreditNoteDataAccess {
         var self = this;
         var findFunc = (function () {
 
-            self.crNoteModel.find({ memberId:memberId }, function (err, budgets) {
+            self.crNoteModel.find({ memberId:memberId }, function (err, creditNotes) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -47,7 +47,33 @@ export class CreditNoteDataAccess {
                     if (closeConnection) {
                         self.connection.close();
                     }
-                    callback(null, self.crNoteController.translateMongooseArrayToCreditNoteArray(budgets));
+                    callback(null, self.crNoteController.translateMongooseArrayToCreditNoteArray(creditNotes));
+                }
+            });
+
+        });
+
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        } else {
+            findFunc();
+        }
+    }
+
+     findByField(filter: any, callback, closeConnection: boolean = false) {
+        var self = this;
+        var findFunc = (function () {
+
+            self.crNoteModel.find(filter, function (err, creditNotes) {
+                if (err) {
+                    self.connection.close();
+                    callback(err);
+                } else {
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
+                    callback(null, self.crNoteController.translateMongooseArrayToCreditNoteArray(creditNotes));
                 }
             });
 
@@ -65,14 +91,14 @@ export class CreditNoteDataAccess {
         var self = this;
         var findFunc = (function () {
 
-            self.crNoteModel.findById(id, function (err, budget: mongoose.Schema) {
+            self.crNoteModel.findById(id, function (err, creditNote: mongoose.Schema) {
                 if (err) {
                     self.connection.close();
                     callback(err);
                 } else {
                     self.connection.close()
-                    console.log(budget);
-                    callback(null, self.crNoteController.translateMongooseToCreditNote(budget));
+                    console.log(creditNote);
+                    callback(null, self.crNoteController.translateMongooseToCreditNote(creditNote));
                 }
             });
 
@@ -142,6 +168,33 @@ export class CreditNoteDataAccess {
         } else {
             updateFunc();
         }
+    }
+
+     updateAll(creditNotes: any[], callback, closeConnection: boolean = false) {
+        var self = this;
+        let count = 0;
+
+        async.whilst(() => { return count < creditNotes.length; },
+            (callback) => {
+                let crNoteObj: CreditNote = creditNotes[count];
+                count++;
+
+                this.update(crNoteObj.externalRef, crNoteObj, function (err, journal) {
+                    if (err === null) {
+                        console.log("Updated");
+                    } else {
+                        console.log("Failed to update " + err);
+                    }
+                    callback();
+                }, false);
+            },
+            (err) => {
+                if (closeConnection) {
+                   this.connection.close();
+                }
+                callback(err, creditNotes);
+            });
+
     }
 
     onConnectionOpen() {

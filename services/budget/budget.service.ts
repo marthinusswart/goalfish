@@ -5,7 +5,7 @@ import { BudgetDeposit } from '../../models/budget/budget.deposit';
 import { BudgetWithdrawal } from '../../models/budget/budget.withdrawal';
 import { BudgetDataAccess } from '../../dataaccess/budget/budget.dataaccess';
 import { Journal } from '../../models/journal/journal';
-import { JournalDataAccess } from '../../dataaccess/journal/journalDataAccess';
+import { JournalDataAccess } from '../../dataaccess/journal/journal.dataAccess';
 import { KeyService } from '../key/key.service';
 import { Key } from '../../models/key/key';
 import async = require('async');

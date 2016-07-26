@@ -1,6 +1,6 @@
 "use strict";
 var mongoose = require('mongoose');
-var journal = require('../../models/journal/journal');
+var journal_1 = require('../../models/journal/journal');
 var JournalController = (function () {
     function JournalController() {
     }
@@ -32,7 +32,7 @@ var JournalController = (function () {
     };
     JournalController.prototype.translateMongooseToJournal = function (mongooseJournal) {
         var journalObj;
-        journalObj = new journal.Journal();
+        journalObj = new journal_1.Journal();
         journalObj.externalRef = mongooseJournal._id;
         journalObj.name = mongooseJournal.name;
         journalObj.description = mongooseJournal.description;
@@ -50,6 +50,16 @@ var JournalController = (function () {
             journalArray.push(_this.translateMongooseToJournal(journalSchema));
         });
         return journalArray;
+    };
+    JournalController.prototype.fromCreditNote = function (creditNote) {
+        var journal = new journal_1.Journal();
+        journal.accountNumber = creditNote.fromAccount;
+        journal.amount = creditNote.amount * -1;
+        journal.date = new Date();
+        journal.description = creditNote.description;
+        journal.name = creditNote.name;
+        journal.id = "JNLxxxx";
+        return journal;
     };
     return JournalController;
 }());

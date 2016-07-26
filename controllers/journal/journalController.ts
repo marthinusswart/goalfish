@@ -1,5 +1,6 @@
 import mongoose = require('mongoose');
-import journal = require('../../models/journal/journal');
+import { Journal } from '../../models/journal/journal';
+import { CreditNote } from '../../models/creditnote/creditnote';
 
 export class JournalController {
 
@@ -18,7 +19,7 @@ export class JournalController {
         return journalSchema;
     }
 
-    translateJournalToMongoose(journal: journal.Journal, mongooseJournal: any) {
+    translateJournalToMongoose(journal: Journal, mongooseJournal: any) {
         mongooseJournal.id = journal.id;
         mongooseJournal.name = journal.name;
         mongooseJournal.description = journal.description;
@@ -34,9 +35,9 @@ export class JournalController {
         return 0
     }
 
-    translateMongooseToJournal(mongooseJournal: any): journal.Journal {
-        let journalObj: journal.Journal;
-        journalObj = new journal.Journal();
+    translateMongooseToJournal(mongooseJournal: any): Journal {
+        let journalObj: Journal;
+        journalObj = new Journal();
         journalObj.externalRef = mongooseJournal._id;
         journalObj.name = mongooseJournal.name;
         journalObj.description = mongooseJournal.description;
@@ -55,6 +56,19 @@ export class JournalController {
             journalArray.push(this.translateMongooseToJournal(journalSchema));
         });
         return journalArray;
+    }
+
+     fromCreditNote(creditNote: CreditNote): Journal {
+        let journal: Journal = new Journal();
+
+        journal.accountNumber = creditNote.fromAccount;
+        journal.amount = creditNote.amount*-1;
+        journal.date = new Date();
+        journal.description = creditNote.description;
+        journal.name = creditNote.name;
+        journal.id = "JNLxxxx";
+
+        return journal;
     }
 
 }

@@ -1,9 +1,9 @@
 "use strict";
 var express = require('express');
-var journalDataAccess_1 = require('../../dataaccess/journal/journalDataAccess');
+var journal_dataAccess_1 = require('../../dataaccess/journal/journal.dataAccess');
 var security_service_1 = require('../../services/security/security.service');
 var router = express.Router();
-var journalDataAcccessService = new journalDataAccess_1.JournalDataAccess();
+var journalDataAcccessService = new journal_dataAccess_1.JournalDataAccess();
 var securityService = new security_service_1.SecurityService();
 journalDataAcccessService.init();
 securityService.init();

@@ -1,7 +1,7 @@
 import trxDataAccessLib = require('../../dataaccess/transaction/transactionDataAccess');
 import trxLib = require('../../models/transaction/transaction');
 
-import journalDataAccessLib = require('../../dataaccess/journal/journalDataAccess');
+import journalDataAccessLib = require('../../dataaccess/journal/journal.dataAccess');
 import journalLib = require('../../models/journal/journal');
 
 import postingDataAccessLib = require('../../dataaccess/posting/postingDataAccess');

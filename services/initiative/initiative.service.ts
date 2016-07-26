@@ -6,7 +6,7 @@ import { Initiative } from '../../models/initiative/initiative';
 import { InitiativeDataAccess } from '../../dataaccess/initiative/initiativeDataAccess';
 import { InitiativeDeposit } from '../../models/initiative/initiative.deposit';
 import { Journal } from '../../models/journal/journal';
-import { JournalDataAccess } from '../../dataaccess/journal/journalDataAccess';
+import { JournalDataAccess } from '../../dataaccess/journal/journal.dataAccess';
 import { KeyService } from '../key/key.service';
 import { Key } from '../../models/key/key';
 

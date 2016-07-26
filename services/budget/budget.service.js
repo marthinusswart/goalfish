@@ -3,7 +3,7 @@ var transactionDataAccess_1 = require('../../dataaccess/transaction/transactionD
 var transaction_1 = require('../../models/transaction/transaction');
 var budget_dataaccess_1 = require('../../dataaccess/budget/budget.dataaccess');
 var journal_1 = require('../../models/journal/journal');
-var journalDataAccess_1 = require('../../dataaccess/journal/journalDataAccess');
+var journal_dataAccess_1 = require('../../dataaccess/journal/journal.dataAccess');
 var key_service_1 = require('../key/key.service');
 var async = require('async');
 var BudgetService = (function () {
@@ -15,7 +15,7 @@ var BudgetService = (function () {
             //this.budgetController = new BudgetController();
             this.budgetDataAccess = new budget_dataaccess_1.BudgetDataAccess();
             this.transactionDataAccess = new transactionDataAccess_1.TransactionDataAccess();
-            this.journalDataAccess = new journalDataAccess_1.JournalDataAccess();
+            this.journalDataAccess = new journal_dataAccess_1.JournalDataAccess();
             this.keyService = new key_service_1.KeyService();
             this.budgetDataAccess.init();
             this.transactionDataAccess.init();
