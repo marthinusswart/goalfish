@@ -64,4 +64,4 @@ var JournalController = (function () {
     return JournalController;
 }());
 exports.JournalController = JournalController;
-//# sourceMappingURL=journalController.js.map
+//# sourceMappingURL=journal.controller.js.map
