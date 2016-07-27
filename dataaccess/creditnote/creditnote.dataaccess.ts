@@ -1,6 +1,7 @@
 import mongoose = require('mongoose');
 import { CreditNote } from '../../models/creditnote/creditnote';
 import { CreditNoteController } from '../../controllers/creditnote/creditnote.controller';
+import async = require('async');
 
 export class CreditNoteDataAccess {
     connection: mongoose.Connection;

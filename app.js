@@ -44,8 +44,8 @@ app.use('/api/v1/member/:id', member);
 app.use('/api/v1/member/ping', member);
 
 app.use('/api/v1/initiative', initiative);
-app.use('/api/v1/initiative/reconcile', budget);
-app.use('/api/v1/initiative/deposit', budget);
+app.use('/api/v1/initiative/reconcile', initiative);
+app.use('/api/v1/initiative/deposit', initiative);
 app.use('/api/v1/initiative/:id', initiative);
 app.use('/api/v1/initiative/ping', initiative);
 
@@ -62,6 +62,7 @@ app.use('/api/v1/budget/:id', budget);
 app.use('/api/v1/budget/ping', budget);
 
 app.use('/api/v1/creditnote', creditNote);
+app.use('/api/v1/creditnote/process', creditNote);
 app.use('/api/v1/creditnote/:id', creditNote);
 app.use('/api/v1/creditnote/ping', creditNote);
 

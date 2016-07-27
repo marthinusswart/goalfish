@@ -1,6 +1,7 @@
 "use strict";
 var mongoose = require('mongoose');
 var creditnote_controller_1 = require('../../controllers/creditnote/creditnote.controller');
+var async = require('async');
 var CreditNoteDataAccess = (function () {
     function CreditNoteDataAccess() {
         this.wasInitialised = false;

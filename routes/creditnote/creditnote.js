@@ -4,10 +4,10 @@ var creditnote_dataaccess_1 = require('../../dataaccess/creditnote/creditnote.da
 var creditnote_service_1 = require('../../services/creditnote/creditnote.service');
 var security_service_1 = require('../../services/security/security.service');
 var router = express.Router();
-var crNoteDataAcccessService = new creditnote_dataaccess_1.CreditNoteDataAccess();
+var crNoteDataAcccess = new creditnote_dataaccess_1.CreditNoteDataAccess();
 var crNoteService = new creditnote_service_1.CreditNoteService();
 var securityService = new security_service_1.SecurityService();
-crNoteDataAcccessService.init();
+crNoteDataAcccess.init();
 crNoteService.init();
 securityService.init();
 router
@@ -17,7 +17,7 @@ router
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
     var tokenString = req.headers['x-access-token'];
     securityService.getToken(tokenString, function (err, token) {
-        crNoteDataAcccessService.find(token.memberId, function (err, creditNotes) {
+        crNoteDataAcccess.find(token.memberId, function (err, creditNotes) {
             res.status(200).send(creditNotes);
         });
     });
@@ -26,7 +26,7 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    crNoteDataAcccessService.findById(req.params.id, function (err, creditNote) {
+    crNoteDataAcccess.findById(req.params.id, function (err, creditNote) {
         res.status(200).send(creditNote);
     });
 })
@@ -34,7 +34,7 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    crNoteDataAcccessService.update(req.params.id, req.body, function (err, creditNote) {
+    crNoteDataAcccess.update(req.params.id, req.body, function (err, creditNote) {
         res.status(200).send(creditNote);
     });
 })
@@ -42,9 +42,22 @@ router
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-    crNoteDataAcccessService.save(req.body, function (err, creditNote) {
+    crNoteDataAcccess.save(req.body, function (err, creditNote) {
         if (err === null) {
             res.status(201).send(creditNote);
+        }
+        else {
+            res.status(500).send(err.message);
+        }
+    });
+})
+    .post('/process', function (req, res, next) {
+    /** Not secure at all, but great for local usage only */
+    res.header("Access-Control-Allow-Origin", "*");
+    /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+    crNoteService.processCreditNotes(function (err, result) {
+        if (err === null) {
+            res.status(201).send(result);
         }
         else {
             res.status(500).send(err.message);
@@ -58,6 +71,15 @@ router
     res.status(200).send("[" + Date.now() + "] pong");
 })
     .options('/', function (req, res, next) {
+    /** Not secure at all, but great for local usage only */
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT");
+    res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept,x-access-token");
+    res.header("Content-Type", "application/json");
+    /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+    res.status(200).send("OK");
+})
+    .options('/process', function (req, res, next) {
     /** Not secure at all, but great for local usage only */
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT");

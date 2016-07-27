@@ -1,7 +1,7 @@
 import mongoose = require('mongoose');
 import { Journal } from '../../models/journal/journal';
 import async = require('async');
-import journalController = require('../../controllers/journal/journalController');
+import journalController = require('../../controllers/journal/journal.controller');
 
 export class JournalDataAccess {
     connection: mongoose.Connection;

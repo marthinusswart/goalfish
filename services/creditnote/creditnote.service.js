@@ -2,9 +2,7 @@
 var creditnote_dataaccess_1 = require('../../dataaccess/creditnote/creditnote.dataaccess');
 var key_service_1 = require('../key/key.service');
 var journal_dataAccess_1 = require('../../dataaccess/journal/journal.dataAccess');
-//import { PostingDataAccess } from '../../dataaccess/posting/postingDataAccess';
-//import { Posting } from '../../models/posting/posting';
-var journalController_1 = require('../../controllers/journal/journalController');
+var journal_controller_1 = require('../../controllers/journal/journal.controller');
 var async = require('async');
 var CreditNoteService = (function () {
     function CreditNoteService() {
@@ -15,7 +13,7 @@ var CreditNoteService = (function () {
             this.creditNoteDataAccess = new creditnote_dataaccess_1.CreditNoteDataAccess();
             this.keyService = new key_service_1.KeyService();
             this.journalDataAccess = new journal_dataAccess_1.JournalDataAccess();
-            this.journalController = new journalController_1.JournalController();
+            this.journalController = new journal_controller_1.JournalController();
             this.creditNoteDataAccess.init();
             this.keyService.init();
             this.journalDataAccess.init();
@@ -23,10 +21,6 @@ var CreditNoteService = (function () {
         }
     };
     CreditNoteService.prototype.processCreditNotes = function (callback) {
-        // this.postingDataAccess = new PostingDataAccess();
-        // this.postingController = new PostingController();
-        // this.postingDataAccess.init();
-        // this.keyService.init();
         var self = this;
         var filter = { state: "Pending" };
         var count = 0;
@@ -43,7 +37,7 @@ var CreditNoteService = (function () {
                     count++;
                     self.keyService.getNextKey("journal", function (err, key) {
                         if (err === null) {
-                            journalObj.createIdFromKey(key.key);
+                            journalObj.id = journalObj.createIdFromKey(key.key);
                         }
                         else {
                             console.log("Failed to load key " + err);

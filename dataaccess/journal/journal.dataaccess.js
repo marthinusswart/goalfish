@@ -1,7 +1,7 @@
 "use strict";
 var mongoose = require('mongoose');
 var async = require('async');
-var journalController = require('../../controllers/journal/journalController');
+var journalController = require('../../controllers/journal/journal.controller');
 var JournalDataAccess = (function () {
     function JournalDataAccess() {
         this.wasInitialised = false;

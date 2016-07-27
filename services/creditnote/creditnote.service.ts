@@ -4,9 +4,7 @@ import { KeyService } from '../key/key.service';
 import { Key } from '../../models/key/key';
 import { JournalDataAccess } from '../../dataaccess/journal/journal.dataAccess';
 import { Journal } from '../../models/journal/journal';
-//import { PostingDataAccess } from '../../dataaccess/posting/postingDataAccess';
-//import { Posting } from '../../models/posting/posting';
-import { JournalController } from '../../controllers/journal/journalController';
+import { JournalController } from '../../controllers/journal/journal.controller';
 import async = require('async');
 
 export class CreditNoteService {
@@ -14,7 +12,6 @@ export class CreditNoteService {
     creditNoteDataAccess: CreditNoteDataAccess;
     keyService: KeyService;
     journalDataAccess: JournalDataAccess;
-    // postingDataAccess: PostingDataAccess;
     journalController: JournalController;
 
     wasInitialised: boolean = false;
@@ -33,13 +30,6 @@ export class CreditNoteService {
     }
 
     processCreditNotes(callback) {
-
-        // this.postingDataAccess = new PostingDataAccess();
-        // this.postingController = new PostingController();
-
-
-        // this.postingDataAccess.init();
-        // this.keyService.init();
 
         var self = this;
         let filter = { state: "Pending" };
@@ -63,7 +53,7 @@ export class CreditNoteService {
 
                         self.keyService.getNextKey("journal", function (err, key: Key) {
                             if (err === null) {
-                                journalObj.createIdFromKey(key.key);
+                               journalObj.id = journalObj.createIdFromKey(key.key);
                             } else {
                                 console.log("Failed to load key " + err);
                             }
