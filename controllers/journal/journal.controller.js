@@ -51,13 +51,21 @@ var JournalController = (function () {
         });
         return journalArray;
     };
-    JournalController.prototype.fromCreditNote = function (creditNote) {
+    JournalController.prototype.fromCreditNote = function (creditNote, isDebit) {
         var journal = new journal_1.Journal();
-        journal.accountNumber = creditNote.fromAccount;
-        journal.amount = creditNote.amount * -1;
+        if (isDebit) {
+            journal.accountNumber = creditNote.fromAccount;
+            journal.amount = creditNote.amount * -1;
+            journal.name = "[CRN Debit] " + creditNote.name;
+            journal.description = "[CRN Debit: " + creditNote.id + "] " + creditNote.description;
+        }
+        else {
+            journal.accountNumber = creditNote.toAccount;
+            journal.amount = creditNote.amount;
+            journal.name = "[CRN Credit] " + creditNote.name;
+            journal.description = "[CRN Credit: " + creditNote.id + "] " + creditNote.description;
+        }
         journal.date = new Date();
-        journal.description = creditNote.description;
-        journal.name = creditNote.name;
         journal.id = "JNLxxxx";
         return journal;
     };

@@ -67,7 +67,7 @@ router
         res.header("Access-Control-Allow-Origin", "*");
         /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-        crNoteService.processCreditNotes(function (err, result) {
+        crNoteService.processCreditNotes(req.body, function (err, result) {
             if (err === null) {
                 res.status(201).send(result);
             }

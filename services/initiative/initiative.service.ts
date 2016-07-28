@@ -105,7 +105,7 @@ export class InitativeService {
             journal.accountNumber = initiativeDeposit.fromAccountId;
             journal.date = initiativeDeposit.depositDate;
             journal.description = initiativeDeposit.description;
-            journal.name = "Contra on transaction";
+            journal.name = "[" + transaction.id + "] Contra on transaction";
             journal.id = journal.createIdFromKey(jnlKey.key);
 
             self.transactionDataAccess.save(transaction, trxSaveFunc);

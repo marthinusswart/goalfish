@@ -20,17 +20,28 @@ var CreditNoteService = (function () {
             this.wasInitialised = true;
         }
     };
-    CreditNoteService.prototype.processCreditNotes = function (callback) {
+    CreditNoteService.prototype.processCreditNotes = function (creditNotes, callback) {
         var self = this;
-        var filter = { state: "Pending" };
+        var filter;
+        // If an list was given, process the list only, else all pending
+        if (creditNotes.length > 0) {
+            filter = { id: { $in: creditNotes } };
+        }
+        else {
+            filter = { state: "Pending" };
+        }
         var count = 0;
         this.creditNoteDataAccess.findByField(filter, function (err, creditNotes) {
             var journals = [];
             if (err === null) {
                 creditNotes.forEach(function (creditNote) {
-                    creditNote.state = "Processed";
-                    var journal = self.journalController.fromCreditNote(creditNote);
-                    journals.push(journal);
+                    if (creditNote.state === "Pending") {
+                        creditNote.state = "Processed";
+                        var journalDt = self.journalController.fromCreditNote(creditNote, true);
+                        var journalCt = self.journalController.fromCreditNote(creditNote, false);
+                        journals.push(journalDt);
+                        journals.push(journalCt);
+                    }
                 });
                 async.whilst(function () { return count < journals.length; }, function (callback) {
                     var journalObj = journals[count];

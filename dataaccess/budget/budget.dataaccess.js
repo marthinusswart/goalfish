@@ -78,6 +78,31 @@ var BudgetDataAccess = (function () {
             findFunc();
         }
     };
+    BudgetDataAccess.prototype.findByField = function (filter, callback, closeConnection) {
+        if (closeConnection === void 0) { closeConnection = false; }
+        var self = this;
+        var findFunc = (function () {
+            self.budgetModel.find(filter, function (err, budgets) {
+                if (err) {
+                    self.connection.close();
+                    callback(err);
+                }
+                else {
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
+                    callback(null, self.budgetController.translateMongooseArrayToBudgetArray(budgets));
+                }
+            });
+        });
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        }
+        else {
+            findFunc();
+        }
+    };
     BudgetDataAccess.prototype.save = function (newBudget, callback, closeConnection) {
         if (closeConnection === void 0) { closeConnection = false; }
         var self = this;

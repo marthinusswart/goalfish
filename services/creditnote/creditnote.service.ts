@@ -29,21 +29,31 @@ export class CreditNoteService {
         }
     }
 
-    processCreditNotes(callback) {
+    processCreditNotes(creditNotes: string[], callback) {
 
         var self = this;
-        let filter = { state: "Pending" };
+        let filter: any;
+
+        // If an list was given, process the list only, else all pending
+        if (creditNotes.length > 0) {
+            filter = { id: { $in: creditNotes } };
+        } else {
+            filter = { state: "Pending" };
+        }
+
         let count = 0;
 
         this.creditNoteDataAccess.findByField(filter, function (err, creditNotes) {
             let journals: Journal[] = [];
             if (err === null) {
                 creditNotes.forEach((creditNote: CreditNote) => {
-                    creditNote.state = "Processed";
-
-                    let journal: Journal = self.journalController.fromCreditNote(creditNote);
-                    journals.push(journal);
-
+                    if (creditNote.state === "Pending") {
+                        creditNote.state = "Processed";
+                        let journalDt: Journal = self.journalController.fromCreditNote(creditNote, true);
+                        let journalCt: Journal = self.journalController.fromCreditNote(creditNote, false);
+                        journals.push(journalDt);
+                        journals.push(journalCt);
+                    }
                 });
 
                 async.whilst(() => { return count < journals.length; },
@@ -53,7 +63,7 @@ export class CreditNoteService {
 
                         self.keyService.getNextKey("journal", function (err, key: Key) {
                             if (err === null) {
-                               journalObj.id = journalObj.createIdFromKey(key.key);
+                                journalObj.id = journalObj.createIdFromKey(key.key);
                             } else {
                                 console.log("Failed to load key " + err);
                             }

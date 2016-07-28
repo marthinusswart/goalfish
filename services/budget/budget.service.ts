@@ -8,30 +8,32 @@ import { Journal } from '../../models/journal/journal';
 import { JournalDataAccess } from '../../dataaccess/journal/journal.dataAccess';
 import { KeyService } from '../key/key.service';
 import { Key } from '../../models/key/key';
+import { CreditNote } from '../../models/creditnote/creditnote';
+import { CreditNoteDataAccess } from '../../dataaccess/creditnote/creditnote.dataaccess';
 import async = require('async');
 
 export class BudgetService {
-    //postingService: postingServiceLib.PostingService;
     budget: Budget;
-    //budgetController: BudgetController;
     budgetDataAccess: BudgetDataAccess;
     transactionDataAccess: TransactionDataAccess;
     journalDataAccess: JournalDataAccess;
+    creditNoteDataAccess: CreditNoteDataAccess;
     keyService: KeyService;
 
     wasInitialised: boolean = false;
 
     init() {
         if (!this.wasInitialised) {
-            //this.budgetController = new BudgetController();
             this.budgetDataAccess = new BudgetDataAccess();
             this.transactionDataAccess = new TransactionDataAccess();
             this.journalDataAccess = new JournalDataAccess();
             this.keyService = new KeyService();
+            this.creditNoteDataAccess = new CreditNoteDataAccess();
             this.budgetDataAccess.init();
             this.transactionDataAccess.init();
             this.journalDataAccess.init();
             this.keyService.init();
+            this.creditNoteDataAccess.init();
             this.wasInitialised = true;
         }
     }
@@ -103,7 +105,7 @@ export class BudgetService {
             journal.accountNumber = budgetDeposit.fromAccountId;
             journal.date = budgetDeposit.depositDate;
             journal.description = budgetDeposit.description;
-            journal.name = "Contra on transaction";
+            journal.name = "[" + transaction.id + "] Contra on transaction";
             journal.id = journal.createIdFromKey(jnlKey.key);
 
             self.transactionDataAccess.save(transaction, trxSaveFunc);
@@ -126,18 +128,21 @@ export class BudgetService {
 
     }
 
-     withdraw(memberId: string, budgetWithdrawal: BudgetWithdrawal, callback) {
+    withdraw(memberId: string, budgetWithdrawal: BudgetWithdrawal, callback) {
         let self = this;
         let transaction = new Transaction();
+        let creditnote = new CreditNote();
+        let budget: Budget;
         let key: number;
+        let filter = { id: budgetWithdrawal.budgetId };
 
         var trxSaveFunc = function (err, transaction) {
-           callback(err, { result: "OK" });
+            callback(err, { result: "OK" });
         };
 
         var trxKeyFunc = function (err, trxKey: Key) {
 
-            transaction.amount = budgetWithdrawal.amount*-1;
+            transaction.amount = budgetWithdrawal.amount * -1;
             transaction.classification = "Budget";
             transaction.date = budgetWithdrawal.withdrawalDate;
             transaction.description = budgetWithdrawal.description;
@@ -148,7 +153,35 @@ export class BudgetService {
             self.transactionDataAccess.save(transaction, trxSaveFunc);
         };
 
-        this.keyService.getNextKey("transaction", trxKeyFunc);
+        var crnSaveFunc = function (err, creditNote) {
+            self.keyService.getNextKey("transaction", trxKeyFunc);
+        }
+
+        var crnKeyFunc = function (err, crnKey: Key) {
+            creditnote.amount = budgetWithdrawal.amount;
+            creditnote.date = budgetWithdrawal.withdrawalDate;
+            creditnote.description = budgetWithdrawal.description;
+            creditnote.fromAccount = budget.underlyingAccount;
+            creditnote.id = creditnote.createIdFromKey(crnKey.key);
+            creditnote.memberId = budget.memberId;
+            creditnote.name = "Credit Note";
+            creditnote.toAccount = budgetWithdrawal.fromAccountId;
+
+            self.creditNoteDataAccess.save(creditnote, crnSaveFunc);
+        }
+
+        var loadBudgetFunc = function (err, budgets) {
+            budget = budgets[0];
+
+            if (budget.underlyingAccount !== budgetWithdrawal.fromAccountId) {
+                self.keyService.getNextKey("creditnote", crnKeyFunc);
+            } else {
+                self.keyService.getNextKey("transaction", trxKeyFunc);
+            }
+        }
+
+
+        this.budgetDataAccess.findByField(filter, loadBudgetFunc);
 
     }
 }

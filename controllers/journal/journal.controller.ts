@@ -13,7 +13,7 @@ export class JournalController {
             date: Date,
             amount: Number,
             accountNumber: String,
-            isPosted : String
+            isPosted: String
         });
 
         return journalSchema;
@@ -58,14 +58,22 @@ export class JournalController {
         return journalArray;
     }
 
-     fromCreditNote(creditNote: CreditNote): Journal {
+    fromCreditNote(creditNote: CreditNote, isDebit: boolean): Journal {
         let journal: Journal = new Journal();
 
-        journal.accountNumber = creditNote.fromAccount;
-        journal.amount = creditNote.amount*-1;
+        if (isDebit) {
+            journal.accountNumber = creditNote.fromAccount;
+            journal.amount = creditNote.amount * -1;
+            journal.name = "[CRN Debit] " + creditNote.name;
+            journal.description = "[CRN Debit: " + creditNote.id + "] " + creditNote.description;
+        } else {
+            journal.accountNumber = creditNote.toAccount;
+            journal.amount = creditNote.amount;
+            journal.name = "[CRN Credit] " + creditNote.name;
+            journal.description = "[CRN Credit: "+ creditNote.id+ "] " + creditNote.description;
+        }
+
         journal.date = new Date();
-        journal.description = creditNote.description;
-        journal.name = creditNote.name;
         journal.id = "JNLxxxx";
 
         return journal;
