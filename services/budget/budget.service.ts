@@ -104,6 +104,7 @@ export class BudgetService {
             journal.amount = budgetDeposit.amount * -1;
             journal.accountNumber = budgetDeposit.fromAccountId;
             journal.date = budgetDeposit.depositDate;
+            journal.memberId = memberId;
             journal.description = budgetDeposit.description;
             journal.name = "[" + transaction.id + "] Contra on transaction";
             journal.id = journal.createIdFromKey(jnlKey.key);
@@ -117,11 +118,16 @@ export class BudgetService {
             transaction.classification = "Budget";
             transaction.date = budgetDeposit.depositDate;
             transaction.description = budgetDeposit.description;
+            transaction.memberId = memberId;
             transaction.referenceId = budgetDeposit.budgetId;
             transaction.underlyingAccount = budgetDeposit.toAccountId;
             transaction.id = transaction.createIdFromKey(trxKey.key);
 
-            self.keyService.getNextKey("journal", journalKeyFunc);
+            if (budgetDeposit.fromAccountId !== "-1") {
+                self.keyService.getNextKey("journal", journalKeyFunc);
+            } else {
+                self.transactionDataAccess.save(transaction, trxSaveFunc);
+            }
         };
 
         this.keyService.getNextKey("transaction", trxKeyFunc);
@@ -145,6 +151,7 @@ export class BudgetService {
             transaction.amount = budgetWithdrawal.amount * -1;
             transaction.classification = "Budget";
             transaction.date = budgetWithdrawal.withdrawalDate;
+            transaction.memberId = memberId;
             transaction.description = budgetWithdrawal.description;
             transaction.referenceId = budgetWithdrawal.budgetId;
             transaction.underlyingAccount = budgetWithdrawal.fromAccountId;

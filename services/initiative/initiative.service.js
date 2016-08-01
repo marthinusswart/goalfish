@@ -14,8 +14,6 @@ var InitativeService = (function () {
     }
     InitativeService.prototype.init = function () {
         if (!this.wasInitialised) {
-            //this.postingService = new postingServiceLib.PostingService();
-            //this.initiativeController = new initiativeControllerLib.InitiativeController();
             this.initiativeDataAccess = new initiativeDataAccess_1.InitiativeDataAccess();
             this.transactionDataAccess = new transactionDataAccess_1.TransactionDataAccess();
             this.journalDataAccess = new journal_dataAccess_1.JournalDataAccess();
@@ -81,6 +79,7 @@ var InitativeService = (function () {
             journal.amount = initiativeDeposit.amount * -1;
             journal.accountNumber = initiativeDeposit.fromAccountId;
             journal.date = initiativeDeposit.depositDate;
+            journal.memberId = memberId;
             journal.description = initiativeDeposit.description;
             journal.name = "[" + transaction.id + "] Contra on transaction";
             journal.id = journal.createIdFromKey(jnlKey.key);
@@ -92,9 +91,15 @@ var InitativeService = (function () {
             transaction.date = initiativeDeposit.depositDate;
             transaction.description = initiativeDeposit.description;
             transaction.referenceId = initiativeDeposit.initiativeId;
+            transaction.memberId = memberId;
             transaction.underlyingAccount = initiativeDeposit.toAccountId;
             transaction.id = transaction.createIdFromKey(trxKey.key);
-            self.keyService.getNextKey("journal", journalKeyFunc);
+            if (initiativeDeposit.fromAccountId !== "-1") {
+                self.keyService.getNextKey("journal", journalKeyFunc);
+            }
+            else {
+                self.transactionDataAccess.save(transaction, trxSaveFunc);
+            }
         };
         this.keyService.getNextKey("transaction", trxKeyFunc);
     };

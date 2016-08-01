@@ -13,7 +13,8 @@ export class TransactionController {
             date: Date,
             amount: Number,
             underlyingAccount: String,
-            isPosted: String
+            isPosted: String,
+            memberId: String
         });
 
         return transactionSchema;
@@ -26,6 +27,7 @@ export class TransactionController {
         mongooseTransaction.amount = transaction.amount;
         mongooseTransaction.date = transaction.date;
         mongooseTransaction.isPosted = transaction.isPosted;
+        mongooseTransaction.memberId = transaction.memberId;
         mongooseTransaction.classification = transaction.classification;
         mongooseTransaction.underlyingAccount = transaction.underlyingAccount;
 
@@ -46,6 +48,7 @@ export class TransactionController {
         transactionObj.amount = mongooseTransaction.amount;
         transactionObj.date = mongooseTransaction.date;
         transactionObj.isPosted = mongooseTransaction.isPosted;
+        transactionObj.memberId = mongooseTransaction.memberId;
         transactionObj.classification = mongooseTransaction.classification;
         transactionObj.underlyingAccount = mongooseTransaction.underlyingAccount;
 

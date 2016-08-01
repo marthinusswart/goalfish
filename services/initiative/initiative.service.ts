@@ -13,9 +13,7 @@ import { Key } from '../../models/key/key';
 import async = require('async');
 
 export class InitativeService {
-    //postingService: postingServiceLib.PostingService;
     initiative: Initiative;
-    //initiativeController: initiativeControllerLib.InitiativeController;
     initiativeDataAccess: InitiativeDataAccess;
     transactionDataAccess: TransactionDataAccess;
     journalDataAccess: JournalDataAccess;
@@ -24,8 +22,6 @@ export class InitativeService {
 
     init() {
         if (!this.wasInitialised) {
-            //this.postingService = new postingServiceLib.PostingService();
-            //this.initiativeController = new initiativeControllerLib.InitiativeController();
             this.initiativeDataAccess = new InitiativeDataAccess();
             this.transactionDataAccess = new TransactionDataAccess();
             this.journalDataAccess = new JournalDataAccess();
@@ -104,6 +100,7 @@ export class InitativeService {
             journal.amount = initiativeDeposit.amount * -1;
             journal.accountNumber = initiativeDeposit.fromAccountId;
             journal.date = initiativeDeposit.depositDate;
+            journal.memberId = memberId;
             journal.description = initiativeDeposit.description;
             journal.name = "[" + transaction.id + "] Contra on transaction";
             journal.id = journal.createIdFromKey(jnlKey.key);
@@ -118,10 +115,15 @@ export class InitativeService {
             transaction.date = initiativeDeposit.depositDate;
             transaction.description = initiativeDeposit.description;
             transaction.referenceId = initiativeDeposit.initiativeId;
+            transaction.memberId = memberId;
             transaction.underlyingAccount = initiativeDeposit.toAccountId;
             transaction.id = transaction.createIdFromKey(trxKey.key);
 
-            self.keyService.getNextKey("journal", journalKeyFunc);
+            if (initiativeDeposit.fromAccountId !== "-1") {
+                self.keyService.getNextKey("journal", journalKeyFunc);
+            } else {
+                self.transactionDataAccess.save(transaction, trxSaveFunc);
+            }
         };
 
         this.keyService.getNextKey("transaction", trxKeyFunc);

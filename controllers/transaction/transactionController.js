@@ -14,7 +14,8 @@ var TransactionController = (function () {
             date: Date,
             amount: Number,
             underlyingAccount: String,
-            isPosted: String
+            isPosted: String,
+            memberId: String
         });
         return transactionSchema;
     };
@@ -25,6 +26,7 @@ var TransactionController = (function () {
         mongooseTransaction.amount = transaction.amount;
         mongooseTransaction.date = transaction.date;
         mongooseTransaction.isPosted = transaction.isPosted;
+        mongooseTransaction.memberId = transaction.memberId;
         mongooseTransaction.classification = transaction.classification;
         mongooseTransaction.underlyingAccount = transaction.underlyingAccount;
         if (transaction.externalRef !== "") {
@@ -42,6 +44,7 @@ var TransactionController = (function () {
         transactionObj.amount = mongooseTransaction.amount;
         transactionObj.date = mongooseTransaction.date;
         transactionObj.isPosted = mongooseTransaction.isPosted;
+        transactionObj.memberId = mongooseTransaction.memberId;
         transactionObj.classification = mongooseTransaction.classification;
         transactionObj.underlyingAccount = mongooseTransaction.underlyingAccount;
         return transactionObj;

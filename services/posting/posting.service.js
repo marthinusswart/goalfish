@@ -17,6 +17,7 @@ var PostingService = (function () {
         this.postingDataAccess.init();
         this.keyService.init();
         var self = this;
+        //let filter = { $and: [{ isPosted: "N" }, {}]};
         var filter = { isPosted: "N" };
         var count = 0;
         this.transactionDataAccess.findByField(filter, function (err, transactions) {

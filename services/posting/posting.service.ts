@@ -31,6 +31,7 @@ export class PostingService {
         this.keyService.init();
 
         var self = this;
+        //let filter = { $and: [{ isPosted: "N" }, {}]};
         let filter = { isPosted: "N" };
         let count = 0;
 

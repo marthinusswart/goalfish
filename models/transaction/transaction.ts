@@ -8,6 +8,7 @@ export class Transaction {
     amount: number;
     underlyingAccount: string;
     isPosted: string;
+    memberId: string;
 
      constructor() {
         this.externalRef = "";
@@ -19,6 +20,7 @@ export class Transaction {
         this.date = new Date();
         this.underlyingAccount = "";      
         this.isPosted = "N"; 
+        this.memberId = "";
     }
 
     createIdFromKey(key: number): string {

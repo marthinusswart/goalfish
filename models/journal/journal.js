@@ -9,6 +9,7 @@ var Journal = (function () {
         this.date = new Date();
         this.accountNumber = "";
         this.isPosted = "N";
+        this.memberId = "";
     }
     Journal.prototype.createIdFromKey = function (key) {
         var keyStr = "JNL" + key;

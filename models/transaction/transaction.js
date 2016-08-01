@@ -10,6 +10,7 @@ var Transaction = (function () {
         this.date = new Date();
         this.underlyingAccount = "";
         this.isPosted = "N";
+        this.memberId = "";
     }
     Transaction.prototype.createIdFromKey = function (key) {
         var keyStr = "TRN" + key;

@@ -7,6 +7,7 @@ export class Journal {
     amount: number;
     accountNumber: string;
     isPosted: string;
+    memberId: string;
 
       constructor() {
         this.externalRef = "";
@@ -17,6 +18,7 @@ export class Journal {
         this.date = new Date();
         this.accountNumber = "";
         this.isPosted = "N";
+        this.memberId = "";
     }
 
      createIdFromKey(key: number): string {
