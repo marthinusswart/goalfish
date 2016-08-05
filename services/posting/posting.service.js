@@ -1,5 +1,5 @@
 "use strict";
-var trxDataAccessLib = require('../../dataaccess/transaction/transactionDataAccess');
+var trxDataAccessLib = require('../../dataaccess/transaction/transaction.dataaccess');
 var journalDataAccessLib = require('../../dataaccess/journal/journal.dataAccess');
 var postingDataAccessLib = require('../../dataaccess/posting/postingDataAccess');
 var postingControllerLib = require('../../controllers/posting/postingController');

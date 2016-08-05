@@ -26,8 +26,19 @@ router
                 res.status(200).send(budgets);
             });
         });
+    })
+    .get('/:id/transactions', function (req, res, next) {
+        /** Not secure at all, but great for local usage only */
+        res.header("Access-Control-Allow-Origin", "*");
+        /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
+        let tokenString = req.headers['x-access-token'];
 
+        securityService.getToken(tokenString, function (err, token: Token) {
+            budgetDataAcccessService.loadTransactions(req.params.id, function (err, transactions) {
+                res.status(200).send(transactions);
+            });
+        });
     })
     .get('/:id', function (req, res, next) {
         /** Not secure at all, but great for local usage only */
@@ -145,6 +156,15 @@ router
         res.status(200).send("OK");
     })
     .options('/reconcile', function (req, res, next) {
+        /** Not secure at all, but great for local usage only */
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Methods", "GET, POST, PUT");
+        res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Authorization,Accept,x-access-token");
+        res.header("Content-Type", "application/json");
+        /** -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+        res.status(200).send("OK");
+    })
+     .options('/:id/transactions', function (req, res, next) {
         /** Not secure at all, but great for local usage only */
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Methods", "GET, POST, PUT");

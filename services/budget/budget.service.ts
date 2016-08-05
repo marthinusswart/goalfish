@@ -1,4 +1,4 @@
-import { TransactionDataAccess } from '../../dataaccess/transaction/transactionDataAccess';
+import { TransactionDataAccess } from '../../dataaccess/transaction/transaction.dataaccess';
 import { Transaction } from '../../models/transaction/transaction';
 import { Budget } from '../../models/budget/budget';
 import { BudgetDeposit } from '../../models/budget/budget.deposit';

@@ -1,4 +1,4 @@
-import trxDataAccessLib = require('../../dataaccess/transaction/transactionDataAccess');
+import trxDataAccessLib = require('../../dataaccess/transaction/transaction.dataaccess');
 import trxLib = require('../../models/transaction/transaction');
 
 import journalDataAccessLib = require('../../dataaccess/journal/journal.dataAccess');

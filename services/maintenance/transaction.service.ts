@@ -1,4 +1,4 @@
-import trxDataAccessLib = require('../../dataaccess/transaction/transactionDataAccess');
+import trxDataAccessLib = require('../../dataaccess/transaction/transaction.dataaccess');
 import trxLib = require('../../models/transaction/transaction');
 
 export class TransactionMaintenanceService {

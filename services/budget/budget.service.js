@@ -1,5 +1,5 @@
 "use strict";
-var transactionDataAccess_1 = require('../../dataaccess/transaction/transactionDataAccess');
+var transaction_dataaccess_1 = require('../../dataaccess/transaction/transaction.dataaccess');
 var transaction_1 = require('../../models/transaction/transaction');
 var budget_dataaccess_1 = require('../../dataaccess/budget/budget.dataaccess');
 var journal_1 = require('../../models/journal/journal');
@@ -15,7 +15,7 @@ var BudgetService = (function () {
     BudgetService.prototype.init = function () {
         if (!this.wasInitialised) {
             this.budgetDataAccess = new budget_dataaccess_1.BudgetDataAccess();
-            this.transactionDataAccess = new transactionDataAccess_1.TransactionDataAccess();
+            this.transactionDataAccess = new transaction_dataaccess_1.TransactionDataAccess();
             this.journalDataAccess = new journal_dataAccess_1.JournalDataAccess();
             this.keyService = new key_service_1.KeyService();
             this.creditNoteDataAccess = new creditnote_dataaccess_1.CreditNoteDataAccess();

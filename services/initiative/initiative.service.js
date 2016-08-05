@@ -1,6 +1,6 @@
 "use strict";
 //import postingServiceLib = require('../../services/posting/posting.service');
-var transactionDataAccess_1 = require('../../dataaccess/transaction/transactionDataAccess');
+var transaction_dataaccess_1 = require('../../dataaccess/transaction/transaction.dataaccess');
 var transaction_1 = require('../../models/transaction/transaction');
 //import initiativeControllerLib = require('../../controllers/initiative/initiativeController');
 var initiativeDataAccess_1 = require('../../dataaccess/initiative/initiativeDataAccess');
@@ -15,7 +15,7 @@ var InitativeService = (function () {
     InitativeService.prototype.init = function () {
         if (!this.wasInitialised) {
             this.initiativeDataAccess = new initiativeDataAccess_1.InitiativeDataAccess();
-            this.transactionDataAccess = new transactionDataAccess_1.TransactionDataAccess();
+            this.transactionDataAccess = new transaction_dataaccess_1.TransactionDataAccess();
             this.journalDataAccess = new journal_dataAccess_1.JournalDataAccess();
             this.keyService = new key_service_1.KeyService();
             this.initiativeDataAccess.init();

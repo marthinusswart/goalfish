@@ -1,8 +1,10 @@
 import mongoose = require('mongoose');
 import { Budget } from '../../models/budget/budget';
 import { BudgetController } from '../../controllers/budget/budget.controller';
+import { TransactionDataAccess } from '../transaction/transaction.dataaccess';
 
 export class BudgetDataAccess {
+    transactionDataAccess: TransactionDataAccess;
     connection: mongoose.Connection;
     budgetController: BudgetController;
     wasInitialised: boolean = false;
@@ -18,10 +20,13 @@ export class BudgetDataAccess {
             this.connection = db.createConnection("localhost", "goalfish");
             this.connection.on("error", console.error.bind(console, "connection error:"));
             this.budgetController = new BudgetController();
+            this.transactionDataAccess = new TransactionDataAccess();
+            this.transactionDataAccess.init();
             this.budgetSchema = this.budgetController.createBudgetMongooseSchema();
             this.budgetModel = this.connection.model("budget", this.budgetSchema, "budget");
             this.isConnectionOpening = true;
             this.wasInitialised = true;
+
             this.connection.on("close", function () {
                 self.onConnectionClose();
             });
@@ -167,6 +172,32 @@ export class BudgetDataAccess {
             this.connection.open("localhost", "goalfish");
         } else {
             updateFunc();
+        }
+    }
+
+     loadTransactions(budgetId: string, callback, closeConnection: boolean = false) {
+        var self = this;
+        var findFunc = (function () {
+
+            self.transactionDataAccess.findByBudgetId(budgetId, function (err, transactions) {
+                if (err) {
+                    self.connection.close();
+                    callback(err);
+                } else {
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
+                    callback(null, transactions);
+                }
+            });
+
+        });
+
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        } else {
+            findFunc();
         }
     }
 

@@ -1,6 +1,6 @@
 import express = require('express');
 import models = require('../../models/transaction/transaction');
-import { TransactionDataAccess } from '../../dataaccess/transaction/transactionDataAccess';
+import { TransactionDataAccess } from '../../dataaccess/transaction/transaction.dataaccess';
 import { SecurityService } from '../../services/security/security.service';
 import { Token } from '../../models/security/token';
 

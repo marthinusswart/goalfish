@@ -1,6 +1,7 @@
 "use strict";
 var mongoose = require('mongoose');
 var budget_controller_1 = require('../../controllers/budget/budget.controller');
+var transaction_dataaccess_1 = require('../transaction/transaction.dataaccess');
 var BudgetDataAccess = (function () {
     function BudgetDataAccess() {
         this.wasInitialised = false;
@@ -14,6 +15,8 @@ var BudgetDataAccess = (function () {
             this.connection = db.createConnection("localhost", "goalfish");
             this.connection.on("error", console.error.bind(console, "connection error:"));
             this.budgetController = new budget_controller_1.BudgetController();
+            this.transactionDataAccess = new transaction_dataaccess_1.TransactionDataAccess();
+            this.transactionDataAccess.init();
             this.budgetSchema = this.budgetController.createBudgetMongooseSchema();
             this.budgetModel = this.connection.model("budget", this.budgetSchema, "budget");
             this.isConnectionOpening = true;
@@ -155,6 +158,31 @@ var BudgetDataAccess = (function () {
         }
         else {
             updateFunc();
+        }
+    };
+    BudgetDataAccess.prototype.loadTransactions = function (budgetId, callback, closeConnection) {
+        if (closeConnection === void 0) { closeConnection = false; }
+        var self = this;
+        var findFunc = (function () {
+            self.transactionDataAccess.findByBudgetId(budgetId, function (err, transactions) {
+                if (err) {
+                    self.connection.close();
+                    callback(err);
+                }
+                else {
+                    if (closeConnection) {
+                        self.connection.close();
+                    }
+                    callback(null, transactions);
+                }
+            });
+        });
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
+            this.connection.once("open", findFunc);
+            this.connection.open("localhost", "goalfish");
+        }
+        else {
+            findFunc();
         }
     };
     BudgetDataAccess.prototype.onConnectionOpen = function () {

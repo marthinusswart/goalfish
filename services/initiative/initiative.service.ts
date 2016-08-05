@@ -1,5 +1,5 @@
 //import postingServiceLib = require('../../services/posting/posting.service');
-import { TransactionDataAccess } from '../../dataaccess/transaction/transactionDataAccess';
+import { TransactionDataAccess } from '../../dataaccess/transaction/transaction.dataaccess';
 import { Transaction } from '../../models/transaction/transaction';
 import { Initiative } from '../../models/initiative/initiative';
 //import initiativeControllerLib = require('../../controllers/initiative/initiativeController');

@@ -1,5 +1,5 @@
 "use strict";
-var trxDataAccessLib = require('../../dataaccess/transaction/transactionDataAccess');
+var trxDataAccessLib = require('../../dataaccess/transaction/transaction.dataaccess');
 var TransactionMaintenanceService = (function () {
     function TransactionMaintenanceService() {
     }

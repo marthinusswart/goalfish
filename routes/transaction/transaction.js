@@ -1,9 +1,9 @@
 "use strict";
 var express = require('express');
-var transactionDataAccess_1 = require('../../dataaccess/transaction/transactionDataAccess');
+var transaction_dataaccess_1 = require('../../dataaccess/transaction/transaction.dataaccess');
 var security_service_1 = require('../../services/security/security.service');
 var router = express.Router();
-var transactionDataAcccessService = new transactionDataAccess_1.TransactionDataAccess();
+var transactionDataAcccessService = new transaction_dataaccess_1.TransactionDataAccess();
 var securityService = new security_service_1.SecurityService();
 transactionDataAcccessService.init();
 securityService.init();
