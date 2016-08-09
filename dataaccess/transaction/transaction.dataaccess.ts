@@ -12,12 +12,14 @@ export class TransactionDataAccess {
     transactionSchema: any;
     transactionModel: any;
     mongooseTransaction: any;
+     dbURI = "mongodb://localhost/goalfish"; 
 
     init() {
         if (!this.wasInitialised) {
+            this.dbURI =  (process.env.MONGODB_URI || "mongodb://localhost/goalfish");  
             var self = this;
             let db = new mongoose.Mongoose();
-            this.connection = db.createConnection("localhost", "goalfish");
+            this.connection = db.createConnection(this.dbURI);
             this.connection.on("error", console.error.bind(console, "connection error:"));
             this.transactionController = new transactionController.TransactionController();
 
@@ -69,7 +71,7 @@ export class TransactionDataAccess {
 
         if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", findFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         } else {
             findFunc();
         }
@@ -100,7 +102,7 @@ export class TransactionDataAccess {
 
         if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", findFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         } else {
             findFunc();
         }
@@ -127,7 +129,7 @@ export class TransactionDataAccess {
 
         if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", findFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         } else {
             findFunc();
         }
@@ -155,7 +157,7 @@ export class TransactionDataAccess {
 
         if (!this.isConnectionOpen) {
             this.connection.once("open", findFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         } else {
             findFunc();
         }
@@ -188,7 +190,7 @@ export class TransactionDataAccess {
 
         if (!this.isConnectionOpen) {
             this.connection.once("open", saveFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         } else {
             saveFunc();
         }
@@ -217,7 +219,7 @@ export class TransactionDataAccess {
 
         if (!this.isConnectionOpen) {
             this.connection.once("open", updateFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         } else {
             updateFunc();
         }

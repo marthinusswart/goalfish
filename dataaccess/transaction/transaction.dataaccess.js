@@ -7,12 +7,14 @@ var TransactionDataAccess = (function () {
         this.wasInitialised = false;
         this.isConnectionOpen = false;
         this.isConnectionOpening = false;
+        this.dbURI = "mongodb://localhost/goalfish";
     }
     TransactionDataAccess.prototype.init = function () {
         if (!this.wasInitialised) {
+            this.dbURI = (process.env.MONGODB_URI || "mongodb://localhost/goalfish");
             var self = this;
             var db = new mongoose.Mongoose();
-            this.connection = db.createConnection("localhost", "goalfish");
+            this.connection = db.createConnection(this.dbURI);
             this.connection.on("error", console.error.bind(console, "connection error:"));
             this.transactionController = new transactionController.TransactionController();
             this.transactionSchema = this.transactionController.createTransactionMongooseSchema();
@@ -58,7 +60,7 @@ var TransactionDataAccess = (function () {
         });
         if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", findFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         }
         else {
             findFunc();
@@ -86,7 +88,7 @@ var TransactionDataAccess = (function () {
         });
         if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", findFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         }
         else {
             findFunc();
@@ -111,7 +113,7 @@ var TransactionDataAccess = (function () {
         });
         if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", findFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         }
         else {
             findFunc();
@@ -138,7 +140,7 @@ var TransactionDataAccess = (function () {
         });
         if (!this.isConnectionOpen) {
             this.connection.once("open", findFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         }
         else {
             findFunc();
@@ -167,7 +169,7 @@ var TransactionDataAccess = (function () {
         });
         if (!this.isConnectionOpen) {
             this.connection.once("open", saveFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         }
         else {
             saveFunc();
@@ -193,7 +195,7 @@ var TransactionDataAccess = (function () {
         });
         if (!this.isConnectionOpen) {
             this.connection.once("open", updateFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         }
         else {
             updateFunc();

@@ -12,12 +12,14 @@ export class BudgetDataAccess {
     isConnectionOpening: boolean = false;
     budgetSchema: any;
     budgetModel: any;
+     dbURI = "mongodb://localhost/goalfish"; 
 
     init() {
         if (!this.wasInitialised) {
+            this.dbURI =  (process.env.MONGODB_URI || "mongodb://localhost/goalfish");  
             let db = new mongoose.Mongoose();
             var self = this;
-            this.connection = db.createConnection("localhost", "goalfish");
+            this.connection = db.createConnection(this.dbURI);
             this.connection.on("error", console.error.bind(console, "connection error:"));
             this.budgetController = new BudgetController();
             this.transactionDataAccess = new TransactionDataAccess();
@@ -60,7 +62,7 @@ export class BudgetDataAccess {
 
         if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", findFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         } else {
             findFunc();
         }
@@ -85,7 +87,7 @@ export class BudgetDataAccess {
 
         if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", findFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         } else {
             findFunc();
         }
@@ -111,7 +113,7 @@ export class BudgetDataAccess {
 
         if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", findFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         } else {
             findFunc();
         }
@@ -140,7 +142,7 @@ export class BudgetDataAccess {
 
         if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", saveFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         } else {
             saveFunc();
         }
@@ -169,7 +171,7 @@ export class BudgetDataAccess {
 
         if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", updateFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         } else {
             updateFunc();
         }
@@ -195,7 +197,7 @@ export class BudgetDataAccess {
 
         if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", findFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         } else {
             findFunc();
         }

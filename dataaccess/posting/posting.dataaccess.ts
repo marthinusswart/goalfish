@@ -11,12 +11,14 @@ export class PostingDataAccess {
     isConnectionOpening: boolean = false;
     postingSchema: any;
     postingModel: any;
+     dbURI = "mongodb://localhost/goalfish"; 
 
     init() {
         if (!this.wasInitialised) {
+            this.dbURI =  (process.env.MONGODB_URI || "mongodb://localhost/goalfish");  
             let db = new mongoose.Mongoose();
             var self = this;
-            this.connection = db.createConnection("localhost", "goalfish");
+            this.connection = db.createConnection(this.dbURI);
             this.connection.on("error", console.error.bind(console, "connection error:"));
             this.postingController = new postingController.PostingController();
             this.postingSchema = this.postingController.createPostingMongooseSchema();
@@ -61,7 +63,7 @@ export class PostingDataAccess {
 
         if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", findFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         } else {
             findFunc();
         }
@@ -87,7 +89,7 @@ export class PostingDataAccess {
 
         if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", findFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         } else {
             findFunc();
         }
@@ -112,7 +114,7 @@ export class PostingDataAccess {
 
         if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", findFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         } else {
             findFunc();
         }
@@ -140,7 +142,7 @@ export class PostingDataAccess {
 
         if (!this.isConnectionOpen) {
             this.connection.once("open", saveFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         } else {
             saveFunc();
         }
@@ -168,7 +170,7 @@ export class PostingDataAccess {
 
         if (!this.isConnectionOpen) {
             this.connection.once("open", updateFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI);
         } else {
             updateFunc();
         }
