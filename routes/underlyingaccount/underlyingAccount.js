@@ -1,10 +1,10 @@
 "use strict";
 var express = require('express');
-var underlyingAccountDataAccess_1 = require('../../dataaccess/underlyingaccount/underlyingAccountDataAccess');
+var underlyingAccount_dataaccess_1 = require('../../dataaccess/underlyingaccount/underlyingAccount.dataaccess');
 var underlyingAccountServiceLib = require('../../services/underlyingaccount/account.service');
 var security_service_1 = require('../../services/security/security.service');
 var router = express.Router();
-var underlyingAccountDataAcccessService = new underlyingAccountDataAccess_1.UnderlyingAccountDataAccess();
+var underlyingAccountDataAcccessService = new underlyingAccount_dataaccess_1.UnderlyingAccountDataAccess();
 var underlyingAccountService = new underlyingAccountServiceLib.UnderlyingAccountService();
 var securityService = new security_service_1.SecurityService();
 underlyingAccountDataAcccessService.init();

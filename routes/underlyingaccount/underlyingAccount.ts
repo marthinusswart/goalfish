@@ -1,6 +1,6 @@
 import express = require('express');
 import models = require('../../models/underlyingaccount/underlyingaccount');
-import { UnderlyingAccountDataAccess } from '../../dataaccess/underlyingaccount/underlyingAccountDataAccess';
+import { UnderlyingAccountDataAccess } from '../../dataaccess/underlyingaccount/underlyingAccount.dataaccess';
 import underlyingAccountServiceLib = require('../../services/underlyingaccount/account.service');
 import { SecurityService } from '../../services/security/security.service';
 import { Token } from '../../models/security/token';

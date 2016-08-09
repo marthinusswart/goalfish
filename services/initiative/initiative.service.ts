@@ -1,12 +1,10 @@
-//import postingServiceLib = require('../../services/posting/posting.service');
 import { TransactionDataAccess } from '../../dataaccess/transaction/transaction.dataaccess';
 import { Transaction } from '../../models/transaction/transaction';
 import { Initiative } from '../../models/initiative/initiative';
-//import initiativeControllerLib = require('../../controllers/initiative/initiativeController');
-import { InitiativeDataAccess } from '../../dataaccess/initiative/initiativeDataAccess';
+import { InitiativeDataAccess } from '../../dataaccess/initiative/initiative.dataaccess';
 import { InitiativeDeposit } from '../../models/initiative/initiative.deposit';
 import { Journal } from '../../models/journal/journal';
-import { JournalDataAccess } from '../../dataaccess/journal/journal.dataAccess';
+import { JournalDataAccess } from '../../dataaccess/journal/journal.dataaccess';
 import { KeyService } from '../key/key.service';
 import { Key } from '../../models/key/key';
 

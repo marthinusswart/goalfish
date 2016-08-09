@@ -1,6 +1,6 @@
 import express = require('express');
 import models = require('../../models/initiative/initiative');
-import { InitiativeDataAccess } from '../../dataaccess/initiative/initiativeDataAccess';
+import { InitiativeDataAccess } from '../../dataaccess/initiative/initiative.dataaccess';
 import initiativeServiceLib = require('../../services/initiative/initiative.service');
 import { SecurityService } from '../../services/security/security.service';
 import { Token } from '../../models/security/token';

@@ -1,6 +1,6 @@
 import express = require('express');
 import models = require('../../models/member/member');
-import memberDataAccess = require('../../dataaccess/member/memberDataAccess');
+import memberDataAccess = require('../../dataaccess/member/member.dataaccess');
 
 let router = express.Router();
 let memberDataAcccessService = new memberDataAccess.MemberDataAccess();

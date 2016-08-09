@@ -1,7 +1,7 @@
 "use strict";
-var postingDataAccess_1 = require('../../dataaccess/posting/postingDataAccess');
+var posting_dataaccess_1 = require('../../dataaccess/posting/posting.dataaccess');
 var underlyingAccountController_1 = require('../../controllers/underlyingaccount/underlyingAccountController');
-var underlyingAccountDataAccess_1 = require('../../dataaccess/underlyingaccount/underlyingAccountDataAccess');
+var underlyingAccount_dataaccess_1 = require('../../dataaccess/underlyingaccount/underlyingAccount.dataaccess');
 var async = require('async');
 var UnderlyingAccountService = (function () {
     function UnderlyingAccountService() {
@@ -10,8 +10,8 @@ var UnderlyingAccountService = (function () {
     UnderlyingAccountService.prototype.init = function () {
         if (!this.wasInitialised) {
             this.underlyingAccountController = new underlyingAccountController_1.UnderlyingAccountController();
-            this.underlyingAccountDataAccess = new underlyingAccountDataAccess_1.UnderlyingAccountDataAccess();
-            this.postingDataAccess = new postingDataAccess_1.PostingDataAccess();
+            this.underlyingAccountDataAccess = new underlyingAccount_dataaccess_1.UnderlyingAccountDataAccess();
+            this.postingDataAccess = new posting_dataaccess_1.PostingDataAccess();
             this.underlyingAccountDataAccess.init();
             this.postingDataAccess.init();
             this.wasInitialised = true;

@@ -1,11 +1,11 @@
 "use strict";
 var express = require('express');
 //import models = require('../../models/posting/posting');
-var postingDataAccess_1 = require('../../dataaccess/posting/postingDataAccess');
+var posting_dataaccess_1 = require('../../dataaccess/posting/posting.dataaccess');
 var posting_service_1 = require('../../services/posting/posting.service');
 var security_service_1 = require('../../services/security/security.service');
 var router = express.Router();
-var postingDataAcccessService = new postingDataAccess_1.PostingDataAccess();
+var postingDataAcccessService = new posting_dataaccess_1.PostingDataAccess();
 var postingService = new posting_service_1.PostingService();
 var securityService = new security_service_1.SecurityService();
 postingDataAcccessService.init();

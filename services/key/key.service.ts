@@ -1,4 +1,4 @@
-import { KeyDataAccess } from '../../dataaccess/key/keyDataAccess';
+import { KeyDataAccess } from '../../dataaccess/key/key.dataaccess';
 import { Key } from '../../models/key/key';
 
 export class KeyService {

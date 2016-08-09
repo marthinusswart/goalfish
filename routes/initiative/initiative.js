@@ -1,10 +1,10 @@
 "use strict";
 var express = require('express');
-var initiativeDataAccess_1 = require('../../dataaccess/initiative/initiativeDataAccess');
+var initiative_dataaccess_1 = require('../../dataaccess/initiative/initiative.dataaccess');
 var initiativeServiceLib = require('../../services/initiative/initiative.service');
 var security_service_1 = require('../../services/security/security.service');
 var router = express.Router();
-var initiativeDataAcccessService = new initiativeDataAccess_1.InitiativeDataAccess();
+var initiativeDataAcccessService = new initiative_dataaccess_1.InitiativeDataAccess();
 var initiativeService = new initiativeServiceLib.InitativeService();
 var securityService = new security_service_1.SecurityService();
 initiativeDataAcccessService.init();

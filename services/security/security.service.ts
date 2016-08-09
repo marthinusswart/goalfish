@@ -1,6 +1,6 @@
 import { SecurityDataAccess } from '../../dataaccess/security/security.dataaccess';
-import { MemberDataAccess } from '../../dataaccess/member/memberDataAccess';
-import { UnderlyingAccountDataAccess } from '../../dataaccess/underlyingaccount/underlyingAccountDataAccess';
+import { MemberDataAccess } from '../../dataaccess/member/member.dataaccess';
+import { UnderlyingAccountDataAccess } from '../../dataaccess/underlyingaccount/underlyingAccount.dataaccess';
 import { Token } from '../../models/security/token';
 import { Credentials } from '../../models/security/credentials';
 import { Member } from '../../models/member/member';

@@ -1,9 +1,9 @@
 
-import { PostingDataAccess } from '../../dataaccess/posting/postingDataAccess';
+import { PostingDataAccess } from '../../dataaccess/posting/posting.dataaccess';
 import {Posting} from '../../models/posting/posting';
 import {UnderlyingAccount} from '../../models/underlyingaccount/underlyingaccount';
 import {UnderlyingAccountController} from '../../controllers/underlyingaccount/underlyingAccountController';
-import {UnderlyingAccountDataAccess} from '../../dataaccess/underlyingaccount/underlyingAccountDataAccess';
+import {UnderlyingAccountDataAccess} from '../../dataaccess/underlyingaccount/underlyingAccount.dataaccess';
 
 import async = require('async');
 

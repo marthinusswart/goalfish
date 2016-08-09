@@ -1,11 +1,9 @@
 "use strict";
-//import postingServiceLib = require('../../services/posting/posting.service');
 var transaction_dataaccess_1 = require('../../dataaccess/transaction/transaction.dataaccess');
 var transaction_1 = require('../../models/transaction/transaction');
-//import initiativeControllerLib = require('../../controllers/initiative/initiativeController');
-var initiativeDataAccess_1 = require('../../dataaccess/initiative/initiativeDataAccess');
+var initiative_dataaccess_1 = require('../../dataaccess/initiative/initiative.dataaccess');
 var journal_1 = require('../../models/journal/journal');
-var journal_dataAccess_1 = require('../../dataaccess/journal/journal.dataAccess');
+var journal_dataaccess_1 = require('../../dataaccess/journal/journal.dataaccess');
 var key_service_1 = require('../key/key.service');
 var async = require('async');
 var InitativeService = (function () {
@@ -14,9 +12,9 @@ var InitativeService = (function () {
     }
     InitativeService.prototype.init = function () {
         if (!this.wasInitialised) {
-            this.initiativeDataAccess = new initiativeDataAccess_1.InitiativeDataAccess();
+            this.initiativeDataAccess = new initiative_dataaccess_1.InitiativeDataAccess();
             this.transactionDataAccess = new transaction_dataaccess_1.TransactionDataAccess();
-            this.journalDataAccess = new journal_dataAccess_1.JournalDataAccess();
+            this.journalDataAccess = new journal_dataaccess_1.JournalDataAccess();
             this.keyService = new key_service_1.KeyService();
             this.initiativeDataAccess.init();
             this.transactionDataAccess.init();

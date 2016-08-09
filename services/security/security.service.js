@@ -1,15 +1,15 @@
 "use strict";
 var security_dataaccess_1 = require('../../dataaccess/security/security.dataaccess');
-var memberDataAccess_1 = require('../../dataaccess/member/memberDataAccess');
-var underlyingAccountDataAccess_1 = require('../../dataaccess/underlyingaccount/underlyingAccountDataAccess');
+var member_dataaccess_1 = require('../../dataaccess/member/member.dataaccess');
+var underlyingAccount_dataaccess_1 = require('../../dataaccess/underlyingaccount/underlyingAccount.dataaccess');
 var token_1 = require('../../models/security/token');
 var SecurityService = (function () {
     function SecurityService() {
     }
     SecurityService.prototype.init = function () {
         this.securityDataAccess = new security_dataaccess_1.SecurityDataAccess();
-        this.memberDataAccess = new memberDataAccess_1.MemberDataAccess();
-        this.underlyingAccountDataAccess = new underlyingAccountDataAccess_1.UnderlyingAccountDataAccess();
+        this.memberDataAccess = new member_dataaccess_1.MemberDataAccess();
+        this.underlyingAccountDataAccess = new underlyingAccount_dataaccess_1.UnderlyingAccountDataAccess();
         this.securityDataAccess.init();
         this.memberDataAccess.init();
         this.underlyingAccountDataAccess.init();

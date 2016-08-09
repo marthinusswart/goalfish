@@ -4,7 +4,7 @@ import trxLib = require('../../models/transaction/transaction');
 import journalDataAccessLib = require('../../dataaccess/journal/journal.dataAccess');
 import journalLib = require('../../models/journal/journal');
 
-import postingDataAccessLib = require('../../dataaccess/posting/postingDataAccess');
+import postingDataAccessLib = require('../../dataaccess/posting/posting.dataaccess');
 import postingLib = require('../../models/posting/posting');
 import postingControllerLib = require('../../controllers/posting/postingController');
 
