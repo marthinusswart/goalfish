@@ -10,15 +10,15 @@ export class MemberDataAccess {
     wasInitialised: boolean = false;
     isConnectionOpening: boolean = false;
     isConnectionOpen: boolean = false;
-    dbURI = "localhost"; 
+    dbURI = "mongodb://localhost/goalfish"; 
 
     init() {
         if (!this.wasInitialised) {
-            this.dbURI =  (process.env.MONGODB_URI || "localhost");
+            this.dbURI =  (process.env.MONGODB_URI || "mongodb://localhost/goalfish");
             console.log("dbURI is: " + this.dbURI);            
             let db = new mongoose.Mongoose();
             let self = this;
-            this.connection = db.createConnection(this.dbURI, "goalfish");
+            this.connection = db.createConnection(this.dbURI);
             this.connection.on("error", console.error.bind(console, "connection error:"));
             this.memberController = new MemberController();
             this.memberSchema = self.memberController.createMemberMongooseSchema();
@@ -58,7 +58,7 @@ export class MemberDataAccess {
 
         if (!this.isConnectionOpen) {
             this.connection.once("open", findFunc);
-            this.connection.open(this.dbURI, "goalfish");
+            this.connection.open(this.dbURI);
         } else {
             findFunc();
         }
@@ -84,7 +84,7 @@ export class MemberDataAccess {
 
         if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", findFunc);
-            this.connection.open(this.dbURI, "goalfish");
+            this.connection.open(this.dbURI);
         } else {
             findFunc();
         }
@@ -134,7 +134,7 @@ export class MemberDataAccess {
 
          if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", saveFunc);
-            this.connection.open(this.dbURI, "goalfish");
+            this.connection.open(this.dbURI);
         } else {
             saveFunc();
         }

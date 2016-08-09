@@ -6,15 +6,15 @@ var MemberDataAccess = (function () {
         this.wasInitialised = false;
         this.isConnectionOpening = false;
         this.isConnectionOpen = false;
-        this.dbURI = "localhost";
+        this.dbURI = "mongodb://localhost/goalfish";
     }
     MemberDataAccess.prototype.init = function () {
         if (!this.wasInitialised) {
-            this.dbURI = (process.env.MONGODB_URI || "localhost");
+            this.dbURI = (process.env.MONGODB_URI || "mongodb://localhost/goalfish");
             console.log("dbURI is: " + this.dbURI);
             var db = new mongoose.Mongoose();
             var self_1 = this;
-            this.connection = db.createConnection(this.dbURI, "goalfish");
+            this.connection = db.createConnection(this.dbURI);
             this.connection.on("error", console.error.bind(console, "connection error:"));
             this.memberController = new memberController_1.MemberController();
             this.memberSchema = self_1.memberController.createMemberMongooseSchema();
@@ -51,7 +51,7 @@ var MemberDataAccess = (function () {
         });
         if (!this.isConnectionOpen) {
             this.connection.once("open", findFunc);
-            this.connection.open(this.dbURI, "goalfish");
+            this.connection.open(this.dbURI);
         }
         else {
             findFunc();
@@ -76,7 +76,7 @@ var MemberDataAccess = (function () {
         });
         if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", findFunc);
-            this.connection.open(this.dbURI, "goalfish");
+            this.connection.open(this.dbURI);
         }
         else {
             findFunc();
@@ -121,7 +121,7 @@ var MemberDataAccess = (function () {
         });
         if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", saveFunc);
-            this.connection.open(this.dbURI, "goalfish");
+            this.connection.open(this.dbURI);
         }
         else {
             saveFunc();
