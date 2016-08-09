@@ -15,6 +15,7 @@ export class MemberDataAccess {
     init() {
         if (!this.wasInitialised) {
             this.dbURI =  (process.env.MONGODB_URI || "localhost");
+            console.log("dbURI is: " + this.dbURI);            
             let db = new mongoose.Mongoose();
             let self = this;
             this.connection = db.createConnection(this.dbURI, "goalfish");

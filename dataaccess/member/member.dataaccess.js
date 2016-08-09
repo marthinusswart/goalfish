@@ -11,6 +11,7 @@ var MemberDataAccess = (function () {
     MemberDataAccess.prototype.init = function () {
         if (!this.wasInitialised) {
             this.dbURI = (process.env.MONGODB_URI || "localhost");
+            console.log("dbURI is: " + this.dbURI);
             var db = new mongoose.Mongoose();
             var self_1 = this;
             this.connection = db.createConnection(this.dbURI, "goalfish");
