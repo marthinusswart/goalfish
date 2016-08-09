@@ -6,9 +6,11 @@ var MemberDataAccess = (function () {
         this.wasInitialised = false;
         this.isConnectionOpening = false;
         this.isConnectionOpen = false;
+        this.dbURI = "localhost";
     }
     MemberDataAccess.prototype.init = function () {
         if (!this.wasInitialised) {
+            console.log("Mongo URI: " + process.env.MONGODB_URI);
             var db = new mongoose.Mongoose();
             var self_1 = this;
             this.connection = db.createConnection("localhost", "goalfish");

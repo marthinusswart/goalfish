@@ -10,9 +10,11 @@ export class MemberDataAccess {
     wasInitialised: boolean = false;
     isConnectionOpening: boolean = false;
     isConnectionOpen: boolean = false;
+    dbURI = "localhost"; 
 
     init() {
         if (!this.wasInitialised) {
+            console.log("Mongo URI: " + process.env.MONGODB_URI);
             let db = new mongoose.Mongoose();
             let self = this;
             this.connection = db.createConnection("localhost", "goalfish");
