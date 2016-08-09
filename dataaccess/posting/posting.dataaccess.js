@@ -1,24 +1,24 @@
 "use strict";
 var mongoose = require('mongoose');
-var keyControllerLib = require('../../controllers/key/keyController');
-var KeyDataAccess = (function () {
-    function KeyDataAccess() {
+var postingController = require('../../controllers/posting/postingController');
+var async = require('async');
+var PostingDataAccess = (function () {
+    function PostingDataAccess() {
         this.wasInitialised = false;
-        this.isConnectionOpening = false;
         this.isConnectionOpen = false;
+        this.isConnectionOpening = false;
     }
-    KeyDataAccess.prototype.init = function () {
+    PostingDataAccess.prototype.init = function () {
         if (!this.wasInitialised) {
             var db = new mongoose.Mongoose();
             var self = this;
             this.connection = db.createConnection("localhost", "goalfish");
             this.connection.on("error", console.error.bind(console, "connection error:"));
-            this.keyController = new keyControllerLib.KeyController();
-            this.keySchema = this.keyController.createKeyMongooseSchema();
-            this.keyModel = this.connection.model("key", this.keySchema, "key");
-            this.mongooseKey = new this.keyModel();
-            this.wasInitialised = true;
+            this.postingController = new postingController.PostingController();
+            this.postingSchema = this.postingController.createPostingMongooseSchema();
+            this.postingModel = this.connection.model("posting", this.postingSchema, "posting");
             this.isConnectionOpening = true;
+            this.wasInitialised = true;
             this.connection.on("close", function () {
                 self.onConnectionClose();
             });
@@ -30,19 +30,16 @@ var KeyDataAccess = (function () {
             throw new ReferenceError("Can't initialise again");
         }
     };
-    KeyDataAccess.prototype.cleanUp = function () {
+    PostingDataAccess.prototype.cleanUp = function () {
         if (this.wasInitialised) {
             this.connection.close();
         }
     };
-    KeyDataAccess.prototype.find = function (callback, closeConnection) {
+    PostingDataAccess.prototype.find = function (accounts, callback, closeConnection) {
         if (closeConnection === void 0) { closeConnection = false; }
-        if (!this.wasInitialised) {
-            throw new ReferenceError("Journal Data Access module was not initialised");
-        }
         var self = this;
         var findFunc = (function () {
-            self.keyModel.find({}, function (err, keys) {
+            self.postingModel.find({ accountNumber: { $in: accounts } }, function (err, postings) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -51,7 +48,7 @@ var KeyDataAccess = (function () {
                     if (closeConnection) {
                         self.connection.close();
                     }
-                    callback(null, self.keyController.translateMongooseArrayToKeyArray(keys));
+                    callback(null, self.postingController.translateMongooseArrayToPostingArray(postings));
                 }
             });
         });
@@ -63,11 +60,11 @@ var KeyDataAccess = (function () {
             findFunc();
         }
     };
-    KeyDataAccess.prototype.findByField = function (filter, callback, closeConnection) {
+    PostingDataAccess.prototype.findByField = function (filter, callback, closeConnection) {
         if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var findFunc = (function () {
-            self.keyModel.find(filter, function (err, keys) {
+            self.postingModel.find(filter, function (err, postings) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -76,7 +73,7 @@ var KeyDataAccess = (function () {
                     if (closeConnection) {
                         self.connection.close();
                     }
-                    callback(null, self.keyController.translateMongooseArrayToKeyArray(keys));
+                    callback(null, self.postingController.translateMongooseArrayToPostingArray(postings));
                 }
             });
         });
@@ -88,24 +85,21 @@ var KeyDataAccess = (function () {
             findFunc();
         }
     };
-    KeyDataAccess.prototype.findById = function (id, callback, closeConnection) {
-        if (closeConnection === void 0) { closeConnection = false; }
+    PostingDataAccess.prototype.findById = function (id, callback) {
         var self = this;
         var findFunc = (function () {
-            self.keyModel.findById(id, function (err, key) {
+            self.postingModel.findById(id, function (err, posting) {
                 if (err) {
                     self.connection.close();
                     callback(err);
                 }
                 else {
-                    if (closeConnection) {
-                        self.connection.close();
-                    }
-                    callback(null, self.keyController.translateMongooseToKey(key));
+                    self.connection.close();
+                    callback(null, self.postingController.translateMongooseToPosting(posting));
                 }
             });
         });
-        if (!this.isConnectionOpen) {
+        if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", findFunc);
             this.connection.open("localhost", "goalfish");
         }
@@ -113,13 +107,13 @@ var KeyDataAccess = (function () {
             findFunc();
         }
     };
-    KeyDataAccess.prototype.save = function (newKey, callback, closeConnection) {
+    PostingDataAccess.prototype.save = function (newPosting, callback, closeConnection) {
         if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var saveFunc = (function () {
-            self.mongooseKey = new self.keyModel();
-            self.keyController.translateKeyToMongoose(newKey, self.mongooseKey);
-            self.mongooseKey.save(function (err, result) {
+            var mongoosePosting = new self.postingModel();
+            self.postingController.translatePostingToMongoose(newPosting, mongoosePosting);
+            mongoosePosting.save(function (err, result) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -128,7 +122,7 @@ var KeyDataAccess = (function () {
                     if (closeConnection) {
                         self.connection.close();
                     }
-                    callback(null, self.keyController.translateMongooseToKey(result));
+                    callback(null, self.postingController.translateMongooseToPosting(result));
                 }
             });
         });
@@ -140,12 +134,13 @@ var KeyDataAccess = (function () {
             saveFunc();
         }
     };
-    KeyDataAccess.prototype.update = function (id, key, callback, closeConnection) {
+    PostingDataAccess.prototype.update = function (id, newPosting, callback, closeConnection) {
         if (closeConnection === void 0) { closeConnection = false; }
         var self = this;
         var updateFunc = (function () {
-            self.keyController.translateKeyToMongoose(key, self.mongooseKey);
-            self.keyModel.findByIdAndUpdate(self.mongooseKey._id, self.mongooseKey, { new: true }, function (err, result) {
+            var mongoosePosting = new self.postingModel();
+            self.postingController.translatePostingToMongoose(newPosting, mongoosePosting);
+            self.postingModel.findByIdAndUpdate(mongoosePosting._id, mongoosePosting, { new: true }, function (err, result) {
                 if (err) {
                     self.connection.close();
                     callback(err);
@@ -154,7 +149,7 @@ var KeyDataAccess = (function () {
                     if (closeConnection) {
                         self.connection.close();
                     }
-                    callback(null, self.keyController.translateMongooseToKey(result));
+                    callback(null, self.postingController.translateMongooseToPosting(result));
                 }
             });
         });
@@ -166,14 +161,38 @@ var KeyDataAccess = (function () {
             updateFunc();
         }
     };
-    KeyDataAccess.prototype.onConnectionOpen = function () {
+    PostingDataAccess.prototype.saveAll = function (postings, callback, closeConnection) {
+        var _this = this;
+        if (closeConnection === void 0) { closeConnection = false; }
+        var self = this;
+        var count = 0;
+        async.whilst(function () { return count < postings.length; }, function (callback) {
+            var postingObj = postings[count];
+            count++;
+            _this.save(postingObj, function (err, posting) {
+                if (err === null) {
+                    console.log("Saved " + posting.externalRef);
+                }
+                else {
+                    console.log("Failed to save " + err);
+                }
+                callback();
+            }, false);
+        }, function (err) {
+            if (closeConnection) {
+                _this.cleanUp();
+            }
+            callback(err, postings);
+        });
+    };
+    PostingDataAccess.prototype.onConnectionOpen = function () {
         this.isConnectionOpen = true;
         this.isConnectionOpening = false;
     };
-    KeyDataAccess.prototype.onConnectionClose = function () {
+    PostingDataAccess.prototype.onConnectionClose = function () {
         this.isConnectionOpen = false;
     };
-    return KeyDataAccess;
+    return PostingDataAccess;
 }());
-exports.KeyDataAccess = KeyDataAccess;
-//# sourceMappingURL=keyDataAccess.js.map
+exports.PostingDataAccess = PostingDataAccess;
+//# sourceMappingURL=posting.dataaccess.js.map

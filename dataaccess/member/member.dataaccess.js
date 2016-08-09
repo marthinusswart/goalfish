@@ -154,4 +154,4 @@ var MemberDataAccess = (function () {
     return MemberDataAccess;
 }());
 exports.MemberDataAccess = MemberDataAccess;
-//# sourceMappingURL=memberDataAccess.js.map
+//# sourceMappingURL=member.dataaccess.js.map
