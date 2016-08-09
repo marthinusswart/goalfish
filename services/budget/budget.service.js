@@ -3,7 +3,7 @@ var transaction_dataaccess_1 = require('../../dataaccess/transaction/transaction
 var transaction_1 = require('../../models/transaction/transaction');
 var budget_dataaccess_1 = require('../../dataaccess/budget/budget.dataaccess');
 var journal_1 = require('../../models/journal/journal');
-var journal_dataAccess_1 = require('../../dataaccess/journal/journal.dataAccess');
+var journal_dataaccess_1 = require('../../dataaccess/journal/journal.dataaccess');
 var key_service_1 = require('../key/key.service');
 var creditnote_1 = require('../../models/creditnote/creditnote');
 var creditnote_dataaccess_1 = require('../../dataaccess/creditnote/creditnote.dataaccess');
@@ -16,7 +16,7 @@ var BudgetService = (function () {
         if (!this.wasInitialised) {
             this.budgetDataAccess = new budget_dataaccess_1.BudgetDataAccess();
             this.transactionDataAccess = new transaction_dataaccess_1.TransactionDataAccess();
-            this.journalDataAccess = new journal_dataAccess_1.JournalDataAccess();
+            this.journalDataAccess = new journal_dataaccess_1.JournalDataAccess();
             this.keyService = new key_service_1.KeyService();
             this.creditNoteDataAccess = new creditnote_dataaccess_1.CreditNoteDataAccess();
             this.budgetDataAccess.init();

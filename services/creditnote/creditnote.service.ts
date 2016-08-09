@@ -2,7 +2,7 @@ import { CreditNote } from '../../models/creditnote/creditnote';
 import { CreditNoteDataAccess } from '../../dataaccess/creditnote/creditnote.dataaccess';
 import { KeyService } from '../key/key.service';
 import { Key } from '../../models/key/key';
-import { JournalDataAccess } from '../../dataaccess/journal/journal.dataAccess';
+import { JournalDataAccess } from '../../dataaccess/journal/journal.dataaccess';
 import { Journal } from '../../models/journal/journal';
 import { JournalController } from '../../controllers/journal/journal.controller';
 import async = require('async');

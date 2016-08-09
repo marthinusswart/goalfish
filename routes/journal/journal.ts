@@ -1,6 +1,6 @@
 import express = require('express');
 import models = require('../../models/journal/journal');
-import { JournalDataAccess } from '../../dataaccess/journal/journal.dataAccess';
+import { JournalDataAccess } from '../../dataaccess/journal/journal.dataaccess';
 import { SecurityService } from '../../services/security/security.service';
 import { Token } from '../../models/security/token';
 

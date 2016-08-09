@@ -1,7 +1,7 @@
 "use strict";
 var creditnote_dataaccess_1 = require('../../dataaccess/creditnote/creditnote.dataaccess');
 var key_service_1 = require('../key/key.service');
-var journal_dataAccess_1 = require('../../dataaccess/journal/journal.dataAccess');
+var journal_dataaccess_1 = require('../../dataaccess/journal/journal.dataaccess');
 var journal_controller_1 = require('../../controllers/journal/journal.controller');
 var async = require('async');
 var CreditNoteService = (function () {
@@ -12,7 +12,7 @@ var CreditNoteService = (function () {
         if (!this.wasInitialised) {
             this.creditNoteDataAccess = new creditnote_dataaccess_1.CreditNoteDataAccess();
             this.keyService = new key_service_1.KeyService();
-            this.journalDataAccess = new journal_dataAccess_1.JournalDataAccess();
+            this.journalDataAccess = new journal_dataaccess_1.JournalDataAccess();
             this.journalController = new journal_controller_1.JournalController();
             this.creditNoteDataAccess.init();
             this.keyService.init();

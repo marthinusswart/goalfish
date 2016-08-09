@@ -1,4 +1,4 @@
-import journalDataAccessLib = require('../../dataaccess/journal/journal.dataAccess');
+import journalDataAccessLib = require('../../dataaccess/journal/journal.dataaccess');
 import journalLib = require('../../models/journal/journal');
 
 export class JournalMaintenanceService {
