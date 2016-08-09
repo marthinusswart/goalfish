@@ -10,10 +10,10 @@ var MemberDataAccess = (function () {
     }
     MemberDataAccess.prototype.init = function () {
         if (!this.wasInitialised) {
-            console.log("Mongo URI: " + process.env.MONGODB_URI);
+            this.dbURI = (process.env.MONGODB_URI || "localhost");
             var db = new mongoose.Mongoose();
             var self_1 = this;
-            this.connection = db.createConnection("localhost", "goalfish");
+            this.connection = db.createConnection(this.dbURI, "goalfish");
             this.connection.on("error", console.error.bind(console, "connection error:"));
             this.memberController = new memberController_1.MemberController();
             this.memberSchema = self_1.memberController.createMemberMongooseSchema();
@@ -50,7 +50,7 @@ var MemberDataAccess = (function () {
         });
         if (!this.isConnectionOpen) {
             this.connection.once("open", findFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI, "goalfish");
         }
         else {
             findFunc();
@@ -75,7 +75,7 @@ var MemberDataAccess = (function () {
         });
         if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", findFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI, "goalfish");
         }
         else {
             findFunc();
@@ -120,7 +120,7 @@ var MemberDataAccess = (function () {
         });
         if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", saveFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI, "goalfish");
         }
         else {
             saveFunc();

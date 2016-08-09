@@ -14,10 +14,10 @@ export class MemberDataAccess {
 
     init() {
         if (!this.wasInitialised) {
-            console.log("Mongo URI: " + process.env.MONGODB_URI);
+            this.dbURI =  (process.env.MONGODB_URI || "localhost");
             let db = new mongoose.Mongoose();
             let self = this;
-            this.connection = db.createConnection("localhost", "goalfish");
+            this.connection = db.createConnection(this.dbURI, "goalfish");
             this.connection.on("error", console.error.bind(console, "connection error:"));
             this.memberController = new MemberController();
             this.memberSchema = self.memberController.createMemberMongooseSchema();
@@ -57,7 +57,7 @@ export class MemberDataAccess {
 
         if (!this.isConnectionOpen) {
             this.connection.once("open", findFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI, "goalfish");
         } else {
             findFunc();
         }
@@ -83,7 +83,7 @@ export class MemberDataAccess {
 
         if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", findFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI, "goalfish");
         } else {
             findFunc();
         }
@@ -133,7 +133,7 @@ export class MemberDataAccess {
 
          if (!this.isConnectionOpen && !this.isConnectionOpening) {
             this.connection.once("open", saveFunc);
-            this.connection.open("localhost", "goalfish");
+            this.connection.open(this.dbURI, "goalfish");
         } else {
             saveFunc();
         }
